@@ -8,6 +8,11 @@ class Dfi_App_Config
      */
     private static $config;
 
+    private static $configLocation = null;
+
+    private static $mode = null;
+
+    const DEFAULT_MODE = 'production';
 
     /**
      * @param bool $asArray
@@ -25,9 +30,9 @@ class Dfi_App_Config
                 $config = self::$config;
             } else {
 
-                if (self::hasSection(APPLICATION_PATH . '/configs/application.ini', $mode)) {
+                if (self::hasSection(self::getConfigLocation(), $mode)) {
 
-                    $config = new Zend_Config_Ini(APPLICATION_PATH . '/configs/application.ini', $mode, array('allowModifications' => true));
+                    $config = new Zend_Config_Ini(self::getConfigLocation(), $mode, array('allowModifications' => true));
 
                     if ($mode == APPLICATION_ENV) {
                         self::$config = $config;
@@ -76,7 +81,7 @@ class Dfi_App_Config
 
     public static function hasSection($file, $section)
     {
-        $ini = parse_ini_file(APPLICATION_PATH . '/configs/application.ini', true);
+        $ini = parse_ini_file(getConfigLocation(), true);
         $keys = array_keys($ini);
         foreach ($keys as $index => $value) {
             if (false !== strpos($value, ':')) {
@@ -90,5 +95,47 @@ class Dfi_App_Config
 
         return false !== array_search($section, $keys);
     }
+
+    /**
+     * @return string
+     */
+    private static function getConfigLocation()
+    {
+        if (self::$configLocation) {
+            return self::$configLocation;
+        }
+        return APPLICATION_PATH . '/configs/application.ini';
+    }
+
+    /**
+     * @param mixed $configLocation
+     */
+    public static function setConfigLocation($configLocation)
+    {
+        self::$configLocation = $configLocation;
+    }
+
+    /**
+     * @return null
+     */
+    public static function getMode()
+    {
+        if (defined(APPLICATION_ENV) && self::$mode == null) {
+            self::$mode = APPLICATION_ENV;
+        }
+        if (self::$mode == null) {
+            return self::DEFAULT_MODE;
+        }
+        return self::$mode;
+    }
+
+    /**
+     * @param null $mode
+     */
+    public static function setMode($mode)
+    {
+        self::$mode = $mode;
+    }
+
 
 }

@@ -1,17 +1,17 @@
 <?php
-require_once '../library/propel/Propel.php';
-require_once '../library/propel/om/Persistent.php';
-require_once '../library/propel/om/BaseObject.php';
-require_once '../application/models/map/DebugLogTableMap.php';
-require_once '../application/models/om/BaseDebugLog.php';
-require_once '../application/models/om/BaseDebugLogPeer.php';
-require_once '../application/models/DebugLog.php';
-require_once '../application/models/DebugLogPeer.php';
+
 
 class Dfi_Error_Report
 {
+    private static $modelName = null;
+    const DEFAULT_MODEL_NAME = 'DebugLog';
+
     public static function save($message, $description = null, $variables = null)
     {
+        if (!self::checkModel()) {
+            return false;
+        }
+
         try {
             self::checkPropel();
             $log = new DebugLog();
@@ -30,6 +30,10 @@ class Dfi_Error_Report
 
     public static function saveException(Exception $e, $additional = array())
     {
+        if (!self::checkModel()) {
+            return false;
+        }
+
         try {
             self::checkPropel();
             $log = new DebugLog();
@@ -69,9 +73,11 @@ class Dfi_Error_Report
 
     private static function checkPropel()
     {
+
+
         if (!Propel::isInit()) {
             require_once APPLICATION_PATH . '/configs/constants.php';
-            define('APPLICATION_ENV','production');
+            define('APPLICATION_ENV', 'production');
 
             if (Zend_Loader::isReadable(Dfi_App_Config::get('db.config'))) {
 
@@ -88,5 +94,64 @@ class Dfi_Error_Report
 
         }
     }
+
+    private static function checkModel()
+    {
+        if (class_exists(self::getModelName())) {
+            return true;
+        } else {
+
+            if (defined('APPLICATION_PATH')) {
+
+            } else {
+                $path = realpath(dirname(__FILE__) . '/../../../');
+            }
+
+            $pathname = $path . '/application/models/' . self::getModelName() . '.php';
+
+            if (file_exists($pathname)) {
+
+                require_once $path . '/library/propel/Propel.php';
+                require_once $path . '/library/propel/om/Persistent.php';
+                require_once $path . '/library/propel/om/BaseObject.php';
+                require_once $path . '/application/models/map/'.self::getModelName() .'TableMap.php';
+                require_once $path . '/application/models/om/Base'.self::getModelName() .'.php';
+                require_once $path . '/application/models/om/Base'.self::getModelName() .'Peer.php';
+                require_once $path . '/application/models/'.self::getModelName() .'.php';
+                require_once $path . '/application/models/'.self::getModelName() .'Peer.php';
+
+
+                try {
+                    $modelName = self::getModelName();
+                    new $modelName();
+
+                    return false;
+                } catch (Exception $e) {
+                    return false;
+                }
+            }
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public static function getModelName()
+    {
+
+        if (self::$modelName == null) {
+            return self::DEFAULT_MODEL_NAME;
+        }
+        return self::$modelName;
+    }
+
+    /**
+     * @param string $modelName
+     */
+    public static function setModelName($modelName)
+    {
+        self::$modelName = $modelName;
+    }
+
 
 }

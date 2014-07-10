@@ -37,20 +37,23 @@ class Dfi_Error_Handler
             }
 
 
-            Zend_Registry::get('shutdownLogger')->log($error['message'] . ' : ' . $error['file'] . ' : (' . $error['line'] . ')', Zend_Log::CRIT);
-            if (!Dfi_App_Config::get('main.showDebug')) {
-                $url = "http" . (($_SERVER['SERVER_PORT'] == 443) ? "s://" : "://") . $_SERVER['HTTP_HOST'].'/';
-                header("Location: " . $url . "error/error" . ($guid ? '/guid/' . $guid : ''));
-                exit();
-            } else {
+            if (!preg_match('/cli/', php_sapi_name())) {
 
-                ob_clean();
+                Zend_Registry::get('shutdownLogger')->log($error['message'] . ' : ' . $error['file'] . ' : (' . $error['line'] . ')', Zend_Log::CRIT);
+                if (!Dfi_App_Config::get('main.showDebug')) {
+                    $url = "http" . (($_SERVER['SERVER_PORT'] == 443) ? "s://" : "://") . $_SERVER['HTTP_HOST'] . '/';
+                    header("Location: " . $url . "error/error" . ($guid ? '/guid/' . $guid : ''));
+                    exit();
+                } else {
 
-                echo '<pre>REPORT: ' . ($guid ? $guid : 'brak') . "\n";
-                echo 'REQUEST: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '') . "\n";
-                echo 'REFERER: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '') . "\n";
-                echo 'ERROR: ' . $e->getMessage() . ' : ' . $e->getFile() . ' : (' . $e->getLine() . ')' . "\n" . $e->getTraceAsString() . '</pre>';
+                    ob_clean();
 
+                    echo '<pre>REPORT: ' . ($guid ? $guid : 'brak') . "\n";
+                    echo 'REQUEST: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '') . "\n";
+                    echo 'REFERER: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '') . "\n";
+                    echo 'ERROR: ' . $e->getMessage() . ' : ' . $e->getFile() . ' : (' . $e->getLine() . ')' . "\n" . $e->getTraceAsString() . '</pre>';
+
+                }
             }
         }
     }

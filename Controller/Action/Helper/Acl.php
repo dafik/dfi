@@ -1,4 +1,5 @@
 <?
+
 class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abstract
 {
 
@@ -32,19 +33,19 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
 
     }
 
-    public function init()
+    public function init($modelName)
     {
         parent::init();
 
-        $this->setRoles();
+        $this->setRoles($modelName);
         $this->setResources();
         $this->setPrivilages();
         $this->setAcl();
     }
 
-    private function setRoles()
+    private function setRoles($modelName)
     {
-        Zend_Auth::getInstance()->setStorage(new Dfi_Auth_Storage_Cookie());
+        Zend_Auth::getInstance()->setStorage(new Dfi_Auth_Storage_Cookie($modelName));
         if (Zend_Auth::getInstance()->hasIdentity()) {
 
             $user = Zend_Auth::getInstance()->getIdentity();
@@ -92,7 +93,7 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
         }
     }
 
-    private function checkResources($resources,$acl = null)
+    private function checkResources($resources, $acl = null)
     {
         $acl = $this->acl;
         $filtered = array();
@@ -102,7 +103,7 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
                     $filtered[] = $resource;
                 }
             } catch (Exception $e) {
-               $x = 1;
+                $x = 1;
             }
         }
         return $filtered;
