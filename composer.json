@@ -1,6 +1,6 @@
 {
     "name": "dafik/dfi",
-    "description": "zendframework 1 + propelorm - project code generation",
+    "description": "utilities + zend framework extensions",
     "minimum-stability": "stable",
     "license": "proprietary",
     "authors": [

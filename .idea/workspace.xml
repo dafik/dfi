@@ -124,7 +124,7 @@
         <entry file="file://$PROJECT_DIR$/composer.json">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.035128806" vertical-offset="0" max-vertical-offset="854">
-              <caret line="2" column="73" selection-start-line="2" selection-start-column="73" selection-end-line="2" selection-end-column="73" />
+              <caret line="2" column="57" selection-start-line="2" selection-start-column="57" selection-end-line="2" selection-end-column="57" />
               <folding />
             </state>
           </provider>
@@ -533,7 +533,7 @@
       <updated>1404993962243</updated>
       <workItem from="1404993964960" duration="3947000" />
       <workItem from="1405000547042" duration="824000" />
-      <workItem from="1405059525227" duration="1461000" />
+      <workItem from="1405059525227" duration="1614000" />
     </task>
     <task id="LOCAL-00001" summary="initial">
       <created>1404994030652</created>
@@ -559,11 +559,15 @@
       <created>1405067097004</created>
       <updated>1405067097004</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="initial">
+      <created>1405067734465</created>
+      <updated>1405067734465</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6232000" />
+    <option name="totallyTimeSpent" value="6385000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="59" y="24" width="1861" height="1056" extended-state="6" />
@@ -969,7 +973,7 @@
     <entry file="file://$PROJECT_DIR$/composer.json">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.035128806" vertical-offset="0" max-vertical-offset="854">
-          <caret line="2" column="73" selection-start-line="2" selection-start-column="73" selection-end-line="2" selection-end-column="73" />
+          <caret line="2" column="57" selection-start-line="2" selection-start-column="57" selection-end-line="2" selection-end-column="57" />
           <folding />
         </state>
       </provider>
