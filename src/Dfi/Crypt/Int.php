@@ -11,7 +11,7 @@ class Dfi_Crypt_Int implements Dfi_Crypt_Interface
      *
      * @var double
      */
-    private static $hash = 1252386456;
+    private static $hash = 1252386456;  //TODO get from config
     /**
      *  must be numeric and must contain 20 digits
      *

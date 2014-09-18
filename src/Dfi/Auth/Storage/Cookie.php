@@ -10,6 +10,10 @@ class Dfi_Auth_Storage_Cookie implements Zend_Auth_Storage_Interface
     protected $model;
 
 
+    /**
+     * User model propel class name
+     * @param string $model
+     */
     function __construct($model)
     {
         $this->model = $model;
@@ -59,7 +63,7 @@ class Dfi_Auth_Storage_Cookie implements Zend_Auth_Storage_Interface
             if (isset($_COOKIE['_u']) && $_COOKIE['_u'] && $_COOKIE['_u'] != 'deleted') {
 
                 $base = base64_decode($_COOKIE['_u']);
-                $decrypted = Dfi_Crypt::decrypt($base);
+                $decrypted = Dfi_Crypt_MCrypt::decode($base);
                 list($userId, $token) = explode('-', $decrypted);
 
                 $time = time();
@@ -121,7 +125,7 @@ class Dfi_Auth_Storage_Cookie implements Zend_Auth_Storage_Interface
                     $response = Zend_Controller_Front::getInstance()->getResponse();
                     $date = new DateTime();
                     $date->modify('+1200 seconds');
-                    $response->setHeader('Set-Cookie', '_u = ' . base64_encode(Dfi_Crypt::Encrypt($user->getPrimaryKey() . '-' . time())) . '; Expires=' . $date->format(DATE_COOKIE) . '; path = /');
+                    $response->setHeader('Set-Cookie', '_u = ' . base64_encode(Dfi_Crypt_MCrypt::encode($user->getPrimaryKey() . '-' . time())) . '; Expires=' . $date->format(DATE_COOKIE) . '; path = /');
                     $this->headersSent = true;
                 } else {
                     headers_sent($file, $line);
