@@ -41,7 +41,7 @@ const SET_MODEL_NAME_NOT_SET ='you must set model name first';
   {
     try{
       $name = ucfirst($modelName);
-      $model = new $name;
+      new $name;
     }catch (Exception $e){
       throw new Exception('model '.$modelName.' doesn\'t exist');
     }
@@ -92,7 +92,7 @@ const SET_MODEL_NAME_NOT_SET ='you must set model name first';
     if (!$this->correctName) {
       throw new Exception('method require valid model name to be set first');
     }
-    $objectList =$this->getObjectList();
+    //$objectList =$this->getObjectList();
     $options = $this->propelObject2array($this->getObjectList(),$this->modelValueField,$this->modelField);
     //$options = $this->propelObject2array($this->getObjectList());
     return $options;

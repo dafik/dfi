@@ -59,6 +59,7 @@ class Dfi_View_Helper_FormSpinner extends Zend_View_Helper_FormText
 			$opt .= '}';
 			return $opt;
 		}
+        return $options;
 	}
 }
 

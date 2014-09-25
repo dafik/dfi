@@ -18,10 +18,10 @@ class Dfi_Paginator_Adapter_PropelPager implements Zend_Paginator_Adapter_Interf
      */
     public function getItems($offset, $itemCountPerPage)
     {
-        $x = 1;
+        //TODO $x = 1;
         // TODO: Implement getItems() method.
         return $this->_pager->getIterator();
-        return $this->_pager->getResults();
+        //return $this->_pager->getResults();
     }
 
     /**
@@ -35,7 +35,7 @@ class Dfi_Paginator_Adapter_PropelPager implements Zend_Paginator_Adapter_Interf
      */
     public function count()
     {
-        $x = 1;
+        //TODO $x = 1;
         // TODO: Implement count() method.
         return $this->_pager->count();
     }

@@ -12,6 +12,7 @@ class Dfi_Form_Element_SelectChained extends Zend_Form_Element_Select
     /**
      * Add an option
      *
+     * @param string $chain
      * @param  string $option
      * @param  string $value
      * @return Zend_Form_Element_Multi

@@ -50,10 +50,10 @@ class Dfi_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract
         );
 
 
-        $t1 = isset($allowedRequests);
+        /*$t1 = isset($allowedRequests);
         $t2 = isset($allowedRequests[$module]);
         $t3 = isset($allowedRequests[$module][$controller]);
-        $t4 = isset($allowedRequests[$module][$controller][$action]);
+        $t4 = isset($allowedRequests[$module][$controller][$action]);*/
 
 
 

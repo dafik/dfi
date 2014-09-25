@@ -112,13 +112,14 @@ class Dfi_Error_Report
             if (file_exists($pathname)) {
 
                 require_once $path . '/library/propel/Propel.php';
+                /** @noinspection PhpIncludeInspection */
                 require_once $path . '/library/propel/om/Persistent.php';
                 require_once $path . '/library/propel/om/BaseObject.php';
-                require_once $path . '/application/models/map/'.self::getModelName() .'TableMap.php';
-                require_once $path . '/application/models/om/Base'.self::getModelName() .'.php';
-                require_once $path . '/application/models/om/Base'.self::getModelName() .'Peer.php';
-                require_once $path . '/application/models/'.self::getModelName() .'.php';
-                require_once $path . '/application/models/'.self::getModelName() .'Peer.php';
+                require_once $path . '/application/models/map/' . self::getModelName() . 'TableMap.php';
+                require_once $path . '/application/models/om/Base' . self::getModelName() . '.php';
+                require_once $path . '/application/models/om/Base' . self::getModelName() . 'Peer.php';
+                require_once $path . '/application/models/' . self::getModelName() . '.php';
+                require_once $path . '/application/models/' . self::getModelName() . 'Peer.php';
 
 
                 try {
@@ -131,6 +132,7 @@ class Dfi_Error_Report
                 }
             }
         }
+        return false;
     }
 
     /**

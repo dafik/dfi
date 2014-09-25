@@ -9,12 +9,6 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
      */
     private $acl;
 
-    /**
-     * Controller
-     *
-     * @var Controller_Base
-     */
-    private $controller;
 
     /**
      * roleName
@@ -23,9 +17,6 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
      */
     private $roleName;
     private $roleId;
-
-    private $aclConfig = array();
-
 
     public function __construct()
     {
@@ -67,7 +58,7 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
         //$this->acl->add(new Zend_Acl_Resource('index'));
         foreach ($modules as $module) {
             /* @var $module SysModule */
-            $this->acl->add(new Zend_Acl_Resource($module->getId()));
+            $this->acl->addResource(new Zend_Acl_Resource($module->getId()));
         }
     }
 
@@ -76,7 +67,7 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
 
         if (Zend_Auth::getInstance()->hasIdentity()) {
             //$privilages = AclQuery::create()->filterByRoleId($this->roleId)->find();
-            $privileges = array();
+            //$privileges = array();
             $userPrivileges = Dfi_Auth_Acl::getModulesIdsByRoleId($this->roleId);
             $userPrivileges = $this->checkResources($userPrivileges);
             //$userPrivilages = array();
@@ -93,7 +84,7 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
         }
     }
 
-    private function checkResources($resources, $acl = null)
+    private function checkResources($resources)
     {
         $acl = $this->acl;
         $filtered = array();
@@ -103,7 +94,7 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
                     $filtered[] = $resource;
                 }
             } catch (Exception $e) {
-                $x = 1;
+                //TODO $x = 1;
             }
         }
         return $filtered;

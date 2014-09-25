@@ -101,7 +101,7 @@ class Dfi_App_Config
 
     public static function hasSection($file, $section)
     {
-        $ini = parse_ini_file(self::getConfigLocation(), true);
+        $ini = parse_ini_file($file, true);
         $keys = array_keys($ini);
         foreach ($keys as $index => $value) {
             if (false !== strpos($value, ':')) {

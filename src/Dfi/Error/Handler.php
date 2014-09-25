@@ -58,11 +58,12 @@ class Dfi_Error_Handler
         }
     }
 
-    public static function errorHandler($errno, $errstr, $errfile = null, $errline = null, array $errcontext = null)
+    public static function errorHandler(/** @noinspection PhpUnusedParameterInspection */
+        $errNumber, $errStr, $errFile = null, $errLine = null)
     {
-        $test = strpos($errfile, 'Zend' . DIRECTORY_SEPARATOR . 'Loader.php');
+        $test = strpos($errFile, 'Zend' . DIRECTORY_SEPARATOR . 'Loader.php');
         if ($test === false) {
-            Zend_Registry::get('errorLogger')->log($errfile . ': (' . $errline . ') : ' . $errstr, Zend_Log::ERR);
+            Zend_Registry::get('errorLogger')->log($errFile . ': (' . $errLine . ') : ' . $errStr, Zend_Log::ERR);
         }
 
 

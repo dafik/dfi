@@ -15,17 +15,17 @@ class Dfi_View_Helper_Paginate extends Zend_View_Helper_Abstract
             return $this;
         }
 
-        /*if (null == $paginateLink) {
+        if (null == $paginateLink) {
             $paginateLink = $this->view->url();
         }
 
-        $paginateLink = preg_replace('/page\/[0-9]+/','', $paginateLink);
-        $paginateLink = preg_replace('/\/$/','', $paginateLink);
-*/
+        $paginateLink = preg_replace('/page\/[0-9]+/', '', $paginateLink);
+        $paginateLink = preg_replace('/\/$/', '', $paginateLink);
+
 
         $view = clone $this->view;
-        //$view->assign('paginate',  $pager);
-        //$view->assign('link', $paginateLink);
+        $view->assign('paginate', $pager);
+        $view->assign('link', $paginateLink);
 
         if (null == $tplName) {
             $name = 'pagination_control.phtml';

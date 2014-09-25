@@ -11,10 +11,10 @@ class Dfi_Propel_Helper
         foreach ($map->getRelations() as $relation) {
             /** @var $localColumn ColumnMap */
             if (count($relation->getLocalColumns()) > 1) {
-                $x = 0;
+                //TODO $x = 0;
             }
             $localColumn = $relation->getLocalColumns()[0];
-            $map->relationsFK[$localColumn->getColumnName()] = $relation;
+            $map->relationsFK[$localColumn->getName()] = $relation;
         }
     }
 
@@ -63,12 +63,12 @@ class Dfi_Propel_Helper
 
         /** @var $column ColumnMap */
         $scoreTable = array();
-        foreach ($map->getColumns() as $key => $column) {
+        foreach ($map->getColumns() as $column) {
 
             if (isset(self::$scores[$column->getType()])) {
                 $score = self::$scores[$column->getType()];
             } else {
-                $x = 'tablenotfound';
+                //todo $x = 'tablenotfound';
                 $score = 0;
             }
             if (!isset($scoreTable[$score])) {

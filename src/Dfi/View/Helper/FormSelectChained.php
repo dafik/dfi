@@ -123,6 +123,7 @@ class Dfi_View_Helper_FormSelectChained extends Zend_View_Helper_FormSelect
     /**
      * Builds the actual <option> tag
      *
+     * @param string $chain
      * @param string $value Options Value
      * @param string $label Options Label
      * @param array $selected The option value(s) to mark as 'selected'

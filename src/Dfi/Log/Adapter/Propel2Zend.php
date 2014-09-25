@@ -1,7 +1,5 @@
 <?php
 
-require_once 'logger/BasicLogger.php';
-
 class Dfi_Log_Adapter_Propel2Zend implements BasicLogger
 {
     /**

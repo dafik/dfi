@@ -44,7 +44,7 @@ class Dfi_Auth_Adapter_Db implements Zend_Auth_Adapter_Interface
     /**
      * Performs an authentication attempt
      *
-     * @throws Zend_Auth_Adapter_Exception If authentication cannot be performed
+     * @throws Exception
      * @return Zend_Auth_Result
      */
     public function authenticate()
@@ -84,9 +84,6 @@ class Dfi_Auth_Adapter_Db implements Zend_Auth_Adapter_Interface
                 throw new Exception(self::NOT_FOUND);
             }
         } catch (Exception $e) {
-            $m = $e->getMessage();
-            $z = strpos($m, 'Invalid credentials');
-
             if (false != strpos($e->getMessage(), 'Invalid credentials')) {
                 return $this->result(Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID, self::BAD_PW_MESSAGE);
             }
@@ -107,8 +104,8 @@ class Dfi_Auth_Adapter_Db implements Zend_Auth_Adapter_Interface
     /**
      * Factory for Zend_Auth_Result
      *
-     * @param integer    The Result code, see Zend_Auth_Result
-     * @param mixed      The Message, can be a string or array
+     * @param integer $code   The Result code, see Zend_Auth_Result
+     * @param mixed $messages     The Message, can be a string or array
      * @return Zend_Auth_Result
      */
     public function result($code, $messages = array())

@@ -5,7 +5,7 @@ class Dfi_Controller_Plugin_Login extends Zend_Controller_Plugin_Abstract
 
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
-        Zend_Auth::getInstance()->setStorage(new Dfi_Auth_Storage_Cookie());
+        Zend_Auth::getInstance()->setStorage(new Dfi_Auth_Storage_Cookie('user'));
 
         $request = $this->getRequest();
 
@@ -55,10 +55,10 @@ class Dfi_Controller_Plugin_Login extends Zend_Controller_Plugin_Abstract
         $allowedRequests = $this->getAllowedRequests();
 
 
-        $t1 = isset($allowedRequests);
+        /*$t1 = isset($allowedRequests);
         $t2 = isset($allowedRequests[$module]);
         $t3 = isset($allowedRequests[$module][$controller]);
-        $t4 = isset($allowedRequests[$module][$controller][$action]);
+        $t4 = isset($allowedRequests[$module][$controller][$action]);*/
 
 
         if (isset($allowedRequests[$module][$controller][$action])) {

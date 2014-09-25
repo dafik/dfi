@@ -37,7 +37,7 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
     /**
      * Performs an authentication attempt
      *
-     * @throws Zend_Auth_Adapter_Exception If authentication cannot be performed
+     * @throws Exception
      * @return Zend_Auth_Result
      */
     public function authenticate()
@@ -47,7 +47,8 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
             if ($this->user) {
                 if ($this->user->getActive()) {
                     $config = new Zend_Config_Ini('configs/ad-conf.php', 'production');
-                    $options = $config->ldap->servers->toArray();
+                    $options = $config->get('ldap')->get('servers')->toArray();
+                    //TODO move to dfi_getconfig
                     $adapter = new Zend_Auth_Adapter_Ldap($options, $this->username, $this->password);
 
                     $result = $adapter->authenticate();
@@ -66,9 +67,6 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
                 throw new Exception(self::NOT_FOUND);
             }
         } catch (Exception $e) {
-            $m = $e->getMessage();
-            $z = strpos($m, 'Invalid credentials');
-
             if (false != strpos($e->getMessage(), 'Invalid credentials')) {
                 return $this->result(Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID, self::BAD_PW_MESSAGE);
             }
@@ -81,7 +79,6 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
             } else {
                 throw $e;
             }
-
         }
         return $this->result(Zend_Auth_Result::SUCCESS);
     }
@@ -89,8 +86,8 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
     /**
      * Factory for Zend_Auth_Result
      *
-     * @param integer    The Result code, see Zend_Auth_Result
-     * @param mixed      The Message, can be a string or array
+     * @param integer $code   The Result code, see Zend_Auth_Result
+     * @param mixed $messages  The Message, can be a string or array
      * @return Zend_Auth_Result
      */
     public function result($code, $messages = array())
@@ -104,44 +101,5 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
             $this->user,
             $messages
         );
-    }
-
-    private function authAd()
-    {
-        try {
-            $username = $this->_request->getParam('login');
-            $password = $this->_request->getParam('password');
-
-            $user = SysUserPeer::retrieveByAdLogin($username);
-
-            if ($user instanceof SysUser) {
-                $this->logUser = $user;
-
-                $auth = Zend_Auth::getInstance();
-                $config = new Zend_Config_Ini('configs/ad-conf.php', 'production');
-                $options = $config->ldap->toArray();
-                $adapter = new Zend_Auth_Adapter_Ldap($options, $username, $password);
-
-                $result = $auth->authenticate($adapter);
-
-                $messages = $result->getMessages();
-
-                $logger = Zend_Registry::get('ADLogger');
-                $filter = new Zend_Log_Filter_Priority(Zend_Log::DEBUG);
-                $logger->addFilter($filter);
-
-                foreach ($messages as $i => $message) {
-                    if ($i-- > 1) { // $messages[2] and up are log messages
-                        $message = str_replace("\n", "\n  ", $message);
-                        $logger->log("Ldap: $i: $message", Zend_Log::DEBUG);
-                    }
-                }
-                return $result->isValid();
-            }
-            return false;
-        } catch (Exception $e) {
-            $this->messages->addMessage('debug', $e->getMessage());
-            return false;
-        }
     }
 }

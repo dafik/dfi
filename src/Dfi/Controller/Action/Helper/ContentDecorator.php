@@ -113,7 +113,7 @@ class Dfi_Controller_Action_Helper_ContentDecorator extends Zend_Controller_Acti
         $response = $this->getActionController()->getResponse();
 
         $content = $response->getBody(true);
-        $contentKey = $this->layout->getContentKey();
+        //$contentKey = $this->layout->getContentKey();
 
         if (isset($content['default'])) {
             $content = $content['default'];

@@ -96,7 +96,7 @@ class Dfi_Auth_Storage_Cookie implements Zend_Auth_Storage_Interface
         } catch (Exception $e) {
             throw new Zend_Auth_Storage_Exception($e->getMessage());
         }
-
+        return false;
     }
 
 
