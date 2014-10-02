@@ -72,6 +72,7 @@ class Dfi_Auth_Storage_Cookie implements Zend_Auth_Storage_Interface
 
                     $queryClass = ucfirst($this->model) . 'Peer';
                     $user = $queryClass::retrieveByPK($userId);
+                    /** @var $user SysUser */
                     if ($user) {
 
                         $this->userId = $user->getPrimaryKey();
