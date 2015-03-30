@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by IntelliJ IDEA.
  * User: z.wieczorek
@@ -48,6 +49,9 @@ class Dfi_View_Helper_DynamicForm_Button
      * @var Dfi_View_Helper_DynamicForm_Callback
      */
     protected $reloadCallback;
+
+
+    protected $options = [];
 
     /**
      * @static
@@ -205,4 +209,32 @@ class Dfi_View_Helper_DynamicForm_Button
     {
         return $this->url;
     }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+        return $this;
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOption($option, $value)
+    {
+        $this->options[$option] = $value;
+        return $this;
+    }
+
+
 }

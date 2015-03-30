@@ -89,11 +89,24 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
     {
         if ($this->messagesExist) {
             $this->layout = $this->getLayout();
-            $this->view->addBasePath(APPLICATION_PATH . '/layouts/partials/');
-            $this->view->assign('messages', $this->messages);
 
+            $messages = $this->messages;
+
+            $tmp = [];
+            foreach ($messages as $messageType => $values) {
+                if (count($values) > 0) {
+                    if ($messageType == self::TYPE_CONFIRMATION) {
+                        $messageType = 'success';
+                    } elseif ($messageType == self::TYPE_DEBUG) {
+                        $messageType = 'information';
+                    } elseif ($messageType == self::TYPE_NOTICE) {
+                        $messageType = 'alert';
+                    }
+                    $tmp[$messageType] = $values;
+                }
+            }
+            $this->layout->assign('messages', json_encode($tmp));
             $this->resetMessages();
-            $this->layout->assign('messages', $this->view->render('messages.phtml'));
         }
     }
 

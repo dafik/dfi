@@ -1,19 +1,22 @@
 <?php
+
 /**
  * Helper for ad
  *
  */
 class Dfi_View_Helper_Addetails extends Zend_View_Helper_Abstract
 {
-    public function addetails($value,$type)
+    public function addetails($value, $type)
     {
 
-        return implode("<br />", $this->format($value,$type));
+        return implode("<br />", $this->format($value, $type));
 
     }
-    private function format($values,$type){
-        $type =$this->findFormat($type);
-        if (!is_array($values)){
+
+    private function format($values, $type)
+    {
+        $type = $this->findFormat($type);
+        if (!is_array($values)) {
             $tmp = $values;
             $values = array();
             $values[] = $tmp;
@@ -35,35 +38,46 @@ class Dfi_View_Helper_Addetails extends Zend_View_Helper_Abstract
                     $value = false;
                     break;
                 default:
+                    $value = $this->view->dnSpace($value);
                     break;
             }
             $values[$key] = $value;
         }
         return $values;
     }
-    private function formatDatetime($value){
-        list($datetime) = explode('.',$value);
+
+    private function formatDatetime($value)
+    {
+        list($datetime) = explode('.', $value);
         $date = new DateTime($datetime);
 
         return $date->format('Y-m-d H:i:s');
     }
-    private function formatTimestamp($value){
+
+    private function formatTimestamp($value)
+    {
         $date = new DateTime();
         $date->setTimestamp($this->win_time_to_unix_time($value));
 
         return $date->format('Y-m-d H:i:s');
     }
-    private function win_time_to_unix_time($win_time) {
+
+    private function win_time_to_unix_time($win_time)
+    {
         //round the win timestamp down to seconds and remove the seconds between 1601-01-01 and 1970-01-01
         $unix_time = round($win_time / 10000000) - 11644477200;
         return $unix_time;
     }
-    private function formatBinary($value){
+
+    private function formatBinary($value)
+    {
         return bin2hex($value);
     }
-    private function findFormat($name){
+
+    private function findFormat($name)
+    {
         if ($name == 'menberof') {
-            $x =1;
+            $x = 1;
         }
         $types = array(
             'accountexpires' => 'timestamp',
@@ -100,20 +114,39 @@ class Dfi_View_Helper_Addetails extends Zend_View_Helper_Abstract
             'usncreated' => '',
             'whenchanged' => 'datetime',
             'whencreated' => 'datetime',
-            'msexchhomeservername'=>'hide',
-            'msexchmailboxguid'=>'hide',
-            'msexchmailboxsecuritydescriptor'=>'hide',
-            'msexchpoliciesexcluded'=>'hide',
-            'msexchprevioushomemdb'=>'hide',
-            'msexchrbacpolicylink'=>'hide',
-            'msexchrecipientdisplaytype'=>'hide',
-            'msexchrecipienttypedetails'=>'hide',
-            'msexchtextmessagingstate'=>'hide',
-            'msexchumdtmfmap'=>'hide',
-            'msexchuseraccountcontrol'=>'hide',
-            'msexchuserculture'=>'hide',
-            'msexchversion'=>'hide',
-            'msexchwhenmailboxcreated'=>'hide'
+            'msexchhomeservername' => 'hide',
+            'msexchmailboxguid' => 'hide',
+            'msexchmailboxsecuritydescriptor' => 'hide',
+            'msexchpoliciesexcluded' => 'hide',
+            'msexchprevioushomemdb' => 'hide',
+            'msexchrbacpolicylink' => 'hide',
+            'msexchrecipientdisplaytype' => 'hide',
+            'msexchrecipienttypedetails' => 'hide',
+            'msexchtextmessagingstate' => 'hide',
+            'msexchumdtmfmap' => 'hide',
+            'msexchuseraccountcontrol' => 'hide',
+            'msexchuserculture' => 'hide',
+            'msexchversion' => 'hide',
+            'msexchwhenmailboxcreated' => 'hide',
+
+            'msexchhomeservername' => 'hide',
+            'msexchmailboxguid' => 'hide',
+            'msexchmailboxsecuritydescriptor' => 'hide',
+            'msexchpoliciesexcluded' => 'hide',
+            'msexchrbacpolicylink' => 'hide',
+            'msexchrecipientdisplaytype' => 'hide',
+            'msexchrecipienttypedetails' => 'hide',
+            'msexchsafesendershash' => 'hide',
+            'msexchtextmessagingstate' => 'hide',
+            'msexchumdtmfmap' => 'hide',
+            'msexchuseraccountcontrol' => 'hide',
+            'msexchuserculture' => 'hide',
+            'msexchversion' => 'hide',
+            'msexchwhenmailboxcreated' => 'hide',
+            'objectsid' => 'hide',
+            'objectguid' => 'hide',
+            'legacyexchangedn' => 'hide'
+
         );
 
         if (isset($types[$name]) && $types[$name] != '') {

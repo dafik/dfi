@@ -1,4 +1,5 @@
 <?php
+
 class Dfi_View_Helper_DynamicForm_Modal
 {
     /**
@@ -46,6 +47,12 @@ class Dfi_View_Helper_DynamicForm_Modal
      */
     protected $beforeCloseCallback;
 
+
+    /**
+     * @var  array
+     */
+    protected $openUrlParams = [];
+
     /**
      * @static
      * @return Dfi_View_Helper_DynamicForm_Modal
@@ -79,7 +86,7 @@ class Dfi_View_Helper_DynamicForm_Modal
      * @param Dfi_View_Helper_DynamicForm_Callback $beforeCloseCallback
      * @return Dfi_View_Helper_DynamicForm_Modal
      */
-    public function setBeforeCloseCallback( Dfi_View_Helper_DynamicForm_Callback $beforeCloseCallback)
+    public function setBeforeCloseCallback(Dfi_View_Helper_DynamicForm_Callback $beforeCloseCallback)
     {
         $this->beforeCloseCallback = $beforeCloseCallback;
         return $this;
@@ -225,4 +232,23 @@ class Dfi_View_Helper_DynamicForm_Modal
     {
         return $this->title;
     }
+
+    /**
+     * @param $array
+     * @return Dfi_View_Helper_DynamicForm_Modal
+     */
+    public function setOpenUrlParams($array)
+    {
+        $this->openUrlParams = $array;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOpenUrlParams()
+    {
+        return $this->openUrlParams;
+    }
+
 }
