@@ -66,7 +66,7 @@ class Dfi_View_Helper_Navigation_Menu extends Zend_View_Helper_Navigation_Menu
             }
             $depth = $iterator->getDepth();
             $isActive = $page->isActive(true);
-            if ($depth < $minDepth || !$this->accept($page)) {
+            if ($depth < $minDepth || !$this->accept($page,false)) {
                 // page is below minDepth or not accepted by acl/visibilty
                 continue;
             } else if ($expandSibs && $depth > $minDepth) {
