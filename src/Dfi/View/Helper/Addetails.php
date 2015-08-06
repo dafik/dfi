@@ -48,6 +48,10 @@ class Dfi_View_Helper_Addetails extends Zend_View_Helper_Abstract
 
     private function formatDatetime($value)
     {
+        if (!$value) {
+            return $value;
+        }
+
         list($datetime) = explode('.', $value);
         $date = new DateTime($datetime);
 
@@ -56,14 +60,29 @@ class Dfi_View_Helper_Addetails extends Zend_View_Helper_Abstract
 
     private function formatTimestamp($value)
     {
-        $date = new DateTime();
-        $date->setTimestamp($this->win_time_to_unix_time($value));
+        if (!$value) {
+            return $value;
+        }
 
-        return $date->format('Y-m-d H:i:s');
+        $timeConverted = $this->win_time_to_unix_time($value);
+        if (is_numeric($timeConverted)) {
+            $date = new DateTime();
+            $date->setTimestamp($timeConverted);
+
+            return $date->format('Y-m-d H:i:s');
+        }
+
+        return $timeConverted;
+
     }
 
     private function win_time_to_unix_time($win_time)
     {
+        if ($win_time == 9223372036854775807 || $win_time == 0) {
+            return 'never expires';
+        }
+
+
         //round the win timestamp down to seconds and remove the seconds between 1601-01-01 and 1970-01-01
         $unix_time = round($win_time / 10000000) - 11644477200;
         return $unix_time;
