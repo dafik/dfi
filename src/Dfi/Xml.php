@@ -219,7 +219,7 @@ class Dfi_Xml
             return false;
         }
         $v = simplexml_load_string($value);
-        if (!$v) {
+        if (false === $v) {
             throw new Exception('malformed xml');
         }
         $v = $v->asXML();
