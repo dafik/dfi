@@ -79,6 +79,7 @@ class Dfi_Form_Decorator_BootstrapSubFormWizzard extends Zend_Form_Decorator_Htm
 
     /**
      * @param $group Dfi_Form_DisplayGroup
+     * @return bool
      */
     private function groupHasErrors($group)
     {

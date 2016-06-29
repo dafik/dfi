@@ -3,6 +3,10 @@
 
 class Dfi_Paginator_Adapter_PropelPager implements Zend_Paginator_Adapter_Interface
 {
+    /**
+     * @var PropelModelPager
+     */
+    protected $_pager;
 
     public function __construct(PropelModelPager $pager)
     {

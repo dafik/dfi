@@ -74,12 +74,15 @@ class Dfi_Crypt_MCrypt implements Dfi_Crypt_Interface
     {
         if (null == self::$cipher || null == self::$secretKey || null == self::$mode) {
 
-            self::$secretKey = 'secret_key';
             self::$cipher = MCRYPT_TRIPLEDES;
             self::$mode = MCRYPT_MODE_ECB;
 
+            $keySize = mcrypt_get_key_size(MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB);
+            self::$secretKey = str_pad('secret_key', $keySize, '_');
+
+
             if (class_exists('Bootstrap')) {
-                $configRegistryKey = constant(Bootstrap::CONFIG_KEY);
+                $configRegistryKey = Bootstrap::CONFIG_KEY;
 
                 if (Zend_Registry::isRegistered($configRegistryKey)) {
                     $config = Zend_Registry::get($configRegistryKey);

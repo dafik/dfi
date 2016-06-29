@@ -22,7 +22,7 @@ class Dfi_Xml
             trigger_error($err);
             return false; //return false error occurred
         }
-        $xml = new XmlWriter();
+        $xml = new XMLWriter();
         $xml->openMemory();
         $xml->startDocument($xml_version, $xml_encoding);
         $xml->startElement($startElement);
@@ -177,7 +177,7 @@ class Dfi_Xml
      * @param $xmlstr
      * @return string
      */
-    public static function display_xml_error(libXMLError $error, $xmlstr)
+    public static function display_xml_error(LibXMLError $error, $xmlstr)
     {
         $xml = explode("\n", $xmlstr);
 
@@ -210,6 +210,7 @@ class Dfi_Xml
     /**
      * @param $value
      * @param bool $pretty
+     * @param bool $removeEmpty
      * @return string
      * @throws Exception
      */
@@ -243,7 +244,7 @@ class Dfi_Xml
                     $node->parentNode->removeChild($node);
                 }
             }
-            $v = $dom->saveXml();
+            $v = $dom->saveXML();
         }
         return $v;
     }
@@ -311,7 +312,7 @@ class Dfi_Xml
     {
         if ($value) {
             if (!$xml) {
-                $xml = simplexml_load_string(Ext_Xml::from_array(array()));
+                $xml = simplexml_load_string(Dfi_Xml::from_array(array()));
             }
             $elements = $xml->xpath($xpathQuery);
 
@@ -398,7 +399,7 @@ class Dfi_Xml
 
         }
 
-        $xml = $stringXml->asXml();
+        $xml = $stringXml->asXML();
 
         return $xml;
     }
@@ -420,7 +421,7 @@ class Dfi_Xml
 
         }
 
-        $xml = $stringXml->asXml();
+        $xml = $stringXml->asXML();
 
         return $xml;
     }
@@ -441,6 +442,7 @@ class Dfi_Xml
      * @param SimpleXMLElement $xml
      * @param $nodeName
      * @param null $nodeValue
+     * @param bool $position
      * @param bool $returnPosition
      * @return bool|int|string
      */
@@ -491,7 +493,7 @@ class Dfi_Xml
         $dom = dom_import_simplexml($xml);
         $x = $dom->ownerDocument->saveXML($dom);
 
-        $hasChildren = $dom->hasChildnodes();
+        $hasChildren = $dom->hasChildNodes();
 
         if ($hasChildren) {
             $childCount = $dom->childNodes->length;

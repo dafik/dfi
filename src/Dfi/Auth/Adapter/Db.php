@@ -1,123 +1,200 @@
 <?php
 
-class Dfi_Auth_Adapter_Db implements Zend_Auth_Adapter_Interface
+class Dfi_Auth_Adapter_Db implements Dfi_Auth_Adapter_AdapterInterface
 {
-    const NOT_FOUND_MESSAGE = "Account not found";
-    const BAD_PW_MESSAGE = "Password is invalid";
-    const NOT_ACTIVE_MESSAGE = "Account not active";
-    const NOT_FOUND = "Podane błędne login lub hasło";
-    const WRONG_PW = "Podane błędne hasło";
-    const NOT_ACTIVATE = "Użytkownik nieaktywny";
+    protected $_password;
+    protected $_options;
+    protected $_username;
 
-
-    /**
-     *
-     * @var Model_User
-     */
-    protected $user;
-
-    /**
-     *
-     * @var string
-     */
-    protected $username;
-
-    /**
-     *
-     * @var string
-     */
-    protected $password;
-
-
-    protected $modelName;
-    protected $hashMethod;
-    protected $activityField;
-
-    public function __construct($username, $password, $options)
+    public function __construct(array $options = array(), $username = null, $password = null)
     {
-        $this->username = $username;
-        $this->password = $password;
+        $options = Dfi_App_Config::getConfig(true, 'main.auth');
 
-        $this->options = $options;
+
+        $this->setOptions($options);
+
+        if ($username !== null) {
+            $this->setUsername($username);
+        }
+        if ($password !== null) {
+            $this->setPassword($password);
+        }
+    }
+
+    public function setOptions($options)
+    {
+        $this->_options = is_array($options) ? $options : array();
+        return $this;
     }
 
     /**
-     * Performs an authentication attempt
+     * Returns the username of the account being authenticated, or
+     * NULL if none is set.
      *
-     * @throws Exception
-     * @return Zend_Auth_Result
+     * @return string|null
      */
+    public function getUsername()
+    {
+        return $this->_username;
+    }
+
+    /**
+     * Sets the username for binding
+     *
+     * @param  string $username The username for binding
+     * @return Dfi_Auth_Adapter_Db Provides a fluent interface
+     */
+    public function setUsername($username)
+    {
+        $this->_username = (string)$username;
+        return $this;
+    }
+
+    /**
+     * Returns the password of the account being authenticated, or
+     * NULL if none is set.
+     *
+     * @return string|null
+     */
+    public function getPassword()
+    {
+        return $this->_password;
+    }
+
+    /**
+     * Sets the passwort for the account
+     *
+     * @param  string $password The password of the account being authenticated
+     * @return Dfi_Auth_Adapter_Db Provides a fluent interface
+     */
+    public function setPassword($password)
+    {
+        $this->_password = (string)$password;
+        return $this;
+    }
+
+
     public function authenticate()
     {
+        $messages = array();
+        $messages[0] = ''; // reserved
+        $messages[1] = ''; // reserved
 
+        $username = $this->_username;
+        $password = $this->_password;
 
-        try {
-            $queryClass = $this->options['table'] . 'Query';
-
-            $this->user = $queryClass::create()
-                ->filterBy(ucfirst($this->options['loginField']), $this->username)
-                ->findOne();
-            if ($this->user) {
-                if ($this->options['activityField']) {
-                    $activityMethod = 'get' . $this->options['activityField'];
-                    if (!$this->user->$activityMethod()) {
-                        throw new Exception(self::NOT_ACTIVATE);
-                    }
-                }
-
-                $passwordMethod = 'get' . ucfirst($this->options['passwordField']);
-                $hashMethod = $this->options['passwordHash'];
-
-
-                if ($hashMethod == 'plain') {
-                    $encodedPassword = $this->password;
-                } else {
-                    $encodedPassword = call_user_func($hashMethod, $this->password);
-                }
-
-                if ($this->user->$passwordMethod() != $encodedPassword) {
-                    throw new Exception(self::WRONG_PW);
-                }
-
-
-            } else {
-                throw new Exception(self::NOT_FOUND);
-            }
-        } catch (Exception $e) {
-            if (false != strpos($e->getMessage(), 'Invalid credentials')) {
-                return $this->result(Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID, self::BAD_PW_MESSAGE);
-            }
-            if ($e->getMessage() == self::WRONG_PW) {
-                return $this->result(Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID, self::BAD_PW_MESSAGE);
-            } elseif ($e->getMessage() == self::NOT_FOUND) {
-                return $this->result(Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND, self::NOT_FOUND_MESSAGE);
-            } elseif ($e->getMessage() == self::NOT_ACTIVATE) {
-                return $this->result(Zend_Auth_Result::FAILURE, self::NOT_ACTIVE_MESSAGE);
-            } else {
-                throw $e;
-            }
-
+        if (!$username) {
+            $code = Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND;
+            $messages[0] = 'A username is required';
+            return new Zend_Auth_Result($code, '', $messages);
         }
-        return $this->result(Zend_Auth_Result::SUCCESS);
+        if (!$password) {
+            /* A password is required because some servers will
+             * treat an empty password as an anonymous bind.
+             */
+            $code = Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID;
+            $messages[0] = 'A password is required';
+            return new Zend_Auth_Result($code, '', $messages);
+        }
+
+        if (!isset($this->_options['table'])) {
+            $code = Zend_Auth_Result::FAILURE_UNCATEGORIZED;
+            $messages[0] = 'Table is required';
+            return new Zend_Auth_Result($code, '', $messages);
+        } else {
+            try {
+                $modelClass = $this->_options['table'];
+                /*                if (false === strpos($modelClass, 'models\Cc\\')) {
+
+                                    $modelClass = 'models\Cc\\' . $modelClass;
+                                }*/
+                $model = new $modelClass;
+            } catch (Exception $e) {
+                $code = Zend_Auth_Result::FAILURE_UNCATEGORIZED;
+                $messages[0] = 'Table model not found';
+                return new Zend_Auth_Result($code, '', $messages);
+            }
+        }
+
+        if (!isset($this->_options['field']['login'])) {
+            $code = Zend_Auth_Result::FAILURE_UNCATEGORIZED;
+            $messages[0] = 'Table login field is required';
+            return new Zend_Auth_Result($code, '', $messages);
+        } else {
+            $getter = 'get' . ucfirst($this->_options['field']['login']);
+            if (!method_exists($model, $getter)) {
+                $code = Zend_Auth_Result::FAILURE_UNCATEGORIZED;
+                $messages[0] = 'Table login field not exist';
+                return new Zend_Auth_Result($code, '', $messages);
+            }
+        }
+
+        if (!isset($this->_options['field']['password'])) {
+            $code = Zend_Auth_Result::FAILURE_UNCATEGORIZED;
+            $messages[0] = 'Table password field is required';
+            return new Zend_Auth_Result($code, '', $messages);
+        } else {
+            $getter = 'get' . ucfirst($this->_options['field']['password']);
+            if (!method_exists($model, $getter)) {
+                $code = Zend_Auth_Result::FAILURE_UNCATEGORIZED;
+                $messages[0] = 'Table password field not exist';
+                return new Zend_Auth_Result($code, '', $messages);
+            }
+        }
+
+
+        if (!isset($this->_options['salt'])) {
+            $code = Zend_Auth_Result::FAILURE_UNCATEGORIZED;
+            $messages[0] = 'salt is required';
+            return new Zend_Auth_Result($code, '', $messages);
+        } else {
+            $salt = $this->_options['salt'];
+        }
+
+        if (!isset($this->_options['hash'])) {
+            $code = Zend_Auth_Result::FAILURE_UNCATEGORIZED;
+            $messages[0] = 'hash  is required';
+            return new Zend_Auth_Result($code, '', $messages);
+        } else {
+            $hash = $this->_options['hash'];
+        }
+
+
+        $queryclass = $modelClass . 'Query';
+        /** @noinspection PhpUndefinedMethodInspection */
+        $qry = $queryclass::create();
+        $method = 'findOneBy' . $this->_options['field']['login'];
+        $obj = $qry->$method($this->_username);
+
+
+        if (!$obj) {
+            $code = Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID;
+            $messages[0] = 'user not found';
+            return new Zend_Auth_Result($code, '', $messages);
+        }
+
+        $hasher = $modelClass::getPasswordHasher();
+
+        $sHash = $obj->$getter();
+        $nHash = $hasher->hash($this->_password);
+
+        if (is_resource($sHash)) {
+            $sHash = stream_get_contents($sHash);
+        }
+
+
+        if ($sHash !== $nHash) {
+            $code = Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID;
+            $messages[0] = 'bad password';
+            return new Zend_Auth_Result($code, '', $messages);
+        }
+
+
+        return new Zend_Auth_Result(Zend_Auth_Result::SUCCESS, $obj, $messages);
     }
 
-    /**
-     * Factory for Zend_Auth_Result
-     *
-     * @param integer $code   The Result code, see Zend_Auth_Result
-     * @param mixed $messages     The Message, can be a string or array
-     * @return Zend_Auth_Result
-     */
-    public function result($code, $messages = array())
+    public static function canChangePassword()
     {
-        if (!is_array($messages)) {
-            $messages = array($messages);
-        }
-
-        return new Zend_Auth_Result(
-            $code,
-            $this->user,
-            $messages
-        );
+        return true;
     }
 }

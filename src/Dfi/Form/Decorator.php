@@ -863,12 +863,7 @@ class Dfi_Form_Decorator
      *
      * @return void
      */
-    public static function setFormDecorator(
-        Zend_Form $form,
-        $format = self::BOOTSTRAP,
-        $submit_str = 'submit',
-        $cancel_str = 'cancel'
-    )
+    public static function setFormDecorator(Zend_Form $form, $format = self::BOOTSTRAP, $submit_str = 'submit', $cancel_str = 'cancel')
     {
 
         self::setFormDefaults($form, $format);
@@ -907,7 +902,7 @@ class Dfi_Form_Decorator
                 $e->setDecorators(self::$_FileDecorator[$format]);
             }
 
-            if ($e->getType() == 'Zend_Form_Element_Text' || $e->getType() == 'Zend_Form_Element_Textarea' || $e->getType() == 'Dfi_Form_Element_Spinner') {
+            if ($e->getType() == 'Zend_Form_Element_Text' || $e->getType() == 'Zend_Form_Element_Password' || $e->getType() == 'Zend_Form_Element_Textarea' || $e->getType() == 'Dfi_Form_Element_Spinner') {
                 $classToAdd[] = 'form-control';
             }
 

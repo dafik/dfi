@@ -40,7 +40,7 @@ class  Dfi_Model_DataVersion
     public static function setData($newData, $currentData)
     {
         if (!$newData) {
-            return;
+            return false;
         }
 
         if (self::compareData($newData, $currentData)) {
@@ -112,7 +112,8 @@ class  Dfi_Model_DataVersion
 
     /**
      * @param DOMDocument $dom
-     * @param $histories
+     * @return DOMElement
+     * @internal param $histories
      */
     private static function applyCurrentHistory(DOMDocument $dom)
     {
@@ -141,9 +142,10 @@ class  Dfi_Model_DataVersion
     }
 
     /**
-     * @param $currentHistoriesDom
      * @param $dom
      * @param $histories
+     * @param $currentXml
+     * @internal param $currentHistoriesDom
      */
     private static function applyOldHistories($dom, $histories, $currentXml)
     {
@@ -166,12 +168,13 @@ class  Dfi_Model_DataVersion
     }
 
     /**
-     * @param $currentVersionsDom
      * @param $dom
-     * @param $versions
-     * @param $currentDom
+     * @param $currentXml
+     * @internal param $currentVersionsDom
+     * @internal param $versions
+     * @internal param $currentDom
      */
-    private static function applyOldVersions($dom, $currentXml)
+    private static function applyOldVersions(DOMDocument $dom, $currentXml)
     {
         $currentBranch = $currentXml->current;
 

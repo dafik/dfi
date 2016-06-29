@@ -121,6 +121,7 @@ class Dfi_View_Helper_DynamicForm_Button
 
     /**
      * @param \Dfi_View_Helper_DynamicForm_Callback $reloadCallback
+     * @return $this
      */
     public function setReloadCallback($reloadCallback)
     {
@@ -220,6 +221,7 @@ class Dfi_View_Helper_DynamicForm_Button
 
     /**
      * @param array $options
+     * @return $this
      */
     public function setOptions($options)
     {
@@ -228,7 +230,10 @@ class Dfi_View_Helper_DynamicForm_Button
     }
 
     /**
-     * @param array $options
+     * @param $option
+     * @param $value
+     * @return $this
+     * @internal param array $options
      */
     public function setOption($option, $value)
     {

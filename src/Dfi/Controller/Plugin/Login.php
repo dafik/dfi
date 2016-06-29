@@ -7,6 +7,7 @@ class Dfi_Controller_Plugin_Login extends Zend_Controller_Plugin_Abstract
     {
         Zend_Auth::getInstance()->setStorage(new Dfi_Auth_Storage_Cookie('user'));
 
+        /** @var Zend_Controller_Request_Http $request */
         $request = $this->getRequest();
 
         $bypass = $this->isBypassRequest($request->getModuleName(), $request->getControllerName(), $request->getActionName());

@@ -10,7 +10,7 @@ class Dfi_Log_Adapter_Propel2Zend implements BasicLogger
     /**
      * constructor for setting up Mojavi log adapter
      *
-     * @param ErrorLog $logger Instance of Mojavi error log obtained by
+     * @param  Zend_Log $logger Instance of Mojavi error log obtained by
      *                               calling LogManager::getLogger();
      */
     public function __construct($logger = null)
@@ -98,7 +98,8 @@ class Dfi_Log_Adapter_Propel2Zend implements BasicLogger
     public function log($message, $severity = null)
     {
         if (is_null($this->logger)) {
-            $this->logger = LogManager::getLogger('propel');
+            $x = 1;
+           // $this->logger = LogManager::getLogger('propel');
         }
 
         // get a backtrace to pass class, function, file, & line to Mojavi logger

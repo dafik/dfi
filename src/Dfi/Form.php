@@ -36,9 +36,10 @@ class Dfi_Form extends Zend_Form
      * Calls {@link self::buildBootstrapErrorDecorators()} for
      * {@link parent::isValid()} returning false.
      *
-     * @param array $data
-     *
-     * @return boolean
+     * @param array $values
+     * @return bool
+     * @throws Zend_Form_Exception
+     * @internal param array $data
      */
     public function isValid($values)
     {

@@ -208,8 +208,9 @@ class Dfi_View_Helper_DynamicForm extends Zend_View_Helper_Abstract
             }
 
             return '{' . implode(",\n", $rows) . '}';
-            throw new Exception('to do : format map');
+            //throw new Exception('to do : format map');
         }
+        return false;
     }
 
     private function formatOptions($options)

@@ -26,8 +26,9 @@ class Dfi_View_Helper_DynamicForm_Map
 
 
     /**
-     * @param array $item
+     * @param array $items
      * @return Dfi_View_Helper_DynamicForm_Map
+     * @internal param array $item
      */
     public function addItems($items = array())
     {

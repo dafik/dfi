@@ -30,12 +30,14 @@ class Dfi_View_Helper_Form_MultiCheckboxDataTable extends Zend_View_Helper_FormE
      *
      * @param mixed $value The radio value to mark as 'checked'.
      *
+     * @param array|string $attribs Attributes added to each radio.
+     *
      * @param array $options An array of key-value pairs where the array
      * key is the radio value, and the array value is the radio text.
      *
-     * @param array|string $attribs Attributes added to each radio.
-     *
+     * @param string $listsep
      * @return string The radio buttons XHTML.
+     * @throws Zend_Filter_Exception
      */
     public function form_MultiCheckboxDataTable($name, $value = null, $attribs = null, $options = null, $listsep = "<br />\n")
     {

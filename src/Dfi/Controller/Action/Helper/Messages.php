@@ -59,10 +59,11 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
     /**
      * Enter description here...
      *
-     * @return Dfi_Controller_Action_Helper_Messages
+     * @return DFi_Controller_Action_Helper_Messages
      */
     public static function getInstance()
     {
+        $x = self::$instance;
 
         if (!self::$instance instanceof Dfi_Controller_Action_Helper_Messages) {
             self::$instance = new Dfi_Controller_Action_Helper_Messages();
@@ -72,11 +73,11 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
 
     public function postDispatch()
     {
-        $this->render();
+        $this->save();
     }
 
     /**
-     * retrieve layout from mvc instance
+     * retrive layout from mvc instance
      *
      * @return Zend_Layout
      */
@@ -132,7 +133,6 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
         }
     }
 
-    /** @noinspection PhpInconsistentReturnPointsInspection */
     public function getMessage($type, $message, $params = null)
     {
         if (!in_array($type, $this->types)) {
@@ -147,29 +147,41 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
         } else {
             throw new Exception('can\'t found message : ' . $message . ' in ' . $type);
         }
+        return false;
     }
 
     private function readFromSession()
     {
-        if (isset($_COOKIE['_m']) && $_COOKIE['_m']) {
-            //TODO
-            //2014-05-15T19:16:13+02:00 ERR (3): /srv/app/lillalou-teens.pl/web/library/Ext/Controller/Action/Helper/Messages.php: (139) : unserialize(): Error at offset 0 of 5 bytes
-            //2014-05-15T19:16:13+02:00 ERR (3): /srv/app/lillalou-teens.pl/web/library/Ext/Controller/Action/Helper/Messages.php: (140) : array_merge(): Argument #2 is not an array
-            //2014-05-15T19:16:13+02:00 ERR (3): /srv/app/lillalou-teens.pl/web/library/Ext/Controller/Action/Helper/Messages.php: (164) : Invalid argument supplied for foreach()
+        $value = false;
+        $x = new \Zend_Controller_Request_Http();
+        $value = $x->getHeader('X-message');
 
-            //$messages = unserialize(base64_decode($_COOKIE['_m']));
-            //$this->messages = array_merge($this->messages, $messages);
-            //$this->messagesExist = true;
 
-            $x = $_COOKIE['_m'];
-
-            $decoded = base64_decode($x);
+        /* if (isset($_COOKIE['_m']) && $_COOKIE['_m']) {
+              $value = $_COOKIE['_m'];
+          }*/
+        if ($value) {
+            $decoded = base64_decode($value);
             if ($decoded) {
-                $unSerialize = @unserialize($decoded);
-                if ($unSerialize) {
-                    $messages = @unserialize(base64_decode($_COOKIE['_m']));
-                    if (is_array($messages)) {
-                        $this->messages = array_merge($this->messages, $messages);
+                $jsoned = json_decode($decoded, true);
+                if (false === $jsoned) {
+                    $unserialize = @unserialize($decoded);
+                } else {
+                    $unserialize = false;
+                }
+                if ($unserialize) {  //probaly very old way
+                    /** @var Zend_Log $logger */
+                    $logger = Zend_Registry::get('debugLogger');
+                    $logger->log(Zend_Debug::dump(debug_backtrace(), 'unserialize', false), Zend_Log::DEBUG);
+                    $messeges = $unserialize;
+                    if (is_array($messeges)) {
+                        $this->messages = array_merge($this->messages, $messeges);
+                        $this->messagesExist = true;
+                    }
+                } elseif ($jsoned) {
+                    $messeges = $jsoned;
+                    if (is_array($messeges)) {
+                        $this->messages = array_merge($this->messages, $messeges);
                         $this->messagesExist = true;
                     }
                 } else {
@@ -183,18 +195,18 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
     public function save()
     {
         $return = array();
-        foreach ($this->messages as $type => $elements) {
-            if (count($elements) > 0) {
-                $return[$type] = $elements;
+        foreach ($this->messages as $type => $elems) {
+            if (count($elems) > 0) {
+                $return[$type] = $elems;
             }
         }
         if (count($return) > 0) {
-            $mess = urlencode(base64_encode(serialize($return)));
 
+            $mess = urlencode(base64_encode(json_encode($return)));
+            //setcookie('_m',$mess);
             if ($mess) {
-                $date = new DateTime();
-                $date->modify('+60 seconds');
-                $this->getResponse()->setHeader('Set-Cookie', '_m = ' . $mess . ';path = /; Expires=' . $date->format(DATE_COOKIE));
+                //$response = $this->getResponse()->setHeader('Set-Cookie', '_m = ' . $mess . ';path = /; expires= ' . date('r', time() + 3600));
+                $response = $this->getResponse()->setHeader('X-message', $mess);
             }
         }
     }
@@ -205,21 +217,15 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
             $messagesType = array();
         }
         if (isset($_COOKIE['_m']) && $_COOKIE['_m']) {
-            $date = new DateTime();
-            $date->modify('-10 seconds');
-            $this->getResponse()->setHeader('Set-Cookie', '_m = deleted ; path = / ; Expires=' . $date->format(DATE_COOKIE));
+            //setcookie('_m','');
+            $this->getResponse()->setHeader('Set-Cookie', '_m = deleted ; path = / ; expires= ' . date('r', time() - 3600));
         }
     }
 
     private function parseMessage($content, $params)
     {
-        /** @var $helper Zend_View_Helper_Translate */
-        $helper = $this->view->getHelper('translate');
-
-        $content = $helper->translate($content);
-
         $matches = array();
-        preg_match_all('/%[a-zA-Z]+%/', $content, $matches);
+        $res = preg_match_all('/%[a-zA-Z]+%/', $content, $matches);
         foreach ($matches[0] as $match) {
             if (isset($params[str_replace('%', '', $match)])) {
                 $content = str_replace($match, $params[str_replace('%', '', $match)], $content);

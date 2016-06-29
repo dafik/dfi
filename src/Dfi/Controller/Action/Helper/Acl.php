@@ -39,11 +39,12 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
         Zend_Auth::getInstance()->setStorage(new Dfi_Auth_Storage_Cookie($modelName));
         if (Zend_Auth::getInstance()->hasIdentity()) {
 
+            /* @var $user SysUser */
             $user = Zend_Auth::getInstance()->getIdentity();
-            /* @var $user User */
+            
 
-            $this->roleName = $user->getRole()->getName();
-            $this->roleId = $user->getRole()->getId();
+            $this->roleName = $user->getSysRole()->getName();
+            $this->roleId = $user->getSysRole()->getId();
             $this->acl->addRole(new Zend_Acl_Role($this->roleId));
         }
 
@@ -54,7 +55,7 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
         //TODO from file
 
 
-        $modules = ModuleQuery::create()->filterByTreeLevel(0, Criteria::GREATER_THAN)->find();
+        $modules = SysModuleQuery::create()->filterByTreeLevel(0, Criteria::GREATER_THAN)->find();
         //$this->acl->add(new Zend_Acl_Resource('index'));
         foreach ($modules as $module) {
             /* @var $module SysModule */

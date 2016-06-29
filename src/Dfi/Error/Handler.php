@@ -28,7 +28,8 @@ class Dfi_Error_Handler
 
         if ($isError) {
             http_response_code(500);
-
+            $guid = false;
+            
             try {
                 $e = new ErrorException($error['message'], 0, 1, $error['file'], $error['line']);
                 //$guid = Dfi_Error_Report::saveException($e);

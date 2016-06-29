@@ -236,7 +236,7 @@ class Dfi_View_Helper_Navigation_Menu extends Zend_View_Helper_Navigation_Menu
             $element = 'a';
             $attribs['href'] = $href;
             $attribs['target'] = $page->getTarget();
-            $attribs['accesskey'] = $page->getAccessKey();
+            $attribs['accesskey'] = $page->getAccesskey();
         } else {
             $element = 'span';
         }

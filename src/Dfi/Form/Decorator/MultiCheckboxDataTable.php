@@ -5,7 +5,7 @@
  *
  * Wraps errors in span with class help-inline
  */
-class Dfi_Form_Decorator_BootstrapErrors extends Zend_Form_Decorator_HtmlTag
+class Dfi_Form_Decorator_MultiCheckboxDataTable extends Zend_Form_Decorator_HtmlTag
 {
     /**
      * Render content wrapped in an HTML tag

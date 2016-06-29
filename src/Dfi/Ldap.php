@@ -34,7 +34,7 @@ class Dfi_Ldap extends Zend_Ldap
             /**
              * @see Zend_Ldap_Exception
              */
-            require_once 'Zend/Ldap/Exception.php';
+            
             throw new Zend_Ldap_Exception(null, 'A host parameter is required');
         }
 
@@ -86,7 +86,7 @@ class Dfi_Ldap extends Zend_Ldap
             /**
              * @see Zend_Ldap_Exception
              */
-            require_once 'Zend/Ldap/Exception.php';
+            
             $zle = new Zend_Ldap_Exception($this, "$host:$port");
             $this->disconnect();
             throw $zle;
@@ -94,7 +94,7 @@ class Dfi_Ldap extends Zend_Ldap
         /**
          * @see Zend_Ldap_Exception
          */
-        require_once 'Zend/Ldap/Exception.php';
+        
         throw new Zend_Ldap_Exception(null, "Failed to connect to LDAP server: $host:$port");
     }
 
