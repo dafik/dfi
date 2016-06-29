@@ -113,7 +113,7 @@ class Dfi_Asterisk_ConnectionsFilter
 
         $options = &$this->options;
         $options['date_sub']['date_to'] = $now->format('Y-m-d H:i:s');
-        $now->modify('-1 hour');
+        $now->modify('-1 day');
         $options['date_sub']['date_from'] = $now->format('Y-m-d H:i:s');
         $options['date_sub']['database'] = 0;
 

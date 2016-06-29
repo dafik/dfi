@@ -341,14 +341,8 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
      */
     private static function getPdo()
     {
-        $config = self::getConfig();
-        if (!self::$pdo instanceof PDO) {
-            $pdo = new PDO('mysql:host=' . $config['host'] . ';dbname=' . $config['dbname'], $config['user'], $config['pass']);
-            $pdo->query('SET names utf8');
-//            $e = $pdo->errorInfo();
-            self::$pdo = $pdo;
-        }
-        return self::$pdo;
+
+        return Propel::getConnection();
     }
 
 

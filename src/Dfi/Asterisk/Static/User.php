@@ -52,25 +52,7 @@ class Dfi_Asterisk_Static_User
 
 
     );
-    private static $attributeValues = array(
-        'fullname' => 'Konsultant __SIP__',
-        'callerid' => 'Konsultant <__SIP__>',
-        'hasvoicemail' => 'yes',
-        'hassip' => 'yes',
-        'host' => 'dynamic',
-        'transfer' => 'yes',
-        'canpark' => 'yes',
-        'cancallforward' => 'yes',
-        'disallow' => 'all',
-        'allow' => 'alaw,gsm',
-        'callreturn' => 'yes',
-        'callcounter' => 'yes',
-        'qualify' => 'yes',
-        'deny' => '0.0.0.0/0.0.0.0',
-        'permit' => '10.0.0.0/255.255.0.0',
-        'call-limit' => '1',
-        'busylevel' => 1
-    );
+
 
     /**
      * Return asterisk user by given sip number
@@ -157,7 +139,7 @@ class Dfi_Asterisk_Static_User
         if ($this->cat_metric) {
             $entry->cat_metric = $this->cat_metric;
         } else {
-            $sqlMax = 'SELECT max(a.`cat_metric`) + 1 FROM ast_config a';
+            $sqlMax = 'SELECT IFNULL(max(a.`cat_metric`),0) + 1 FROM ast_config a';
             $stmt = $this->getPdo()->query($sqlMax);
 
             $maxCatMetric = $stmt->fetchColumn(0);
@@ -196,23 +178,13 @@ class Dfi_Asterisk_Static_User
 
     public static function getPdo()
     {
-        $config = self::getConfig();
-        if (!self::$pdo instanceof PDO) {
-            $pdo = new PDO('mysql:host=' . $config['host'] . ';dbname=' . $config['dbname'], $config['user'], $config['pass']);
-
-            $pdo->query('SET names utf8');
-
-            //TODO $e = $pdo->errorInfo();
-
-            self::$pdo = $pdo;
-        }
-        return self::$pdo;
+        return Propel::getConnection();
     }
 
     private static function getConfig()
     {
-        $config = new Zend_Config_Ini('configs/asterisk-conf.php', APPLICATION_ENV);
-        return $config->get('asterisk')->get('db')->toArray();
+        $config = new Zend_Config_Ini('configs/asterisk.ini', APPLICATION_ENV);
+        return $config->toArray();
     }
 
     public function setSipNumber($sip)
@@ -518,10 +490,13 @@ class Dfi_Asterisk_Static_User
     public static function create($number, $context, $isWebRtc = false)
     {
 
+        $attribs = self::getConfig()['sip'];
+
+
         $user = new Dfi_Asterisk_Static_User();
         $user->setSipNumber($number);
 
-        foreach (self::$attributeValues as $attrib => $value) {
+        foreach ($attribs as $attrib => $value) {
             if (strpos($value, '__SIP__')) {
                 $value = str_replace('__SIP__', $number, $value);
             }

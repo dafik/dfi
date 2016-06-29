@@ -344,13 +344,13 @@ class Dfi_Form_Decorator
             array(
                 'BootstrapTag',
                 array(
-                    'class' => 'controls'
+                    'class' => 'col-md-10 controls'
                 )
             ),
             array(
                 'Label',
                 array(
-                    'class' => 'control-label'
+                    'class' => 'col-md-2 control-label',
                 )
             ),
             array(
@@ -858,17 +858,26 @@ class Dfi_Form_Decorator
      *
      * @param Zend_Form $form Zend_Form pointer-reference
      * @param string $format Project_Plugin_FormDecoratorDefinition constants
-     * @param string $submit_str Element name. (TBD)
-     * @param string $cancel_str Element name. (TBD)
+     * @param string $buttons Element name. (TBD)
+     * @param bool $loadElementsDecorator
+     * @throws Zend_Form_Exception
      *
-     * @return void
      */
-    public static function setFormDecorator(Zend_Form $form, $format = self::BOOTSTRAP, $submit_str = 'submit', $cancel_str = 'cancel')
+    //public static function setFormDecorator(Zend_Form $form, $format = self::BOOTSTRAP, $buttons = 'submit', $cancel_str = 'cancel')
+    public static function setFormDecorator(Zend_Form $form, $format = self::BOOTSTRAP, $buttons = 'submit', $loadElementsDecorator = true)
     {
 
         self::setFormDefaults($form, $format);
+        if ($loadElementsDecorator) {
+            self::setElementsDecoratorDefaults($form, $format);
+        }
 
-        self::setButtonDecorators($form, $format, $submit_str, $cancel_str);
+        if (!is_array($buttons)) {
+            $buttons = [$buttons];
+        }
+
+
+        self::setButtonDecorators($form, $format, $buttons);
 
         // set hidden, captcha, multi input decorators, file
         /**
@@ -900,13 +909,32 @@ class Dfi_Form_Decorator
             }
             if ($e->getType() == 'Zend_Form_Element_File') {
                 $e->setDecorators(self::$_FileDecorator[$format]);
+                $e->setAttrib('data-style', "fileinput");
             }
 
-            if ($e->getType() == 'Zend_Form_Element_Text' || $e->getType() == 'Zend_Form_Element_Password' || $e->getType() == 'Zend_Form_Element_Textarea' || $e->getType() == 'Dfi_Form_Element_Spinner') {
+            if (in_array($e->getType(), array(
+                'Zend_Form_Element_Text',
+                'Zend_Form_Element_Textarea',
+                'Zend_Form_Element_Password',
+                'Dfi_Form_Element_Spinner'
+            ))) {
                 $classToAdd[] = 'form-control';
             }
+            if ($e->getType() == 'Dfi_Form_Element_DateClockPicker') {
+                $classToAdd[] = 'form-control';
+                //$e->removeDecorator('BootstrapTag');
+            }
 
-            if ($e->getType() == 'Zend_Form_Element_Select' || $e->getType() == 'Dfi_Form_Element_List') {
+            if (false !== in_array($e->getType(), array(
+                    'Zend_Form_Element_Select',
+                    'Dfi_Form_Element_Lists',
+                    'Dfi_Form_Element_SelectChained',
+                    /*'Zend_Form_Element_Multiselect',*/
+                    'Dfi_Form_Element_Multiselect',
+                    'Dfi_Form_Element_Multilist',
+                    'Dfi_Form_Element_Select'
+                ))
+            ) {
                 $classToAdd[] = 'select2';
                 $classToAdd[] = 'full-width-fix';
             }
@@ -958,7 +986,7 @@ class Dfi_Form_Decorator
     {
         $form->setDisableLoadDefaultDecorators(true);
         $form->setDisplayGroupDecorators(self::$_DisplayGroupDecorator[$format]);
-        $form->setDecorators(self::$_FormDecorator[$format]);
+        $form->setDecorators(static::$_FormDecorator[$format]);
 
         if (self::BOOTSTRAP == $format || self::BOOTSTRAP_MINIMAL == $format) {
             $form->addElementPrefixPath(
@@ -966,41 +994,72 @@ class Dfi_Form_Decorator
                 'Dfi/Form/Decorator',
                 Zend_Form::DECORATOR
             );
-            $form->addPrefixPath('Dfi_Form_Decorator',
+            $form->addPrefixPath(
+                'Dfi_Form_Decorator',
                 'Dfi/Form/Decorator',
                 Zend_Form::DECORATOR);
         }
+
+        //$form->setElementDecorators(self::$_ElementDecorator[$format]);
+
+        return;
+    }
+
+    protected static function setElementsDecoratorDefaults(Zend_Form $form, $format)
+    {
 
         $form->setElementDecorators(self::$_ElementDecorator[$format]);
 
         return;
     }
 
+
     /**
      * Set Button Decorators
      *
      * @param Zend_Form $form Instance of the form.
      * @param string $format The format (standard, minimal, table).
-     * @param string $submit_str Element name of the submit button.
-     * @param string $cancel_str Element name of the cancel button.
+     * @param $buttons
+     * @throws Zend_Form_Exception
+     * @internal param string $submit_str Element name of the submit button.
+     * @internal param string $cancel_str Element name of the cancel button.
      *
-     * @return void
      */
-    protected static function setButtonDecorators(
-        Zend_Form $form,
-        $format,
-        $submit_str,
-        $cancel_str
-    )
+    protected static function setButtonDecorators(Zend_Form $form, $format, $buttons)
     {
+
+        if (array_key_exists('submit', $buttons)) {
+            $submit_str = $buttons['submit'];
+            unset($buttons['submit']);
+        } elseif (array_key_exists(0, $buttons)) {
+            $submit_str = $buttons[0];
+            unset($buttons[0]);
+        }
+
+        if (array_key_exists('cancel', $buttons)) {
+            $cancel_str = $buttons['cancel'];
+            unset($buttons['cancel']);
+        } elseif (array_key_exists(1, $buttons)) {
+            $cancel_str = $buttons[1];
+            unset($buttons[1]);
+        }
+        $tmp = [];
+        foreach ($buttons as $key => $button) {
+            $elem = $form->getElement($button);
+            if ($elem) {
+                $tmp[] = $elem;
+            }
+        }
+        $buttons = $tmp;
+        unset($elem, $button, $key, $tmp);
+
+
         // set submit button decorators
         if ($form->getElement($submit_str)) {
 
-            $form->getElement($submit_str)->setDecorators(
-                self::$_SubmitDecorator[$format]
-            );
+            $form->getElement($submit_str)->setDecorators(self::$_SubmitDecorator[$format]);
 
-            if (self::BOOTSTRAP == $format || self::BOOTSTRAP_MINIMAL == $format) {
+            if (self::BOOTSTRAP === $format || self::BOOTSTRAP_MINIMAL === $format) {
                 $attribs = $form->getElement($submit_str)->getAttrib('class');
                 if (empty($attribs)) {
                     $attribs = array('btn', 'btn-primary', 'pull-right');
@@ -1013,39 +1072,36 @@ class Dfi_Form_Decorator
                 $submitBtn = $form->getElement($submit_str);
                 $submitBtn->setAttrib('class', $attribs);
 
-                if (
-                    true === ($submitBtn instanceof Zend_Form_Element_Button)
-                    && $submitBtn->getAttrib('type') === null
-                ) {
+                if (true === ($submitBtn instanceof Zend_Form_Element_Button) && $submitBtn->getAttrib('type') === null) {
                     $submitBtn->setAttrib('type', 'submit');
                 }
 
-                if ($form->getElement($cancel_str) && self::BOOTSTRAP == $format) {
-                    $form->getElement($submit_str)->getDecorator('HtmlTag')
+                if ((isset($cancel_str) && ($form->getElement($cancel_str)) || count($buttons) > 0) && self::BOOTSTRAP == $format) {
+                    $form->getElement($submit_str)
+                        ->getDecorator('HtmlTag')
                         ->setOption('openOnly', true);
                 }
             }
             if (self::TABLE == $format) {
                 if ($form->getElement($cancel_str)) {
-                    $form->getElement($submit_str)->getDecorator('data')
+                    $form->getElement($submit_str)
+                        ->getDecorator('data')
                         ->setOption('openOnly', true);
-                    $form->getElement($submit_str)->getDecorator('row')
+                    $form->getElement($submit_str)
+                        ->getDecorator('row')
                         ->setOption('openOnly', true);
                 }
             }
         }
-
         // set cancel button decorators
-        if ($form->getElement($cancel_str)) {
-
-            $form->getElement($cancel_str)->setDecorators(
-                self::$_ResetDecorator[$format]
-            );
+        if (isset($cancel_str) && $form->getElement($cancel_str)) {
+            //TODO chcek tags open close
+            $form->getElement($cancel_str)->setDecorators(self::$_ResetDecorator[$format]);
 
             if (self::BOOTSTRAP == $format || self::BOOTSTRAP_MINIMAL == $format) {
                 $attribs = $form->getElement($cancel_str)->getAttrib('class');
                 if (empty($attribs)) {
-                    $attribs = array('btn', 'pull-right');
+                    $attribs = array('btn', 'btn-warning', 'pull-right');
                 } else {
                     if (is_string($attribs)) {
                         $attribs = array($attribs);
@@ -1069,5 +1125,58 @@ class Dfi_Form_Decorator
                 }
             }
         }
+
+        $count = count($buttons);
+        /** @var Zend_Form_Element $button */
+        foreach ($buttons as $key => $button) {
+            $button->setDecorators(self::$_ResetDecorator[$format]);
+            if (self::BOOTSTRAP == $format || self::BOOTSTRAP_MINIMAL == $format) {
+                $attribs = $button->getAttrib('class');
+                if (empty($attribs)) {
+                    $attribs = array('btn', 'pull-right');
+                } else {
+                    if (is_string($attribs)) {
+                        $attribs = array($attribs);
+                    }
+                    $attribs = array_unique(array_merge(array('btn', 'pull-right'), $attribs));
+                }
+                $button->setAttrib('class', $attribs);
+
+                if ($button && ($key == $count - 1) && self::BOOTSTRAP == $format) {
+                    $button->getDecorator('HtmlTag')->setOption('closeOnly', true);
+                } else {
+                    $button->removeDecorator('HtmlTag');
+                }
+            }
+            if (self::TABLE == $format) {
+                //TODO chcek tags open close
+                if ($form->getElement($submit_str)) {
+                    $form->getElement($cancel_str)->getDecorator('data')
+                        ->setOption('closeOnly', true);
+                    $form->getElement($cancel_str)->getDecorator('row')
+                        ->setOption('closeOnly', true);
+                }
+            }
+
+        }
+
+
+    }
+
+    /**
+     * @param Zend_Form $form
+     * @param $type
+     * @param $name
+     * @param string $format
+     * @return Zend_Form_Element
+     * @throws Zend_Form_Exception
+     */
+    public static function createElementWithDecorators(Zend_Form $form, $type, $name, $format = self::BOOTSTRAP)
+    {
+        $element = $form->createElement($type, $name);
+        $decorators = self::$_ElementDecorator[$format];
+        $element->setDecorators($decorators);
+
+        return $element;
     }
 }

@@ -39,7 +39,6 @@ class Dfi_Form extends Zend_Form
      * @param array $values
      * @return bool
      * @throws Zend_Form_Exception
-     * @internal param array $data
      */
     public function isValid($values)
     {

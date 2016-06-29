@@ -35,6 +35,42 @@ class Dfi_Form_SubForm_Decorator extends Dfi_Form_Decorator
         ),
         'bootstrap' => array(
             'FormElements',
+            'BootstrapWidget'
         )
     );
+
+    /**
+     * Set Form defaults
+     * - disable default decorators
+     * - set form & displaygroup decorators
+     * - set needed prefix path for bootstrap decorators
+     * - set form element decorators
+     *
+     * @param Zend_Form $form The form instance.
+     * @param string $format Standard, minimal, table.
+     *
+     * @return void
+     */
+    protected static function setFormDefaults(Zend_Form $form, $format)
+    {
+        $form->setDisableLoadDefaultDecorators(true);
+        $form->setDisplayGroupDecorators(self::$_DisplayGroupDecorator[$format]);
+        $form->setDecorators(self::$_FormDecorator[$format]);
+
+        if (self::BOOTSTRAP == $format || self::BOOTSTRAP_MINIMAL == $format) {
+            $form->addElementPrefixPath(
+                'Dfi_Form_Decorator',
+                'Dfi/Form/Decorator',
+                Zend_Form::DECORATOR
+            );
+            $form->addPrefixPath(
+                'Dfi_Form_Decorator',
+                'Dfi/Form/Decorator',
+                Zend_Form::DECORATOR);
+        }
+
+        $form->setElementDecorators(self::$_ElementDecorator[$format]);
+
+        return;
+    }
 }
