@@ -1,55 +1,9 @@
 <?php
 
-class Dfi_Asterisk_Static_User
+class Dfi_Asterisk_Static_Sip
 {
-    private $entries = array();
-    private static $pdo;
-
-    private $cat_metric;
-    private $var_metric;
-    private $commented = 0;
-    const  FILE_NAME = 'users.conf';
-    private $category;
-
-
-    private $isModified = false;
-
+    const  FILE_NAME = 'sip.conf';
     private $attributes = array(
-        'fullname',
-        'callerid',
-        'secret',
-        'hasvoicemail',
-        'hassip',
-        'context',
-        'host',
-        'transfer',
-        'canpark',
-        'cancallforward',
-        'disallow',
-        'allow',
-        'callreturn',
-        'callcounter',
-        'qualify',
-        'cid_number',
-        'deny',
-        'permit',
-        'call-limit',
-        'busylevel',
-
-        'transport',
-        'avpf',
-        'icesupport',
-        'nat',
-        'encryption',
-
-        'dtlsenable',
-        'dtlsverify',
-        'dtlscertfile',
-        'dtlsprivatekey',
-        'dtlscafile',
-        'dtlssetup',
-        'force_avp'
-
 
     );
 

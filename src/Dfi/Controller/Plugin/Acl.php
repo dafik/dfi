@@ -1,4 +1,5 @@
 <?
+
 class Dfi_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract
 {
 
@@ -12,22 +13,22 @@ class Dfi_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract
         if (Zend_Auth::getInstance()->hasIdentity()) {
             $acl = Zend_Registry::get('acl');
 
-            $roleId = Zend_Auth::getInstance()->getIdentity()->getRole()->getId();
+            $roleId = Zend_Auth::getInstance()->getIdentity()->getSysRole()->getId();
 
             $privilageName = Dfi_Auth_Acl::getModulesIdsByRequest($request);
 
             if ($roleId && $privilageName) {
-                if (Zend_Auth::getInstance()->getIdentity()->hasRole(Dfi_App_Config::get('cc.role.super.id '))) {
+
+                if ($acl->isAllowed($roleId, $privilageName)) {
                     return;
                 }
 
-                if (!$acl->isAllowed($roleId, $privilageName)) {
-                    $request->setModuleName('default');
-                    $request->setControllerName('Error');
-                    $request->setActionName('forbiden');
-                }
             }
+
         }
+        $request->setModuleName('default');
+        $request->setControllerName('Error');
+        $request->setActionName('forbidden');
     }
 
     private function isBypassRequest($module, $controller, $action)
@@ -43,9 +44,9 @@ class Dfi_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract
 
         $allowedRequests = array(
             'default' => array(
-                'login'  => array('index' => 0, 'return' => 0),
+                'login' => array('index' => 0, 'return' => 0),
                 'logout' => array('index' => 0),
-                'error'  => array('error' => 0, 'forbiden' => 0)
+                'error' => array('error' => 0, 'forbiden' => 0)
             )
         );
 
@@ -54,8 +55,6 @@ class Dfi_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract
         $t2 = isset($allowedRequests[$module]);
         $t3 = isset($allowedRequests[$module][$controller]);
         $t4 = isset($allowedRequests[$module][$controller][$action]);*/
-
-
 
 
         if (isset($allowedRequests[$module][$controller][$action])) {

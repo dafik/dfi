@@ -18,7 +18,42 @@ class Dfi_Asterisk_Static_Dialplan extends Dfi_Asterisk_Static_ConfigAbstract
     {
         $this->filename = self::FILE_NAME;
         $this->category = $name;
+
         $this->allowDuplicateKeys = true;
+    }
+
+    /**
+     * @param PbxContext $ctx
+     * @param $dialplan
+     * @throws PropelException
+     */
+    private static function addEntries(PbxContext $ctx, $dialplan)
+    {
+        $extensions = $ctx->getPbxExtensions(PbxExtensionQuery::create()->orderByRank());
+        /** @var $extension PbxExtension */
+        foreach ($extensions as $extension) {
+            $priorities = $extension->getPbxPriorities(PbxPriorityQuery::create()->orderByRank());
+            /** @var $priority PbxPriority */
+            foreach ($priorities as $priority) {
+
+                $entry = new Dfi_Asterisk_Static_Entry();
+
+                if ($priorities->isFirst()) {
+                    $entry->var_name = 'exten';
+                } else {
+                    $entry->var_name = 'same';
+                }
+                $entry->var_val = self::formatLine($priority, $priorities->isFirst());
+                $dialplan->addEntry($entry);
+            }
+            if ($extension->getName() == 'Include') {
+                $entry = new Dfi_Asterisk_Static_Entry();
+                $entry->var_name = 'Include';
+                $entry->var_val = $extension->getInclude();
+                $dialplan->addEntry($entry);
+
+            }
+        }
     }
 
     public function getName()
@@ -30,25 +65,7 @@ class Dfi_Asterisk_Static_Dialplan extends Dfi_Asterisk_Static_ConfigAbstract
     {
         $dialplan = new self($ctx->getName());
 
-        $extensions = $ctx->getPbxExtensions(PbxExtensionQuery::create()->orderByRank());
-        /** @var $extension PbxExtension */
-        foreach ($extensions as $extension) {
-            $priorities = $extension->getPbxPriorities(PbxPriorityQuery::create()->orderByRank());
-            /** @var $priority PbxPriority */
-            foreach ($priorities as $priority) {
-
-                $entry = new Dfi_Asterisk_Static_Entry();
-                if ($extension->getName() == 'Include') {
-                    $entry->var_name = 'Include';
-                } elseif ($priorities->isFirst()) {
-                    $entry->var_name = 'exten';
-                } else {
-                    $entry->var_name = 'same';
-                }
-                $entry->var_val = self::formatLine($priority, $priorities->isFirst());
-                $dialplan->addEntry($entry);
-            }
-        }
+        self::addEntries($ctx, $dialplan);
         return $dialplan;
     }
 
@@ -94,59 +111,8 @@ class Dfi_Asterisk_Static_Dialplan extends Dfi_Asterisk_Static_ConfigAbstract
                 }
             }
         }
-
-        $key = 0;
-        $extensions = $ctx->getPbxExtensions(PbxExtensionQuery::create()->orderByRank());
-        /** @var $extension PbxExtension */
-        foreach ($extensions as $extension) {
-            $priorities = $extension->getPbxPriorities(PbxPriorityQuery::create()->orderByRank());
-            /** @var $priority PbxPriority */
-            foreach ($priorities as $priority) {
-                $entry = $this->getEntry($key);
-                $new = false;
-                if (!$entry) {
-                    $entry = new Dfi_Asterisk_Static_Entry();
-                    $new = true;
-                }
-
-                if ($extension->getName() == 'Include') {
-                    $var_name = 'Include';
-                } elseif ($priorities->isFirst()) {
-                    $var_name = 'exten';
-                } else {
-                    $var_name = 'same';
-                }
-
-                if ($var_name != $entry->var_name) {
-                    $entry->updateName($var_name);
-                }
-
-                $var_val = self::formatLine($priority, $priorities->isFirst());
-
-                if ($var_val != $entry->var_val) {
-                    $entry->updateValue($var_val);
-                }
-                if ($new) {
-                    $this->addEntry($entry);
-                }
-
-                $key++;
-            }
-        }
-        if ($this->category != $ctx->getName()) {
-            $this->setCategory($ctx->getName());
-        }
+        self::addEntries($ctx, $this);
     }
-
-   /* private function generalConfig()
-    {
-        $c = array(
-            'general' => array(
-                'static' => 'yes',
-                'writeprotect' => 'no',
-                'clearglobalvars' => 'no'
-            ));
-    }*/
 
 
 }

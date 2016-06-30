@@ -927,7 +927,7 @@ class Dfi_Form_Decorator
 
             if (false !== in_array($e->getType(), array(
                     'Zend_Form_Element_Select',
-                    'Dfi_Form_Element_Lists',
+                    'Dfi_Form_Element_List',
                     'Dfi_Form_Element_SelectChained',
                     /*'Zend_Form_Element_Multiselect',*/
                     'Dfi_Form_Element_Multiselect',

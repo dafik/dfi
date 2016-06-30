@@ -8,7 +8,6 @@ class Dfi_View_Helper_FormSpinner extends Zend_View_Helper_FormText
 	{
 		$options = $this->getOptions($attribs);
 
-		$this->view->headScript()->appendFile(_JS.'lib/jquery/ui.spinner.js');
 		$inlineScript = 'jQuery().ready(function($) {
             $(\'#'.$name.'\').spinner('.$this->parseOptions($options).');
           });';

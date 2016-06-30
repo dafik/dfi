@@ -4,7 +4,7 @@ class Dfi_Ldap_Config
 {
     public static function getConfig($asArray = true, $path = false, $default = null, $mode = APPLICATION_ENV)
     {
-        $config = new Zend_Config_Ini(APPLICATION_PATH . '/configs/ldap.ini', $mode);
+        $config = new Zend_Config_Ini(APPLICATION_PATH . '/configs/ini/ldap.ini', $mode);
 
         if ($path) {
             if (strpos($path, '.')) {

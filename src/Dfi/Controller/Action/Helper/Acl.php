@@ -75,13 +75,6 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
             if ($userPrivileges) {
                 $this->acl->allow($this->roleId, $userPrivileges);
             }
-
-            $user = Zend_Auth::getInstance()->getIdentity();
-            /* @var $user SysUser */
-            if ($user->getId() == 6) {
-                //$this->acl->allow($this->roleId); //all
-            }
-
         }
     }
 

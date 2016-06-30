@@ -78,6 +78,11 @@ class Dfi_Asterisk_Static_Entry
      */
     public function save(PDO $pdo)
     {
+        $this->filename = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $this->filename);
+        $this->category = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $this->category);
+        $this->var_name = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $this->var_name);
+        $this->var_val = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $this->var_val);
+
 
         if ($this->isDeleted) {
             $sql = 'DELETE FROM `ast_config` WHERE `id` = :id';

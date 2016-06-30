@@ -19,11 +19,15 @@ class Dfi_Asterisk_Ami
         try {
             $client = self::getAmiClient();
             if (!Dfi_App_Config::getString('asterisk.fake', true)) {
-                $client->send(new CommandAction('reload'));
+                $res = $client->send(new CommandAction('core reload'));
+            } else {
+                $res = 'fake';
             }
         } catch (Exception $e) {
             Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage('debug', $e->getMessage());
+            $res = $e;
         }
+        return $res;
     }
 
     public static function reloadDialplan()
@@ -31,11 +35,47 @@ class Dfi_Asterisk_Ami
         try {
             $client = self::getAmiClient();
             if (!Dfi_App_Config::getString('asterisk.fake', true)) {
-                $client->send(new CommandAction('dialplan reload'));
+                $res = $client->send(new CommandAction('dialplan reload'));
+            } else {
+                $res = 'fake';
             }
         } catch (Exception $e) {
             Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage('debug', $e->getMessage());
+            $res = $e;
         }
+        return $res;
+    }
+
+    public static function reloadSip()
+    {
+        try {
+            $client = self::getAmiClient();
+            if (!Dfi_App_Config::getString('asterisk.fake', true)) {
+                $res = $client->send(new CommandAction('sip reload'));
+            } else {
+                $res = 'fake';
+            }
+        } catch (Exception $e) {
+            Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage('debug', $e->getMessage());
+            $res = $e;
+        }
+        return $res;
+    }
+
+    public static function reloadQueues()
+    {
+        try {
+            $client = self::getAmiClient();
+            if (!Dfi_App_Config::getString('asterisk.fake', true)) {
+                $res = $client->send(new CommandAction('queue reload all'));
+            } else {
+                $res = 'fake';
+            }
+        } catch (Exception $e) {
+            Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage('debug', $e->getMessage());
+            $res = $e;
+        }
+        return $res;
     }
 
     /**
@@ -46,7 +86,7 @@ class Dfi_Asterisk_Ami
     {
         try {
             $client = self::getAmiClient();
-            if (defined('_ASTERISK_FAKE') && !_ASTERISK_FAKE) {
+            if (!Dfi_App_Config::get('asterisk.fake')) {
                 $res = $client->send($message);
                 //sleep(5);
                 return $res;
@@ -167,8 +207,8 @@ class Dfi_Asterisk_Ami
 
     private static function getConfig()
     {
-        $config = new Zend_Config_Ini('configs/asterisk-conf.php', APPLICATION_ENV);
-        return $config->get('asterisk')->get('ami')->toArray();
+        $config = new Zend_Config_Ini('configs/ini/asterisk.ini', APPLICATION_ENV);
+        return $config->get('ami')->toArray();
     }
 
     /**
@@ -180,10 +220,10 @@ class Dfi_Asterisk_Ami
         if (!Dfi_Asterisk_Ami::$amiClient instanceof ClientImpl) {
 
             $config = self::getConfig();
-            $c = new Zend_Config_Ini(APPLICATION_PATH . '/configs/log4php-pami.conf.php');
+            $c = new Zend_Config_Ini(APPLICATION_PATH . '/configs/sys/log4php-pami.conf.php');
             $config["log4php.properties"] = $c->toArray();
 
-            $config["log4php.properties"]['log4php']['properties']['log4php']['appender']['default']['file'] = APPLICATION_PATH . '/configs/ami.log';
+            $config["log4php.properties"]['appenders']['appender']['default']['file'] = Dfi_App_Config::get('paths.log') . 'ami.log';
 
             $client = new Dfi_Asterisk_Client($config);
             $client->open();

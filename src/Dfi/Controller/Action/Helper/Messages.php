@@ -73,6 +73,7 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
 
     public function postDispatch()
     {
+        $this->render();
         $this->save();
     }
 
@@ -154,16 +155,16 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
     {
         $value = false;
         $x = new \Zend_Controller_Request_Http();
-        $value = $x->getHeader('X-message');
+        //$value = $x->getHeader('X-message');
 
 
-        /* if (isset($_COOKIE['_m']) && $_COOKIE['_m']) {
-              $value = $_COOKIE['_m'];
-          }*/
+        if (isset($_COOKIE['_m']) && $_COOKIE['_m']) {
+            $value = $_COOKIE['_m'];
+        }
         if ($value) {
             $decoded = base64_decode($value);
             if ($decoded) {
-                $jsoned = json_decode($decoded, true);
+                $jsoned = @json_decode($decoded, true);
                 if (false === $jsoned) {
                     $unserialize = @unserialize($decoded);
                 } else {
@@ -205,8 +206,8 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
             $mess = urlencode(base64_encode(json_encode($return)));
             //setcookie('_m',$mess);
             if ($mess) {
-                //$response = $this->getResponse()->setHeader('Set-Cookie', '_m = ' . $mess . ';path = /; expires= ' . date('r', time() + 3600));
-                $response = $this->getResponse()->setHeader('X-message', $mess);
+                $response = $this->getResponse()->setHeader('Set-Cookie', '_m = ' . $mess . ';path = /; expires= ' . date('r', time() + 3600));
+                //$response = $this->getResponse()->setHeader('X-message', $mess);
             }
         }
     }

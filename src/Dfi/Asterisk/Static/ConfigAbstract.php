@@ -38,7 +38,7 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
     /**
      * @var bool
      */
-    private $commented = false;
+    private $commented = 0;
 
     /**
      * @var PDO
@@ -345,16 +345,6 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
         return Propel::getConnection();
     }
 
-
-    /**
-     * @return array
-     */
-    private static function getConfig()
-    {
-        $config = new Zend_Config_Ini('configs/asterisk-conf.php', APPLICATION_ENV);
-        $val = $config->toArray();
-        return $val['asterisk']['db'];
-    }
 
     /**
      * @param string $category
