@@ -25,10 +25,8 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
 
     protected $allowDuplicateKeys = false;
     protected $keysIndex = array();
-    /**
-     * @var array Dfi_Asterisk_Static_Entry[]
-     */
-    private $entries = array();
+
+    private $entries = [];
 
 
     /**
@@ -44,6 +42,25 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
      * @var PDO
      */
     private static $pdo;
+
+    public function __construct()
+    {
+
+    }
+
+    public function getEntriesArray()
+    {
+        return $this->entries;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
 
     /**
      * @return array
@@ -154,6 +171,7 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
         }
 
         if ($this->allowDuplicateKeys) {
+
             $key = array_push($this->entries, $entry);
             $this->keysIndex[$key - 1] = $entry->var_name;
         } else {
@@ -182,7 +200,7 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
     public static function getReplicateFields()
     {
         $fields = array_keys(static::$transTable);
-        $fields[] = static::$categoryField;
+        //$fields[] = static::$categoryField;
         return $fields;
     }
 
@@ -196,17 +214,19 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
 
     public function save($reloadAsterisk = true)
     {
+        $i = 1;
         /** @var $entry Dfi_Asterisk_Static_Entry */
         foreach ($this->entries as $key => $entry) {
 
             $entry->updateCategory($this->category);
             $entry->updateCatMetric($this->cat_metric);
-            $entry->updateVarMetric($key);
+            $entry->updateVarMetric($i);
 
             $res = $entry->save($this->getPdo());
             if ($res) {
                 $this->isModified = true;
             }
+            $i++;
         }
         if ($this->isModified && $reloadAsterisk) {
             if ($this instanceof Dfi_Asterisk_Static_Dialplan) {
@@ -250,8 +270,25 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
             foreach ($this->entries as $entry) {
                 $entry->updateCommented(!$state);
             }
-
         }
+        if ($propelObject->getOldName()) {
+            $class = get_class($propelObject);
+            $peer = constant($class . '::PEER');
+            /** @var $tableMap TableMap */
+            $tableMap = $peer::getTableMap();
+
+            $method = 'get' . $tableMap->getColumn(static::$categoryField)->getPhpName();
+            $this->category = $propelObject->$method();
+        }
+
+        ///definitions
+        $this->removeDefinitions();
+
+        if (method_exists($propelObject, 'getDefinition')) {
+            $this->applyDefinitions($propelObject->getDefinition());
+        }
+
+
     }
 
     protected static function getFileName()
@@ -272,13 +309,39 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
      * @param $variable
      * @return bool|Dfi_Asterisk_Static_Entry
      */
-    protected function getEntry($variable)
+    public function getEntry($variable)
     {
-        if (isset($this->entries[$variable])) {
-            return $this->entries[$variable];
+        if ($this->allowDuplicateKeys) {
+            $key = array_search($variable, $this->keysIndex);
+            if (false !== $key) {
+                return $this->entries[$key];
+            }
+        } else {
+            if (isset($this->entries[$variable])) {
+                return $this->entries[$variable];
+            }
         }
         return false;
     }
+
+    protected function getEntries($variable)
+    {
+        if ($this->allowDuplicateKeys) {
+            $keys = array_filter($this->keysIndex, function ($element) use ($variable) {
+                return $element == $variable;
+            });
+            if (false !== $keys) {
+                $z = array_intersect_key($this->entries, $keys);
+            }
+
+        } else {
+            if (isset($this->entries[$variable])) {
+                return [$this->entries[$variable]];
+            }
+        }
+        return false;
+    }
+
 
     protected function countEntries()
     {
@@ -302,11 +365,11 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
             $maxCatMetric = $stmt->fetchColumn(0);
             $this->cat_metric = $entry->cat_metric = $maxCatMetric;
         }
-        if ($this->var_metric || $this->var_metric === 0) {
+        if ($this->var_metric || $this->var_metric === 1) {
 
             $entry->var_metric = $this->var_metric + 1;
         } else {
-            $entry->var_metric = 0;
+            $entry->var_metric = 1;
         }
         $this->var_metric = $entry->var_metric;
         $entry->commented = $this->commented;
@@ -317,7 +380,7 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
             throw new Exception('unknown attribute: ' . $entry->var_name);
         }*/
         if (null === $entry->var_val) {
-            throw new Exception('value can\'t be null');
+            throw new Exception('value can\'t be null ' . $entry->var_name);
         }
     }
 
@@ -358,5 +421,28 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
         }
     }
 
+    private function removeDefinitions()
+    {
+        foreach ($this->keysIndex as $key => $value) {
+            if (false === array_key_exists($value, static::$attributeValues)) {
+                $this->entries[$key]->delete();
+            }
+        }
+    }
+
+    protected function applyDefinitions($definitionDef)
+    {
+
+        $def = explode("\n", $definitionDef);
+        foreach ($def as $definition) {
+            if (false !== strpos($definition, '=')) {
+                list($name, $val) = explode('=', $definition);
+                $entry = new Dfi_Asterisk_Static_Entry();
+                $entry->var_name = trim($name);
+                $entry->var_val = trim($val);
+                $this->addEntry($entry);
+            }
+        }
+    }
 
 }

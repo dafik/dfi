@@ -138,7 +138,7 @@ class Dfi_Asterisk_Static_Entry
 
     public function updateName($value)
     {
-        if ($this->var_name = $value) {
+        if ($this->var_name !== $value) {
             $this->var_name = $value;
             $this->isModified = true;
         }
@@ -146,7 +146,7 @@ class Dfi_Asterisk_Static_Entry
 
     public function updateValue($value)
     {
-        if ($this->var_val != $value) {
+        if ($this->var_val !== $value) {
             $this->var_val = $value;
             $this->isModified = true;
         }
@@ -154,7 +154,7 @@ class Dfi_Asterisk_Static_Entry
 
     public function updateCategory($value)
     {
-        if ($this->category != $value) {
+        if ($this->category !== $value) {
             $this->category = $value;
             $this->isModified = true;
         }
@@ -162,7 +162,7 @@ class Dfi_Asterisk_Static_Entry
 
     public function updateCatMetric($value)
     {
-        if ($this->cat_metric != $value) {
+        if ($this->cat_metric !== $value) {
             $this->cat_metric = $value;
             $this->isModified = true;
         }
@@ -170,7 +170,7 @@ class Dfi_Asterisk_Static_Entry
 
     public function updateVarMetric($value)
     {
-        if ($this->var_metric != $value) {
+        if ($this->var_metric !== $value) {
             $this->var_metric = $value;
             $this->isModified = true;
         }
@@ -178,8 +178,8 @@ class Dfi_Asterisk_Static_Entry
 
     public function updateCommented($value)
     {
-        $value = (bool)$value;
-        if ($this->commented != $value) {
+        $value = (integer)$value;
+        if ($this->commented !== $value) {
             $this->commented = $value;
             $this->isModified = true;
         }

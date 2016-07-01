@@ -205,6 +205,37 @@ class Dfi_Asterisk_Ami
 
     }
 
+
+    public static function getConfigMappings()
+    {
+        $res = Dfi_Asterisk_Ami::send(new \PAMI\Message\Action\CommandAction('core show config mappings'));
+        $lines = explode("\n", array_pop(explode("\r\n", $res->getRawContent())));
+
+
+        $i = 0;
+        $found = [];
+        $started = false;
+        while (true) {
+            $line = $lines[$i];
+
+            if ($started && preg_match('/Config Engine/', $line)) {
+                break;
+            }
+            if ($started) {
+                $found[] = preg_replace('/\s*===> ([a-z]+\.conf).*/', '$1', $line);
+            }
+            if ($line == 'Config Engine: odbc') {
+                $started = true;
+            }
+            $i++;
+            if ($i == count($lines)) {
+                break;
+            }
+        }
+        return $found;
+    }
+
+
     private static function getConfig()
     {
         $config = new Zend_Config_Ini('configs/ini/asterisk.ini', APPLICATION_ENV);

@@ -16,6 +16,8 @@ class Dfi_Asterisk_Static_Dialplan extends Dfi_Asterisk_Static_ConfigAbstract
 
     public function __construct($name)
     {
+        parent::__construct();
+
         $this->filename = self::FILE_NAME;
         $this->category = $name;
 
