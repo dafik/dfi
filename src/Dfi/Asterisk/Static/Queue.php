@@ -4,11 +4,6 @@ class Dfi_Asterisk_Static_Queue extends Dfi_Asterisk_Static_ConfigAbstract
 {
     const  FILE_NAME = 'queues.conf';
 
-    protected $allowDuplicateKeys = true;
-
-
-   
-
     protected static $categoryField = 'pbx_queues.name';
 
     protected static $transTable = array(
@@ -20,7 +15,6 @@ class Dfi_Asterisk_Static_Queue extends Dfi_Asterisk_Static_ConfigAbstract
         'pbx_queues.strategy' => 'strategy',
     );
 
-
     public function __construct($name)
     {
         self::$attributeValues = self::getConfig()['queue'];
@@ -29,18 +23,15 @@ class Dfi_Asterisk_Static_Queue extends Dfi_Asterisk_Static_ConfigAbstract
         $this->category = $name;
     }
 
-
     public function getName()
     {
         return $this->category;
     }
 
-    public static function create(PbxQueue $queue)
+    public static function create(PbxQueue $trunk)
     {
-
-
-        $pbxQueue = parent::create($queue);
-        $pbxQueue->applyDefinitions($queue->getDefinition());
+        $pbxQueue = parent::create($trunk);
+        $pbxQueue->applyDefinitions($trunk->getDefinition());
         return $pbxQueue;
     }
 }

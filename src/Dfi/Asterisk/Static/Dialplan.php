@@ -12,7 +12,6 @@ class Dfi_Asterisk_Static_Dialplan extends Dfi_Asterisk_Static_ConfigAbstract
 
     protected static $categoryField = 'sip.context.name';
 
-    protected static $transTable = array();
 
     public function __construct($name)
     {
@@ -20,8 +19,6 @@ class Dfi_Asterisk_Static_Dialplan extends Dfi_Asterisk_Static_ConfigAbstract
 
         $this->filename = self::FILE_NAME;
         $this->category = $name;
-
-        $this->allowDuplicateKeys = true;
     }
 
     /**
@@ -29,7 +26,7 @@ class Dfi_Asterisk_Static_Dialplan extends Dfi_Asterisk_Static_ConfigAbstract
      * @param $dialplan
      * @throws PropelException
      */
-    private static function addEntries(PbxContext $ctx, $dialplan)
+    private static function addEntries(PbxContext $ctx, Dfi_Asterisk_Static_Dialplan $dialplan)
     {
         $extensions = $ctx->getPbxExtensions(PbxExtensionQuery::create()->orderByRank());
         /** @var $extension PbxExtension */
@@ -104,13 +101,8 @@ class Dfi_Asterisk_Static_Dialplan extends Dfi_Asterisk_Static_ConfigAbstract
             ->filterByPbxContext($ctx)->count();
         $countEntries = $this->countEntries();
         if ($countProperties < $countEntries) {
-            for ($i = ($countProperties - 1); $i < $countEntries; $i++) {
-                $entry = $this->getEntry($i);
-                if ($entry) {
-                    $entry->delete();
-                } else {
-                    //TODO $x = 'błąd';
-                }
+            foreach ($this->getEntriesArray() as $entry) {
+                $entry->delete();
             }
         }
         self::addEntries($ctx, $this);

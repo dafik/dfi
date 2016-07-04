@@ -49,7 +49,7 @@ class Dfi_Asterisk_Static_Entry
     private $isDeleted = false;
 
     /**
-     * @param null|array $row
+     * @param null|array|AstConfig $row
      */
     public function __construct($row = null)
     {
@@ -60,7 +60,6 @@ class Dfi_Asterisk_Static_Entry
                 $tmp[$row->getPeer()->getTableMap()->getColumnByPhpName($key)->getName()] = $value;
             }
             $row = $tmp;
-
         }
 
         if ($row) {
@@ -184,4 +183,31 @@ class Dfi_Asterisk_Static_Entry
             $this->isModified = true;
         }
     }
+
+    /**
+     * @return boolean
+     */
+    public function isIsModified()
+    {
+        return $this->isModified;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isIsNew()
+    {
+        return $this->isNew;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isIsDeleted()
+    {
+        return $this->isDeleted;
+    }
+
+
+
 }

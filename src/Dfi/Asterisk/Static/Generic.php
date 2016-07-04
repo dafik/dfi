@@ -2,9 +2,6 @@
 
 class Dfi_Asterisk_Static_Generic extends Dfi_Asterisk_Static_ConfigAbstract
 {
-
-    protected $allowDuplicateKeys = true;
-
     public function __construct($config, $name, $catMetric = null)
     {
         parent::__construct();
