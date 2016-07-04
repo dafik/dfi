@@ -48,6 +48,9 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
     {
         $replicateFields = self::getReplicateFields();
         $intersect = array_intersect($propelObject->getModifiedColumns(), $replicateFields);
+        if ($addDefaults) {
+            $intersect = $replicateFields;
+        }
         $categoryField = self::getCategoryField();
         $transTable = static::$transTable;
         $class = get_class($propelObject);
