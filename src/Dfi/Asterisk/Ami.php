@@ -208,12 +208,22 @@ class Dfi_Asterisk_Ami
 
     public static function getConfigMappings()
     {
+        $found = [];
+
         $res = Dfi_Asterisk_Ami::send(new \PAMI\Message\Action\CommandAction('core show config mappings'));
+        if (!$res instanceof \PAMI\Message\Response\ResponseMessage) {
+            $cat = AstConfigQuery::create()
+                ->select('FileName')
+                ->distinct()
+                ->find();
+
+            return $cat->toArray();
+        }
         $lines = explode("\n", array_pop(explode("\r\n", $res->getRawContent())));
 
 
         $i = 0;
-        $found = [];
+
         $started = false;
         while (true) {
             $line = $lines[$i];
@@ -257,7 +267,9 @@ class Dfi_Asterisk_Ami
             $config["log4php.properties"]['appenders']['appender']['default']['file'] = Dfi_App_Config::get('paths.log') . 'ami.log';
 
             $client = new Dfi_Asterisk_Client($config);
-            $client->open();
+            if (!Dfi_App_Config::getString('asterisk.fake', true)) {
+                $client->open();
+            }
 
             Dfi_Asterisk_Ami::$amiClient = $client;
         }

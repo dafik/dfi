@@ -6,14 +6,8 @@ class Dfi_Asterisk_Static_Queue extends Dfi_Asterisk_Static_ConfigAbstract
 
     protected $allowDuplicateKeys = true;
 
-    protected static $attributeValues = array(
-        'musicclass' => 'silence',
-        'timeout' => '600',
-        'retry' => '1',
-        'maxlen' => '0',
-        'monitor-format' => 'gsm',
-        'strategy' => 'rrmemory',
-    );
+
+   
 
     protected static $categoryField = 'pbx_queues.name';
 
@@ -29,8 +23,8 @@ class Dfi_Asterisk_Static_Queue extends Dfi_Asterisk_Static_ConfigAbstract
 
     public function __construct($name)
     {
-        parent::__construct();
-        
+        self::$attributeValues = self::getConfig()['queue'];
+
         $this->filename = self::FILE_NAME;
         $this->category = $name;
     }
@@ -43,6 +37,8 @@ class Dfi_Asterisk_Static_Queue extends Dfi_Asterisk_Static_ConfigAbstract
 
     public static function create(PbxQueue $queue)
     {
+
+
         $pbxQueue = parent::create($queue);
         $pbxQueue->applyDefinitions($queue->getDefinition());
         return $pbxQueue;

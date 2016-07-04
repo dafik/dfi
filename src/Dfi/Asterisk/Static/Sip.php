@@ -1,61 +1,10 @@
 <?php
 
-class Dfi_Asterisk_Static_User
+class Dfi_Asterisk_Static_User extends Dfi_Asterisk_Static_ConfigAbstract
 {
 
     const  FILE_NAME = 'users.conf';
-
-    private $entries = array();
-    private static $pdo;
-
-    private $cat_metric;
-    private $var_metric;
-    private $commented = 0;
-
-    private $category;
-
-
-    private $isModified = false;
-
-    private $attributes = array(
-        'fullname',
-        'callerid',
-        'secret',
-        'hasvoicemail',
-        'hassip',
-        'context',
-        'host',
-        'transfer',
-        'canpark',
-        'cancallforward',
-        'disallow',
-        'allow',
-        'callreturn',
-        'callcounter',
-        'qualify',
-        'cid_number',
-        'deny',
-        'permit',
-        'call-limit',
-        'busylevel',
-
-        'transport',
-        'avpf',
-        'icesupport',
-        'nat',
-        'encryption',
-
-        'dtlsenable',
-        'dtlsverify',
-        'dtlscertfile',
-        'dtlsprivatekey',
-        'dtlscafile',
-        'dtlssetup',
-        'force_avp'
-
-
-    );
-
+    protected static $attributes = [];
 
     /**
      * Return asterisk user by given sip number
@@ -71,13 +20,16 @@ class Dfi_Asterisk_Static_User
         $stmt = $pdo->query($query);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $user = new Dfi_Asterisk_Static_User();
-        foreach ($rows as $row) {
-            $entry = new Dfi_Asterisk_Static_UserEntry($row);
-            $user->addEntry($entry);
-        }
+        if (count($rows) > 0) {
+            $user = new Dfi_Asterisk_Static_User();
+            foreach ($rows as $row) {
+                $entry = new Dfi_Asterisk_Static_UserEntry($row);
+                $user->addEntry($entry);
+            }
 
-        return $user;
+            return $user;
+        }
+        return false;
     }
 
     public static function getSips()
@@ -98,6 +50,7 @@ class Dfi_Asterisk_Static_User
         $this->entries[$entry->var_name] = $entry;
         $this->prepareUser($entry);
     }
+
 
     public function deleteEntry($entry)
     {
@@ -157,7 +110,7 @@ class Dfi_Asterisk_Static_User
         $entry->filename = self::FILE_NAME;
         $entry->category = $this->category;
 
-        if (!in_array($entry->var_name, $this->attributes)) {
+        if (!in_array($entry->var_name, static::$attributes)) {
             throw new Exception('unknown attribute: ' . $entry->var_name);
         }
         if (null === $entry->var_val) {
@@ -184,11 +137,6 @@ class Dfi_Asterisk_Static_User
         return Propel::getConnection();
     }
 
-    private static function getConfig()
-    {
-        $config = new Zend_Config_Ini('configs/asterisk.ini', APPLICATION_ENV);
-        return $config->toArray();
-    }
 
     public function setSipNumber($sip)
     {
@@ -247,216 +195,65 @@ class Dfi_Asterisk_Static_User
         return false;
     }
 
-    public function modify($password = null, $context = null, $ddi = null, $isWebRtc = false)
+    public static function create($number, $password, $context)
+    {
+
+        self::prepareAttributes();
+
+        $attribs = self::getConfig()['sipUser'];
+
+
+        $user = new Dfi_Asterisk_Static_User();
+        $user->setSipNumber($number);
+
+        foreach ($attribs as $attrib => $value) {
+            if (strpos($value, '__SIP__')) {
+                $value = str_replace('__SIP__', $number, $value);
+            }
+            $entry = new Dfi_Asterisk_Static_UserEntry();
+            $entry->var_name = $attrib;
+            $entry->var_val = $value;
+
+            $user->addEntry($entry);
+        }
+
+        $entry = new Dfi_Asterisk_Static_UserEntry();
+        $entry->var_name = 'secret';
+        $entry->var_val = $password;
+
+        $user->addEntry($entry);
+
+        $entry = new Dfi_Asterisk_Static_UserEntry();
+        $entry->var_name = 'context';
+        $entry->var_val = $context;
+
+        $user->addEntry($entry);
+
+
+        return $user;
+    }
+
+
+    public function modify($password = null, $context = null, $definition)
     {
         $passwordE = $this->getSipVariable('secret');
-        if ($passwordE && $password) {
-            if ($passwordE != $password) {
-                $entry = $this->getSipEntry('secret');
-                $entry->var_val = $password;
-                $entry->isModified = true;
-                $this->isModified = true;
-            }
+
+        if ($passwordE != $password) {
+            $entry = $this->getSipEntry('secret');
+            $entry->var_val = $password;
+            $entry->isModified = true;
+            $this->isModified = true;
         }
+
         $contextE = $this->getSipVariable('context');
-        if ($contextE && $context) {
-            if ($contextE != $context) {
-                $entry = $this->getSipEntry('context');
-                $entry->var_val = $context;
-                $entry->isModified = true;
-                $this->isModified = true;
-            }
+
+        if ($contextE != $context) {
+            $entry = $this->getSipEntry('context');
+            $entry->var_val = $context;
+            $entry->isModified = true;
+            $this->isModified = true;
         }
-        $ddiE = $this->getSipVariable('cid_number');
-        if ($ddiE) {
-            if ($ddiE != $ddi) {
-                if ($ddi) {
-                    $entry = $this->getSipEntry('cid_number');
-                    $entry->var_val = $ddi;
-                    $entry->isModified = true;
-                    $this->isModified = true;
-                } else {
-                    $entry = $this->getSipEntry('cid_number');
-                    $entry->delete();
-                    $this->isModified = true;
-                }
-            }
-        } elseif ($ddi) {
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = 'cid_number';
-            $entry->var_val = $ddi;
-            $this->addEntry($entry);
-        }
-
-        if ($isWebRtc) {
-            $transport = $this->getSipVariable('transport');
-            if ($transport) {
-                $entry = $this->getSipEntry('transport');
-                $entry->var_val = 'udp,ws,wss';
-                $entry->isModified = true;
-                $this->isModified = true;
-            } else {
-                $entry = new Dfi_Asterisk_Static_UserEntry();
-                $entry->var_name = 'transport';
-                $entry->var_val = 'udp,ws,wss';
-                $this->addEntry($entry);
-            }
-            $avpf = $this->getSipVariable('avpf');
-            if ($avpf) {
-                $entry = $this->getSipEntry('avpf');
-                $entry->var_val = 'yes';
-                $entry->isModified = true;
-                $this->isModified = true;
-            } else {
-                $entry = new Dfi_Asterisk_Static_UserEntry();
-                $entry->var_name = 'avpf';
-                $entry->var_val = 'yes';
-                $this->addEntry($entry);
-            }
-            $ice = $this->getSipVariable('icesupport');
-            if ($ice) {
-                $entry = $this->getSipEntry('icesupport');
-                $entry->var_val = 'yes';
-                $entry->isModified = true;
-                $this->isModified = true;
-            } else {
-                $entry = new Dfi_Asterisk_Static_UserEntry();
-                $entry->var_name = 'icesupport';
-                $entry->var_val = 'yes';
-                $this->addEntry($entry);
-            }
-            $nat = $this->getSipVariable('nat');
-            if ($nat) {
-                $entry = $this->getSipEntry('nat');
-                $entry->var_val = 'force_rport,comedia';
-                $entry->isModified = true;
-                $this->isModified = true;
-            } else {
-                $entry = new Dfi_Asterisk_Static_UserEntry();
-                $entry->var_name = 'nat';
-                $entry->var_val = 'force_rport,comedia';
-                $this->addEntry($entry);
-            }
-            $enc = $this->getSipVariable('encryption');
-            if ($enc) {
-                $entry = $this->getSipEntry('encryption');
-                $entry->var_val = 'no';
-                $entry->isModified = true;
-                $this->isModified = true;
-            } else {
-                $entry = new Dfi_Asterisk_Static_UserEntry();
-                $entry->var_name = 'encryption';
-                $entry->var_val = 'no';
-                $this->addEntry($entry);
-            }
-            ////
-            $dtlsenable = $this->getSipVariable('dtlsenable');
-            if ($dtlsenable) {
-                $entry = $this->getSipEntry('dtlsenable');
-                $entry->var_val = 'yes';
-                $entry->isModified = true;
-                $this->isModified = true;
-            } else {
-                $entry = new Dfi_Asterisk_Static_UserEntry();
-                $entry->var_name = 'dtlsenable';
-                $entry->var_val = 'yes';
-                $this->addEntry($entry);
-            }
-
-            $dtlsverify = $this->getSipVariable('dtlsverify');
-            if ($dtlsverify) {
-                $entry = $this->getSipEntry('dtlsverify');
-                $entry->var_val = 'no';
-                $entry->isModified = true;
-                $this->isModified = true;
-            } else {
-                $entry = new Dfi_Asterisk_Static_UserEntry();
-                $entry->var_name = 'dtlsverify';
-                $entry->var_val = 'no';
-                $this->addEntry($entry);
-            }
-            $dtlscertfile = $this->getSipVariable('dtlscertfile');
-            if ($dtlscertfile) {
-                $entry = $this->getSipEntry('dtlscertfile');
-                $entry->var_val = '/etc/asterisk/keys/crt.pem';
-                $entry->isModified = true;
-                $this->isModified = true;
-            } else {
-                $entry = new Dfi_Asterisk_Static_UserEntry();
-                $entry->var_name = 'dtlscertfile';
-                $entry->var_val = '/etc/asterisk/keys/crt.pem';
-                $this->addEntry($entry);
-            }
-            $dtlsprivatekey = $this->getSipVariable('dtlsprivatekey');
-            if ($dtlsprivatekey) {
-                $entry = $this->getSipEntry('dtlsprivatekey');
-                $entry->var_val = '/etc/asterisk/keys/key.pem';
-                $entry->isModified = true;
-                $this->isModified = true;
-            } else {
-                $entry = new Dfi_Asterisk_Static_UserEntry();
-                $entry->var_name = 'dtlsprivatekey';
-                $entry->var_val = '/etc/asterisk/keys/key.pem';
-                $this->addEntry($entry);
-            }
-
-            $dtlscafile = $this->getSipVariable('dtlscafile');
-            if ($dtlscafile) {
-                $entry = $this->getSipEntry('dtlscafile');
-                $entry->var_val = '/etc/asterisk/keys/ca-crt.pem';
-                $entry->isModified = true;
-                $this->isModified = true;
-            } else {
-                $entry = new Dfi_Asterisk_Static_UserEntry();
-                $entry->var_name = 'dtlscafile';
-                $entry->var_val = '/etc/asterisk/keys/ca-crt.pem';
-                $this->addEntry($entry);
-            }
-
-            $dtlssetup = $this->getSipVariable('dtlssetup');
-            if ($dtlssetup) {
-                $entry = $this->getSipEntry('dtlssetup');
-                $entry->var_val = 'actpass';
-                $entry->isModified = true;
-                $this->isModified = true;
-            } else {
-                $entry = new Dfi_Asterisk_Static_UserEntry();
-                $entry->var_name = 'dtlssetup';
-                $entry->var_val = 'actpass';
-                $this->addEntry($entry);
-            }
-
-
-            $force_avp = $this->getSipVariable('force_avp');
-            if ($force_avp) {
-                $entry = $this->getSipEntry('force_avp');
-                $entry->var_val = 'yes';
-                $entry->isModified = true;
-                $this->isModified = true;
-            } else {
-                $entry = new Dfi_Asterisk_Static_UserEntry();
-                $entry->var_name = 'force_avp';
-                $entry->var_val = 'yes';
-                $this->addEntry($entry);
-            }
-
-
-        } else {
-            $this->deleteEntry('transport');
-            $this->deleteEntry('avpf');
-            $this->deleteEntry('icesupport');
-            $this->deleteEntry('nat');
-            $this->deleteEntry('encryption');
-
-            //
-            $this->deleteEntry('dtlsenable');
-            $this->deleteEntry('dtlsverify');
-            $this->deleteEntry('dtlscertfile');
-            $this->deleteEntry('dtlsprivatekey');
-            $this->deleteEntry('dtlscafile');
-            $this->deleteEntry('dtlssetup');
-            $this->deleteEntry('force_avp');
-        }
+        $this->applyDefinitions($definition);
     }
 
     public function delete()
@@ -490,114 +287,34 @@ class Dfi_Asterisk_Static_User
      * @param bool $isWebRtc
      * @return Dfi_Asterisk_Static_User
      */
-    public static function create($number, $context, $isWebRtc = false)
+
+    public function getDefinition()
     {
-
-        $attribs = self::getConfig()['sip'];
-
-
-        $user = new Dfi_Asterisk_Static_User();
-        $user->setSipNumber($number);
-
-        foreach ($attribs as $attrib => $value) {
-            if (strpos($value, '__SIP__')) {
-                $value = str_replace('__SIP__', $number, $value);
-            }
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = $attrib;
-            $entry->var_val = $value;
-
-            $user->addEntry($entry);
+        $tmp = [];
+        /** @var Dfi_Asterisk_Static_UserEntry $entry */
+        foreach ($this->entries as $entry) {
+            $tmp[] = $entry->var_name . '=' . $entry->var_val;
         }
-
-        $entry = new Dfi_Asterisk_Static_UserEntry();
-        $entry->var_name = 'secret';
-        $entry->var_val = trim(shell_exec('pwgen 7 1'));
-
-        $user->addEntry($entry);
-
-        $entry = new Dfi_Asterisk_Static_UserEntry();
-        $entry->var_name = 'context';
-        $entry->var_val = $context;
-
-        $user->addEntry($entry);
-
-
-        if ($isWebRtc) {
-
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = 'transport';
-            $entry->var_val = 'udp,ws,wss';
-            $user->addEntry($entry);
-
-
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = 'avpf';
-            $entry->var_val = 'yes';
-            $user->addEntry($entry);
-
-
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = 'icesupport';
-            $entry->var_val = 'yes';
-            $user->addEntry($entry);
-
-
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = 'nat';
-            $entry->var_val = 'force_rport,comedia';
-            $user->addEntry($entry);
-
-
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = 'encryption';
-            $entry->var_val = 'no';
-            $user->addEntry($entry);
-
-
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = 'dtlsenable';
-            $entry->var_val = 'yes';
-            $user->addEntry($entry);
-
-
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = 'dtlsverify';
-            $entry->var_val = 'no';
-            $user->addEntry($entry);
-
-
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = 'dtlscertfile';
-            $entry->var_val = '/etc/asterisk/keys/crt.pem';
-            $user->addEntry($entry);
-
-
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = 'dtlsprivatekey';
-            $entry->var_val = '/etc/asterisk/keys/key.pem';
-            $user->addEntry($entry);
-
-
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = 'dtlscafile';
-            $entry->var_val = '/etc/asterisk/keys/ca-crt.pem';
-            $user->addEntry($entry);
-
-
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = 'dtlssetup';
-            $entry->var_val = 'actpass';
-            $user->addEntry($entry);
-
-
-            $entry = new Dfi_Asterisk_Static_UserEntry();
-            $entry->var_name = 'force_avp';
-            $entry->var_val = 'yes';
-            $user->addEntry($entry);
-
-
-        }
-        return $user;
+        return $tmp;
     }
+
+
+    public static function prepareAttributes()
+    {
+        if (count(self::$attributes) == 0) {
+            $class = static::class;
+            $file = constant($class . '::FILE_NAME');
+
+            $config = new Zend_Config_Ini('configs/ini/configs.ini', APPLICATION_ENV);
+            $config = $config->toArray();
+
+            $attr = array_merge($config['sip']['entry'], $config['users']['general']);
+
+
+            self::$attributes = array_keys($attr);
+            sort(self::$attributes);
+        }
+    }
+
+
 }

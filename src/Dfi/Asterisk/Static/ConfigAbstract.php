@@ -23,25 +23,27 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
      */
     protected $category;
 
+
     protected $allowDuplicateKeys = false;
     protected $keysIndex = array();
 
-    private $entries = [];
-
+    protected $entries = [];
 
     /**
      * @var bool
      */
-    private $isModified = false;
+    protected $isModified = false;
     /**
      * @var bool
      */
-    private $commented = 0;
+    protected $commented = 0;
 
     /**
      * @var PDO
      */
     private static $pdo;
+
+    protected static $attributes = [];
 
     public function __construct()
     {
@@ -51,6 +53,12 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
     public function getEntriesArray()
     {
         return $this->entries;
+    }
+
+    protected static function getConfig()
+    {
+        $config = new Zend_Config_Ini('configs/ini/asterisk.ini', APPLICATION_ENV);
+        return $config->toArray();
     }
 
     /**
@@ -437,11 +445,34 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
         foreach ($def as $definition) {
             if (false !== strpos($definition, '=')) {
                 list($name, $val) = explode('=', $definition);
-                $entry = new Dfi_Asterisk_Static_Entry();
+
+                $entry = $this->getEntries($name);
+
+                if($entry){
+
+                }else{
+                    $entry = new Dfi_Asterisk_Static_Entry();
+                }
+
                 $entry->var_name = trim($name);
                 $entry->var_val = trim($val);
                 $this->addEntry($entry);
             }
+        }
+    }
+
+    public static function prepareAttributes()
+    {
+        if (count(self::$attributes) == 0) {
+            $class = static::class;
+            $file = constant($class . '::FILE_NAME');
+            $file = str_replace('.conf', '', $file);
+
+            $config = new Zend_Config_Ini('configs/ini/configs.ini', APPLICATION_ENV);
+
+
+            self::$attributes = array_keys($config->toArray()[$file]['entry']);
+            sort(self::$attributes);
         }
     }
 
