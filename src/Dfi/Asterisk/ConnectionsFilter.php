@@ -231,6 +231,7 @@ class Dfi_Asterisk_ConnectionsFilter
             $to = new DateTime($this->options['date_sub']['date_to']);
             $query->filterByCalldate($to->format('Y-m-d H:i:s'), Criteria::LESS_EQUAL);
         }
+        $query->orderByCalldate();
     }
 
     private function prepareValues($type, $values)
