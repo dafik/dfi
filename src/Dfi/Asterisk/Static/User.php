@@ -34,7 +34,7 @@ class Dfi_Asterisk_Static_User extends Dfi_Asterisk_Static_ConfigAbstract
 
     public static function create(PbxAccountSip $trunk, $addDefaults = false)
     {
-        $pbxAccount = parent::create($trunk,$addDefaults);
+        $pbxAccount = parent::create($trunk, $addDefaults);
         $pbxAccount->applyDefinitions($trunk->getDefinition());
 
         return $pbxAccount;

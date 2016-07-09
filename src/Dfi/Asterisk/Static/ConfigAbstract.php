@@ -44,11 +44,12 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
      * @param BaseObject $propelObject
      * @return Dfi_Asterisk_Static_ConfigAbstract
      */
-    public static function create(BaseObject $propelObject, $addDefaults = false)
+    public static function create(BaseObject $propelObject, $addDefaults, $doIntersect = false)
     {
         $replicateFields = self::getReplicateFields();
-        $intersect = array_intersect($propelObject->getModifiedColumns(), $replicateFields);
-        if ($addDefaults) {
+        if ($doIntersect) {
+            $intersect = array_intersect($propelObject->getModifiedColumns(), $replicateFields);
+        } else {
             $intersect = $replicateFields;
         }
         $categoryField = self::getCategoryField();
@@ -201,7 +202,7 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
 
     }
 
-    public function modify(BaseObject $propelObject)
+    public function modify(BaseObject $propelObject, $defaults)
     {
         $replicateFields = self::getReplicateFields();
         $intersect = array_intersect($propelObject->getModifiedColumns(), $replicateFields);
@@ -264,19 +265,25 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
 
     public function save($reloadAsterisk = true)
     {
+
+        if (!$this instanceof Dfi_Asterisk_Static_Dialplan) {
+            $this->removeDuplicates();
+        }
         $i = 1;
         /** @var $entry Dfi_Asterisk_Static_Entry */
         foreach ($this->entries as $key => $entry) {
 
             $entry->updateCategory($this->category);
             $entry->updateCatMetric($this->cat_metric);
-            $entry->updateVarMetric($i);
-
+            if (!$entry->isIsDeleted()) {
+                $entry->updateVarMetric($i);
+                $i++;
+            }
             $res = $entry->save($this->getPdo());
             if ($res) {
                 $this->isModified = true;
             }
-            $i++;
+
         }
         if ($this->isModified && $reloadAsterisk) {
             if ($this instanceof Dfi_Asterisk_Static_Dialplan) {
@@ -293,6 +300,7 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
         foreach ($this->entries as $entry) {
             $entry->delete();
         }
+        return $this;
     }
 
 
@@ -512,5 +520,32 @@ abstract class Dfi_Asterisk_Static_ConfigAbstract
         $this->filename = $filename;
     }
 
+    private function removeDuplicates()
+    {
+        $tmp = [];
+        foreach ($this->keysIndex as $key => $name) {
+            if (!isset($tmp[$name])) {
+                $tmp[$name] = [];
+            }
+            $tmp[$name][] = $key;
+        }
 
+        $tmp2 = [];
+
+        foreach ($tmp as $name => $keys) {
+            if (count($keys) > 1) {
+                foreach ($keys as $key) {
+                    /** @var Dfi_Asterisk_Static_Entry $entry */
+                    $entry = $this->entries[$key];
+                    $tmp2[$key] = $entry->var_name . $entry->var_val;
+                }
+                $tmp2 = array_keys(array_unique($tmp2));
+                foreach ($keys as $key) {
+                    if (false === array_search($key, $tmp2)) {
+                        $this->entries[$key]->delete();
+                    }
+                }
+            }
+        }
+    }
 }
