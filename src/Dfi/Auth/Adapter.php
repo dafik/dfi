@@ -13,7 +13,7 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
 
     /**
      *
-     * @var SysUser
+     * @var Dfi_Auth_UserInterface
      */
     protected $user;
 
@@ -35,10 +35,17 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
      */
     protected $translator;
 
-    public function __construct($username, $password)
+    /**
+     * @var Dfi_Auth_UserProviderInterface
+     */
+    protected $provider;
+
+    public function __construct(Dfi_Auth_UserProviderInterface $provider, $username, $password)
     {
         $this->username = $username;
         $this->password = $password;
+
+        $this->provider = $provider;
 
         if (Dfi_App_Config::get('main.useFakeLogin')) {
             $this->useFakeLogin = true;
@@ -53,7 +60,7 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
     public function authenticate()
     {
         try {
-            $this->user = SysUserQuery::create()->filterByLogin($this->username)->findOne();
+            $this->user = $this->provider->findByByLogin($this->username);
             if ($this->user) {
                 if ($this->user->getActive()) {
                     if (!$this->useFakeLogin) {
@@ -73,7 +80,7 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
             }
         } catch (Exception $e) {
             $m = $e->getMessage();
-            $z = strpos($m, 'Invalid credentials');
+            //$z = strpos($m, 'Invalid credentials');
 
             if (false !== strpos($e->getMessage(), $this->getMessage(self::NOT_FOUND))) {
                 return $this->result(Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID, $this->getMessage(self::NOT_FOUND));
@@ -96,11 +103,11 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
     }
 
     /**
-     * @param SysUser $user
+     * @param Dfi_Auth_UserInterface $user
      * @return Dfi_Auth_Adapter_AdapterInterface
      * @throws Exception
      */
-    private function getAdapter(SysUser $user)
+    private function getAdapter(Dfi_Auth_UserInterface $user)
     {
         $adapter = $user->getAuthAdapter();
         $adapter->setPassword($this->password);

@@ -124,7 +124,7 @@ class Dfi_App_Config
         if (self::$configLocation) {
             return self::$configLocation;
         }
-        return APPLICATION_PATH . '/configs/application.ini';
+        return APPLICATION_PATH . '/configs/ini/application.ini';
     }
 
     /**

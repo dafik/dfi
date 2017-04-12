@@ -106,6 +106,9 @@ class Dfi_Error_Report
             } else {
                 $path = realpath(dirname(__FILE__) . '/../../../');
             }
+            if (Propel::isInit()) {
+                return false;
+            }
 
             $pathname = $path . '/application/models/' . self::getModelName() . '.php';
 
