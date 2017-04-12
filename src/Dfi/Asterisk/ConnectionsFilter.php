@@ -113,7 +113,7 @@ class Dfi_Asterisk_ConnectionsFilter
 
         $options = &$this->options;
         $options['date_sub']['date_to'] = $now->format('Y-m-d H:i:s');
-        $now->modify('-1 day');
+        $now->modify('-1 hour');
         $options['date_sub']['date_from'] = $now->format('Y-m-d H:i:s');
         $options['date_sub']['database'] = 0;
 
@@ -123,7 +123,6 @@ class Dfi_Asterisk_ConnectionsFilter
 
     public function __destruct()
     {
-        $x = 1;
         $this->write();
     }
 
@@ -198,11 +197,14 @@ class Dfi_Asterisk_ConnectionsFilter
 
     public function filter($isAdvancedSearch = false)
     {
+        $className = Dfi_App_Config::get('asterisk.billingTable');
 
         if ($this->options['date_sub']['database'] == 0) {
-            $query = AstBillingQuery::create();
+            /** @var Dfi_Asterisk_Billing_QueryInterface $query */
+            $query = call_user_func([$className . 'Query', 'create']);
         } else {
-            $query = AstBillingArchiveQuery::create();
+            /** @var Dfi_Asterisk_Billing_QueryInterface $query */
+            $query = call_user_func([$className . 'ArchiveQuery', 'create']);
         }
 
 
@@ -221,7 +223,7 @@ class Dfi_Asterisk_ConnectionsFilter
         return $query;
     }
 
-    private function filterByDate(AstBillingQuery $query)
+    private function filterByDate(Dfi_Asterisk_Billing_QueryInterface $query)
     {
         if (isset($this->options['date_sub']['date_from'])) {
             $from = new DateTime($this->options['date_sub']['date_from']);
@@ -232,6 +234,7 @@ class Dfi_Asterisk_ConnectionsFilter
             $query->filterByCalldate($to->format('Y-m-d H:i:s'), Criteria::LESS_EQUAL);
         }
         $query->orderByCalldate(Criteria::DESC);
+
     }
 
     private function prepareValues($type, $values)
@@ -254,7 +257,7 @@ class Dfi_Asterisk_ConnectionsFilter
         return false;
     }
 
-    private function filterBySource(AstBillingQuery $query)
+    private function filterBySource(Dfi_Asterisk_Billing_QueryInterface $query)
     {
         if (isset($this->options['src_sub']['src'])) {
             $op = trim($this->options['src_sub']['src_op']);
@@ -267,7 +270,7 @@ class Dfi_Asterisk_ConnectionsFilter
         }
     }
 
-    private function filterByDestination(AstBillingQuery $query)
+    private function filterByDestination(Dfi_Asterisk_Billing_QueryInterface $query)
     {
         if (isset($this->options['dst_sub']['dst'])) {
             $op = trim($this->options['dst_sub']['dst_op']);
@@ -280,7 +283,7 @@ class Dfi_Asterisk_ConnectionsFilter
         }
     }
 
-    private function filterByContext(AstBillingQuery $query)
+    private function filterByContext(Dfi_Asterisk_Billing_QueryInterface $query)
     {
         if (isset($this->options['context_sub']['context'])) {
             $op = trim($this->options['context_sub']['context_op']);
@@ -294,7 +297,7 @@ class Dfi_Asterisk_ConnectionsFilter
 
     }
 
-    private function filterByChannel(AstBillingQuery $query)
+    private function filterByChannel(Dfi_Asterisk_Billing_QueryInterface $query)
     {
         if (isset($this->options['channel_sub']['channel'])) {
             $op = trim($this->options['channel_sub']['channel_op']);
@@ -312,28 +315,36 @@ class Dfi_Asterisk_ConnectionsFilter
                 }
             }
         }
+
+
     }
 
-    private function filterByState(AstBillingQuery $query)
+    private function filterByState(Dfi_Asterisk_Billing_QueryInterface $query)
     {
         $options = $this->options;
 
         if (isset($options['state_sub'])) {
 
             $val = array();
-            isset($options['state_sub']['state_ANSWERED']) ? $val[] = 'ANSWERED' : '';
-            isset($options['state_sub']['state_FAILED']) ? $val[] = 'FAILED' : '';
-            isset($options['state_sub']['state_NO_ANSWER']) ? $val[] = 'NO_ANSWER' : '';
-            isset($options['state_sub']['state_BUSY']) ? $val[] = 'BUSY' : '';
-
-
+            if (isset($options['state_sub']['state_ANSWERED'])) {
+                $val[] = 'ANSWERED';
+            }
+            if (isset($options['state_sub']['state_FAILED'])) {
+                $val[] = 'FAILED';
+            }
+            if (isset($options['state_sub']['state_NO_ANSWER'])) {
+                $val[] = 'NO_ANSWER';
+            }
+            if (isset($options['state_sub']['state_BUSY'])) {
+                $val[] = 'BUSY';
+            }
             if (count($val) > 0) {
                 $query->filterByDisposition($val);
             }
         }
     }
 
-    private function filterByDirection(AstBillingQuery $query)
+    private function filterByDirection(Dfi_Asterisk_Billing_QueryInterface $query)
     {
 
         $opt = array(
@@ -342,8 +353,14 @@ class Dfi_Asterisk_ConnectionsFilter
             ));
     }
 
-    private function filterByDuration(AstBillingQuery $query)
+    private function filterByDuration(Dfi_Asterisk_Billing_QueryInterface $query)
     {
+        $opFrom = false;
+        $valFrom = false;
+        $opTo = false;
+        $valTo = false;
+
+
         if (isset($this->options['duration_sub']['from_val'])) {
             $opFrom = trim($this->options['duration_sub']['from_op']);
             $opFrom = constant('Criteria::' . $opFrom);
@@ -384,7 +401,7 @@ class Dfi_Asterisk_ConnectionsFilter
             ));
     }
 
-    private function filterByCustom(AstBillingQuery $query)
+    private function filterByCustom(Dfi_Asterisk_Billing_QueryInterface $query)
     {
         /*'source'
         'destination'
