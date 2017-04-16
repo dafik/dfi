@@ -1,5 +1,7 @@
-<?php
-interface Dfi_Auth_PasswordHasher_PasswordHasherInterface
+<?
+namespace Dfi\Auth\Adapter\PasswordHasher;
+
+interface PasswordHasherInterface
 {
 
     public function hash($password);

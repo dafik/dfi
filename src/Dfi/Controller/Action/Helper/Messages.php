@@ -1,6 +1,16 @@
 <?
+namespace Dfi\Controller\Action\Helper;
 
-class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helper_Abstract
+use Exception;
+use Zend_Controller_Action_Helper_Abstract;
+use Zend_Debug;
+use Zend_Layout;
+use Zend_Log;
+use Zend_Registry;
+use Zend_View;
+use Zend_View_Interface;
+
+class Messages extends Zend_Controller_Action_Helper_Abstract
 {
     const TYPE_ERROR = 'error';
     const TYPE_NOTICE = 'notice';
@@ -22,7 +32,7 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
     /**
      * Dfi_Controller_Action_Helper_Messages
      *
-     * @var Dfi_Controller_Action_Helper_Messages
+     * @var Messages
      */
     private static $instance;
     /**
@@ -59,14 +69,12 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
     /**
      * Enter description here...
      *
-     * @return DFi_Controller_Action_Helper_Messages
+     * @return Messages
      */
     public static function getInstance()
     {
-        $x = self::$instance;
-
-        if (!self::$instance instanceof Dfi_Controller_Action_Helper_Messages) {
-            self::$instance = new Dfi_Controller_Action_Helper_Messages();
+        if (!self::$instance instanceof Messages) {
+            self::$instance = new Messages();
         }
         return self::$instance;
     }
@@ -154,10 +162,6 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
     private function readFromSession()
     {
         $value = false;
-        $x = new \Zend_Controller_Request_Http();
-        //$value = $x->getHeader('X-message');
-
-
         if (isset($_COOKIE['_m']) && $_COOKIE['_m']) {
             $value = $_COOKIE['_m'];
         }
@@ -206,7 +210,7 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
             $mess = urlencode(base64_encode(json_encode($return)));
             //setcookie('_m',$mess);
             if ($mess) {
-                $response = $this->getResponse()->setHeader('Set-Cookie', '_m = ' . $mess . ';path = /; expires= ' . date('r', time() + 3600));
+                $this->getResponse()->setHeader('Set-Cookie', '_m = ' . $mess . ';path = /; expires= ' . date('r', time() + 3600));
                 //$response = $this->getResponse()->setHeader('X-message', $mess);
             }
         }
@@ -226,7 +230,7 @@ class Dfi_Controller_Action_Helper_Messages extends Zend_Controller_Action_Helpe
     private function parseMessage($content, $params)
     {
         $matches = array();
-        $res = preg_match_all('/%[a-zA-Z]+%/', $content, $matches);
+        preg_match_all('/%[a-zA-Z]+%/', $content, $matches);
         foreach ($matches[0] as $match) {
             if (isset($params[str_replace('%', '', $match)])) {
                 $content = str_replace($match, $params[str_replace('%', '', $match)], $content);

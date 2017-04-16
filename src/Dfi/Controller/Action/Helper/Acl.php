@@ -1,6 +1,23 @@
 <?
 
-class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abstract
+namespace Dfi\Controller\Action\Helper;
+
+use Criteria;
+use Dfi\Auth\Acl as AuthAcl;
+use Dfi\Auth\Storage\Cookie;
+use Dfi\Iface\Helper;
+use Dfi\Iface\Model\Sys\Module;
+use Dfi\Iface\Model\Sys\User;
+use Dfi\Iface\Provider\Sys\ModuleProvider;
+use Exception;
+use Zend_Acl;
+use Zend_Acl_Resource;
+use Zend_Acl_Role;
+use Zend_Auth;
+use Zend_Controller_Action_Helper_Abstract;
+use Zend_Registry;
+
+class Acl extends Zend_Controller_Action_Helper_Abstract
 {
 
     /**
@@ -36,12 +53,12 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
 
     private function setRoles($modelName)
     {
-        Zend_Auth::getInstance()->setStorage(new Dfi_Auth_Storage_Cookie($modelName));
+        Zend_Auth::getInstance()->setStorage(new Cookie($modelName));
         if (Zend_Auth::getInstance()->hasIdentity()) {
 
-            /* @var $user SysUser */
+            /* @var $user User */
             $user = Zend_Auth::getInstance()->getIdentity();
-            
+
 
             $this->roleName = $user->getSysRole()->getName();
             $this->roleId = $user->getSysRole()->getId();
@@ -54,11 +71,15 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
     {
         //TODO from file
 
+        $providerName = Helper::getClass("iface.provider.sys.module");
+        /** @var ModuleProvider $provider */
+        $provider = $providerName::create();
 
-        $modules = SysModuleQuery::create()->filterByTreeLevel(0, Criteria::GREATER_THAN)->find();
+
+        $modules = $provider->filterByTreeLevel(0, Criteria::GREATER_THAN)->find();
         //$this->acl->add(new Zend_Acl_Resource('index'));
         foreach ($modules as $module) {
-            /* @var $module SysModule */
+            /* @var $module Module */
             $this->acl->addResource(new Zend_Acl_Resource($module->getId()));
         }
     }
@@ -69,7 +90,7 @@ class Dfi_Controller_Action_Helper_Acl extends Zend_Controller_Action_Helper_Abs
         if (Zend_Auth::getInstance()->hasIdentity()) {
             //$privilages = AclQuery::create()->filterByRoleId($this->roleId)->find();
             //$privileges = array();
-            $userPrivileges = Dfi_Auth_Acl::getModulesIdsByRoleId($this->roleId);
+            $userPrivileges = AuthAcl::getModulesIdsByRoleId($this->roleId);
             $userPrivileges = $this->checkResources($userPrivileges);
             //$userPrivilages = array();
             if ($userPrivileges) {

@@ -1,6 +1,9 @@
 <?php
+namespace Dfi\View\Helper;
 
-class Dfi_View_Helper_FormSpinner extends Zend_View_Helper_FormText
+use Zend_View_Helper_FormText;
+
+class FormSpinner extends Zend_View_Helper_FormText
 {
 
 	 

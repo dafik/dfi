@@ -1,6 +1,12 @@
 <?
+namespace Dfi\Controller\Action\Helper;
 
-class Dfi_Controller_Action_Helper_ContentDecorator extends Zend_Controller_Action_Helper_Abstract
+use Exception;
+use Zend_Controller_Action_Helper_Abstract;
+use Zend_Layout;
+use Zend_View_Interface;
+
+class ContentDecorator extends Zend_Controller_Action_Helper_Abstract
 {
     /**
      * Layout

@@ -1,6 +1,17 @@
 <?
 
-class  Dfi_Model_DataVersion
+namespace Dfi\Model;
+
+use DateTime;
+use Dfi\Iface\Model\Sys\User;
+use Dfi\Xml;
+use DOMDocument;
+use DOMElement;
+use Exception;
+use SimpleXMLElement;
+use Zend_Auth;
+
+class  DataVersion
 {
 
 
@@ -13,22 +24,22 @@ class  Dfi_Model_DataVersion
     private static function compareData($newData, $currentData)
     {
 
-        $currentXml = Dfi_Xml::asSimpleXml(
-            Dfi_Xml::checkIsValidXmlStirng(
-                Dfi_Xml::castToXmlString($currentData)
+        $currentXml = Xml::asSimpleXml(
+            Xml::checkIsValidXmlStirng(
+                Xml::castToXmlString($currentData)
             )
         );
         if ($currentXml instanceof SimpleXMLElement) {
             /* @var $currentBranch SimpleXMLElement */
             $currentBranch = $currentXml->current;
-            $currentBranch = Dfi_Xml::checkIsValidXmlStirng($currentBranch->asXML(), true, true);
+            $currentBranch = Xml::checkIsValidXmlStirng($currentBranch->asXML(), true, true);
 
-            $newBranch = Dfi_Xml::asSimpleXml(Dfi_Xml::checkIsValidXmlStirng(Dfi_Xml::castToXmlString($newData), true, true));
+            $newBranch = Xml::asSimpleXml(Xml::checkIsValidXmlStirng(Xml::castToXmlString($newData), true, true));
             $tmp = new SimpleXMLElement('<current></current>');
             foreach ($newBranch as $name => $value) {
                 $tmp->addChild($name, $value);
             }
-            $newBranch = Dfi_Xml::checkIsValidXmlStirng($tmp->asXML(), true, true);
+            $newBranch = Xml::checkIsValidXmlStirng($tmp->asXML(), true, true);
 
             if ($newBranch == $currentBranch) {
                 return false;
@@ -45,26 +56,26 @@ class  Dfi_Model_DataVersion
 
         if (self::compareData($newData, $currentData)) {
 
-            $currentXml = Dfi_Xml::asSimpleXml(Dfi_Xml::castToXmlString($currentData));
+            $currentXml = Xml::asSimpleXml(Xml::castToXmlString($currentData));
 
             $dom = self::makeDomFromNewData($newData);
-            $x = Dfi_Xml::asSimpleXml($dom->saveXML());
+            $x = Xml::asSimpleXml($dom->saveXML());
 
             self::applyOldVersions($dom, $currentXml);
-            $x = Dfi_Xml::asSimpleXml($dom->saveXML());
+            $x = Xml::asSimpleXml($dom->saveXML());
 
             $histories = self::applyCurrentHistory($dom);
-            $x = Dfi_Xml::asSimpleXml($dom->saveXML());
+            $x = Xml::asSimpleXml($dom->saveXML());
 
             self::applyOldHistories($dom, $histories, $currentXml);
-            $x = Dfi_Xml::asSimpleXml($dom->saveXML());
+            $x = Xml::asSimpleXml($dom->saveXML());
 
 
             $newData = $dom->saveXML($dom);
         } else {
-            $newData = Dfi_Xml::castToXmlString($currentData);
+            $newData = Xml::castToXmlString($currentData);
         }
-        return Dfi_Xml::checkIsValidXmlStirng($newData);
+        return Xml::checkIsValidXmlStirng($newData);
     }
 
     /**
@@ -74,10 +85,10 @@ class  Dfi_Model_DataVersion
      */
     private static function makeDomFromNewData($newData)
     {
-        $newXmlString = Dfi_Xml::castToXmlString($newData);
-        $newXml = Dfi_Xml::asSimpleXml($newXmlString);
+        $newXmlString = Xml::castToXmlString($newData);
+        $newXml = Xml::asSimpleXml($newXmlString);
 
-        $x = Dfi_Xml::asSimpleXml('<current></current>');
+        $x = Xml::asSimpleXml('<current></current>');
         /** @var SimpleXMLElement $value */
         foreach ($newXml as $key => $value) {
             if ((string)$value != '') {
@@ -128,7 +139,7 @@ class  Dfi_Model_DataVersion
 
         //add userid and date to new history entry
         $user = Zend_Auth::getInstance()->getIdentity();
-        if ($user instanceof SysUser) {
+        if ($user instanceof User) {
             $userId = $dom->createElement('user', $user->getId());
         }
         $now = new DateTime();
@@ -147,7 +158,7 @@ class  Dfi_Model_DataVersion
      * @param $currentXml
      * @internal param $currentHistoriesDom
      */
-    private static function applyOldHistories($dom, $histories, $currentXml)
+    private static function applyOldHistories(DOMDocument $dom, $histories, $currentXml)
     {
         /* $currentHistories SimpleXMLElement */
         $currentHistories = $currentXml->histories;

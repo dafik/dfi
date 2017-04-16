@@ -1,8 +1,21 @@
 <?php
 
-class Dfi_Module_Resource
+namespace Dfi\Module;
+
+use Criteria;
+use Dfi\Iface\Helper;
+use Dfi\Iface\Model\Sys\Module;
+use Dfi\Iface\Provider\Sys\ModuleProvider;
+use DirectoryIterator;
+use Exception;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
+use Zend_Loader;
+
+class Resource
 {
-    public static function getResources(SysModule $parent, $filter = false, $addEmpty = true, $module = null, $controller = null)
+    public static function getResources(Module $parent, $filter = false, $addEmpty = true, $module = null, $controller = null)
     {
         if ($parent->getAction()) {
             throw new Exception('can\'t add to parent with action');
@@ -47,13 +60,18 @@ class Dfi_Module_Resource
     }
 
 
-    public static function  getModules($filter = false)
+    public static function getModules($filter = false)
     {
         $path = _BASE_PATH . 'application/modules/';
         $notAllowed = array('soap', 'ajax');
         if ($filter) {
-            $modules = SysModuleQuery::create()->filterByAction(null)->filterByController(null)->filterByModule(null, Criteria::ISNOTNULL)->find();
-            /** @var $module SysModule */
+            $providerName = Helper::getClass("iface.provider.sys.module");
+            /** @var ModuleProvider $provider */
+            $provider = $providerName::create();
+
+
+            $modules = $provider->filterByAction(null)->filterByController(null)->filterByModule(null, Criteria::ISNOTNULL)->find();
+            /** @var $module Module */
             foreach ($modules as $module) {
                 $notAllowed[] = $module->getModule();
             }
@@ -73,8 +91,12 @@ class Dfi_Module_Resource
         $path = _BASE_PATH . '/application/modules/' . $module . '/controllers';
 
         if ($filter) {
-            $modules = SysModuleQuery::create()->filterByAction(null)->filterByController(null)->filterByModule(null, $module)->find();
-            /** @var $module SysModule */
+            $providerName = Helper::getClass("iface.provider.sys.module");
+            /** @var ModuleProvider $provider */
+            $provider = $providerName::create();
+
+            $modules = $provider->filterByAction(null)->filterByController(null)->filterByModule(null, $module)->find();
+            /** @var $module Module */
             foreach ($modules as $module) {
                 $notAllowed[] = $module->getModule();
             }
@@ -83,7 +105,7 @@ class Dfi_Module_Resource
 
     }
 
-    public static function  getActions($filter = false, $module, $controller)
+    public static function getActions($filter = false, $module, $controller)
     {
 
         $controller = ucfirst($controller) . 'Controller.php';

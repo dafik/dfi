@@ -1,5 +1,11 @@
 <?
-class Dfi_Controller_Action_Helper_Login extends Zend_Controller_Action_Helper_Abstract {
+namespace Dfi\Controller\Action\Helper;
+
+use Zend_Auth;
+use Zend_Controller_Action_Helper_Abstract;
+use Zend_Layout;
+
+class Login extends Zend_Controller_Action_Helper_Abstract {
 
 	public function postDispatch(){
 		$this->render();

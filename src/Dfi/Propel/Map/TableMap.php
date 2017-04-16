@@ -1,6 +1,11 @@
 <?php
 
-class Dfi_Propel_Map_TableMap extends TableMap
+namespace Dfi\Propel\Map;
+
+
+use TableMap as PropelTableMap;
+
+class TableMap extends PropelTableMap
 {
 
     protected $description;
@@ -17,7 +22,7 @@ class Dfi_Propel_Map_TableMap extends TableMap
 
     public function addColumn($name, $phpName, $type, $isNotNull = false, $size = null, $defaultValue = null, $pk = false, $fkTable = null, $fkColumn = null, $description = null)
     {
-        $col = new Dfi_Propel_Map_ColumnMap($name, $this);
+        $col = new ColumnMap($name, $this);
         $col->setType($type);
         $col->setSize($size);
         $col->setPhpName($phpName);

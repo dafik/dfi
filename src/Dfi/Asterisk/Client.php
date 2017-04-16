@@ -1,11 +1,14 @@
 <?php
-use PAMI\Client\Impl\ClientImpl;
+namespace Dfi\Asterisk;
 
-class Dfi_Asterisk_Client extends ClientImpl
+use PAMI\Client\Impl\ClientImpl;
+use Zend_Registry;
+
+class Client extends ClientImpl
 {
     public function __construct($options)
     {
-        $logger = new Dfi_Asterisk_Logger(Zend_Registry::get('debugLogger'));
+        $logger = new \Dfi\Asterisk\Logger(Zend_Registry::get('debugLogger'));
         parent::__construct($options, $logger);
     }
 }

@@ -1,4 +1,10 @@
 <?php
+namespace Dfi\Form;
+use Exception;
+use Zend_Form;
+use Zend_Form_Element;
+use Zend_Form_Element_Button;
+use Zend_Form_Exception;
 
 /**
  * Default Decorators Set
@@ -16,7 +22,7 @@
  * );
  *
  */
-class Dfi_Form_Decorator
+class Decorator
 {
     /**
      * Constants Definition for Decorator

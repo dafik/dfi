@@ -1,8 +1,18 @@
 <?php
+namespace Dfi\Asterisk;
+
 
 //TODO move to controller
 
-class Dfi_Asterisk_ConnectionsFilter
+use Criteria;
+use DateTime;
+use Dfi\App\Config;
+use Dfi\Crypt\MCrypt;
+use Dfi\Iface\Provider\Pbx\BillingProvider;
+use Exception;
+use Zend_Controller_Front;
+
+class ConnectionsFilter
 {
 
     private $initialized = false;
@@ -137,10 +147,10 @@ class Dfi_Asterisk_ConnectionsFilter
      */
     public static function getInstance()
     {
-        if (self::$_instance instanceof Dfi_Asterisk_ConnectionsFilter) {
+        if (self::$_instance instanceof ConnectionsFilter) {
             return self::$_instance;
         }
-        return self::$_instance = new Dfi_Asterisk_ConnectionsFilter();
+        return self::$_instance = new ConnectionsFilter();
     }
 
 
@@ -152,7 +162,7 @@ class Dfi_Asterisk_ConnectionsFilter
             if (isset($_COOKIE[self::COOKIE_SELECTOR]) && $_COOKIE[self::COOKIE_SELECTOR]) {
 
                 $base = base64_decode($_COOKIE[self::COOKIE_SELECTOR]);
-                $decrypted = Dfi_Crypt_MCrypt::decode($base);
+                $decrypted = MCrypt::decode($base);
 
                 $unserialized = unserialize($decrypted);
                 $this->setValues($unserialized);
@@ -184,7 +194,7 @@ class Dfi_Asterisk_ConnectionsFilter
 
             $values = serialize($valuesToSerialize);
 
-            $crypted = Dfi_Crypt_MCrypt::encode($values);
+            $crypted = MCrypt::encode($values);
             $base64 = base64_encode($crypted);
 
             $response = Zend_Controller_Front::getInstance()->getResponse();
@@ -197,13 +207,13 @@ class Dfi_Asterisk_ConnectionsFilter
 
     public function filter($isAdvancedSearch = false)
     {
-        $className = Dfi_App_Config::get('asterisk.billingTable');
+        $className = Config::get('asterisk.billingTable');
 
         if ($this->options['date_sub']['database'] == 0) {
-            /** @var Dfi_Asterisk_Billing_QueryInterface $query */
+            /** @var BillingProvider $query */
             $query = call_user_func([$className . 'Query', 'create']);
         } else {
-            /** @var Dfi_Asterisk_Billing_QueryInterface $query */
+            /** @var BillingProvider $query */
             $query = call_user_func([$className . 'ArchiveQuery', 'create']);
         }
 
@@ -223,7 +233,7 @@ class Dfi_Asterisk_ConnectionsFilter
         return $query;
     }
 
-    private function filterByDate(Dfi_Asterisk_Billing_QueryInterface $query)
+    private function filterByDate(BillingProvider $query)
     {
         if (isset($this->options['date_sub']['date_from'])) {
             $from = new DateTime($this->options['date_sub']['date_from']);
@@ -257,7 +267,7 @@ class Dfi_Asterisk_ConnectionsFilter
         return false;
     }
 
-    private function filterBySource(Dfi_Asterisk_Billing_QueryInterface $query)
+    private function filterBySource(BillingProvider $query)
     {
         if (isset($this->options['src_sub']['src'])) {
             $op = trim($this->options['src_sub']['src_op']);
@@ -270,7 +280,7 @@ class Dfi_Asterisk_ConnectionsFilter
         }
     }
 
-    private function filterByDestination(Dfi_Asterisk_Billing_QueryInterface $query)
+    private function filterByDestination(BillingProvider $query)
     {
         if (isset($this->options['dst_sub']['dst'])) {
             $op = trim($this->options['dst_sub']['dst_op']);
@@ -283,7 +293,7 @@ class Dfi_Asterisk_ConnectionsFilter
         }
     }
 
-    private function filterByContext(Dfi_Asterisk_Billing_QueryInterface $query)
+    private function filterByContext(BillingProvider $query)
     {
         if (isset($this->options['context_sub']['context'])) {
             $op = trim($this->options['context_sub']['context_op']);
@@ -297,7 +307,7 @@ class Dfi_Asterisk_ConnectionsFilter
 
     }
 
-    private function filterByChannel(Dfi_Asterisk_Billing_QueryInterface $query)
+    private function filterByChannel(BillingProvider $query)
     {
         if (isset($this->options['channel_sub']['channel'])) {
             $op = trim($this->options['channel_sub']['channel_op']);
@@ -319,7 +329,7 @@ class Dfi_Asterisk_ConnectionsFilter
 
     }
 
-    private function filterByState(Dfi_Asterisk_Billing_QueryInterface $query)
+    private function filterByState(BillingProvider $query)
     {
         $options = $this->options;
 
@@ -344,7 +354,7 @@ class Dfi_Asterisk_ConnectionsFilter
         }
     }
 
-    private function filterByDirection(Dfi_Asterisk_Billing_QueryInterface $query)
+    private function filterByDirection(BillingProvider $query)
     {
 
         $opt = array(
@@ -353,7 +363,7 @@ class Dfi_Asterisk_ConnectionsFilter
             ));
     }
 
-    private function filterByDuration(Dfi_Asterisk_Billing_QueryInterface $query)
+    private function filterByDuration(BillingProvider $query)
     {
         $opFrom = false;
         $valFrom = false;
@@ -401,7 +411,7 @@ class Dfi_Asterisk_ConnectionsFilter
             ));
     }
 
-    private function filterByCustom(Dfi_Asterisk_Billing_QueryInterface $query)
+    private function filterByCustom(BillingProvider $query)
     {
         /*'source'
         'destination'

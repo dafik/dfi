@@ -1,18 +1,26 @@
 <?php
+namespace Dfi\View\Helper;
+use Dfi\View\Helper\DynamicForm\Button;
+use Dfi\View\Helper\DynamicForm\Callback;
+use Dfi\View\Helper\DynamicForm\Map;
+use Dfi\View\Helper\DynamicForm\Modal;
+use Exception;
+use stdClass;
+use Zend_View_Helper_Abstract;
 
 /**
  * Helper for rendering javascript code for dynamic form
  *
  */
-class Dfi_View_Helper_DynamicForm extends Zend_View_Helper_Abstract
+class DynamicForm extends Zend_View_Helper_Abstract
 {
     public function dynamicForm($options, $selector = false, $exportAsFunction = false)
     {
-        if (!$options instanceof Dfi_View_Helper_DynamicForm_Modal) {
+        if (!$options instanceof Modal) {
             throw new Exception('old format');
 
         } else {
-            /* @var  $options Dfi_View_Helper_DynamicForm_Modal */
+            /* @var  $options Modal */
             $properties = array(
                 'selector' => '"' . ($selector ? $selector : $options->getSelector()) . '"',
                 'title' => '"' . $options->getTitle() . ' "',
@@ -39,7 +47,7 @@ class Dfi_View_Helper_DynamicForm extends Zend_View_Helper_Abstract
             // beforeClose: function( event, ui ) {}
         }
 
-        $format = new Dfi_View_Helper_JSFormat();
+        $format = new JSFormat();
 
         $out = '<script type="text/javascript">' . "\n"
             . $format->JSFormat(''
@@ -63,7 +71,7 @@ class Dfi_View_Helper_DynamicForm extends Zend_View_Helper_Abstract
         if ($options && is_array($options)) {
             foreach ($options as $buttonOptions) {
 
-                if (!$buttonOptions instanceof Dfi_View_Helper_DynamicForm_Button) {
+                if (!$buttonOptions instanceof Button) {
 
                     $button = array(
                         'name' => '"' . $buttonOptions->name . '"',
@@ -74,30 +82,30 @@ class Dfi_View_Helper_DynamicForm extends Zend_View_Helper_Abstract
                         $callback = $buttonOptions->successCallback;
                         $button['successCallback'] = $this->formatCallback($callback);
                     } else {
-                        $button['successCallback'] = $this->formatCallback(Dfi_View_Helper_DynamicForm_Callback::create());
+                        $button['successCallback'] = $this->formatCallback(Callback::create());
                     }
                     if (isset($buttonOptions->formCallback)) {
                         $callback = $buttonOptions->formCallback;
                         $button['formCallback'] = $this->formatCallback($callback);
                     } else {
-                        $button['formCallback'] = $this->formatCallback(Dfi_View_Helper_DynamicForm_Callback::create());
+                        $button['formCallback'] = $this->formatCallback(Callback::create());
                     }
                     if (isset($buttonOptions->errorCallback)) {
                         $callback = $buttonOptions->errorCallback;
                         $button['errorCallback'] = $this->formatCallback($callback);
                     } else {
-                        $button['errorCallback'] = $this->formatCallback(Dfi_View_Helper_DynamicForm_Callback::create());
+                        $button['errorCallback'] = $this->formatCallback(Callback::create());
                     }
                     if (isset($buttonOptions->reloadCallback)) {
                         $callback = $buttonOptions->reloadCallback;
                         $button['reloadCallback'] = $this->formatCallback($callback);
                     } else {
-                        $button['reloadCallback'] = $this->formatCallback(Dfi_View_Helper_DynamicForm_Callback::create());
+                        $button['reloadCallback'] = $this->formatCallback(Callback::create());
                     }
                     $buttons[] = "{\n" . $this->formatButtonOptions($button) . "\t\n}";
                 } else {
                     $buttonOption = $buttonOptions;
-                    /* @var $buttonOption  Dfi_View_Helper_DynamicForm_Button */
+                    /* @var $buttonOption  Button */
 
                     $type = $buttonOption->getType();
 
@@ -117,29 +125,29 @@ class Dfi_View_Helper_DynamicForm extends Zend_View_Helper_Abstract
                         if ($buttonOption->getSuccessCallback()) {
                             $button['successCallback'] = $this->formatCallback($buttonOption->getSuccessCallback());
                         } else {
-                            $button['successCallback'] = $this->formatCallback(Dfi_View_Helper_DynamicForm_Callback::create());
+                            $button['successCallback'] = $this->formatCallback(Callback::create());
                         }
                         if ($buttonOption->getFormCallback()) {
                             $button['formCallback'] = $this->formatCallback($buttonOption->getFormCallback());
                         } else {
-                            $button['formCallback'] = $this->formatCallback(Dfi_View_Helper_DynamicForm_Callback::create());
+                            $button['formCallback'] = $this->formatCallback(Callback::create());
                         }
                         if ($buttonOption->getErrorCallback()) {
                             $button['errorCallback'] = $this->formatCallback($buttonOption->getErrorCallback());
                         } else {
-                            $button['errorCallback'] = $this->formatCallback(Dfi_View_Helper_DynamicForm_Callback::create());
+                            $button['errorCallback'] = $this->formatCallback(Callback::create());
                         }
                         if ($buttonOption->getReloadCallback()) {
                             $button['reloadCallback'] = $this->formatCallback($buttonOption->getReloadCallback());
                         } else {
-                            $button['reloadCallback'] = $this->formatCallback(Dfi_View_Helper_DynamicForm_Callback::create());
+                            $button['reloadCallback'] = $this->formatCallback(Callback::create());
                         }
                     } else {
                         $button = array_merge(array('name' => '"' . $buttonOption->getName() . '"'), $buttonOption->getOptions());
                         if ($buttonOption->getButtonCallback()) {
                             $button['buttonCallback'] = $this->formatCallback($buttonOption->getButtonCallback());
                         } else {
-                            $button['buttonCallback'] = $this->formatCallback(Dfi_View_Helper_DynamicForm_Callback::create());
+                            $button['buttonCallback'] = $this->formatCallback(Callback::create());
                         }
                     }
                     $buttons[] = '"' . $buttonOption->getName() . '":' . "{\n" . $this->formatButtonOptions($button) . "\t\n}";
@@ -153,7 +161,7 @@ class Dfi_View_Helper_DynamicForm extends Zend_View_Helper_Abstract
 
     private function formatCallback($callBack)
     {
-        if (!$callBack instanceof Dfi_View_Helper_DynamicForm_Callback) {
+        if (!$callBack instanceof Callback) {
             throw new Exception('old format');
             /* @var  $options stdClass */
             /*
@@ -172,7 +180,7 @@ class Dfi_View_Helper_DynamicForm extends Zend_View_Helper_Abstract
                 $steps = implode(";\n\t\t\t", $steps);
             }*/
         } else {
-            /* @var $callBack Dfi_View_Helper_DynamicForm_Callback */
+            /* @var $callBack Callback */
             $arguments = array();
             if ($callBack->getArguments()) {
                 foreach ($callBack->getArguments() as $argument) {
@@ -199,7 +207,7 @@ class Dfi_View_Helper_DynamicForm extends Zend_View_Helper_Abstract
 
     }
 
-    private function formatMap(Dfi_View_Helper_DynamicForm_Map $map)
+    private function formatMap(Map $map)
     {
         if ($map->getItems() > 0) {
             $rows = array();

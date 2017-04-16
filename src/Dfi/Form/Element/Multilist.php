@@ -1,5 +1,11 @@
 <?
-class Dfi_Form_Element_Multilist extends Zend_Form_Element_Multiselect
+namespace Dfi\Form\Element;
+use Criteria;
+use Exception;
+use Zend_Form_Element_Multiselect;
+use Zend_View_Interface;
+
+class Multilist extends Zend_Form_Element_Multiselect
 {
 const SET_MODEL_NAME_NOT_SET ='you must set model name first';
 

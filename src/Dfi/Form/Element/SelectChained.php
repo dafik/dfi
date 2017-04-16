@@ -1,6 +1,13 @@
 <?
 
-class Dfi_Form_Element_SelectChained extends Zend_Form_Element_Select
+namespace Dfi\Form\Element;
+
+use Dfi\View\Helper\FormSelectChained;
+use Zend_Form_Element_Multi;
+use Zend_Form_Element_Select;
+use Zend_View;
+
+class SelectChained extends Zend_Form_Element_Select
 {
     /**
      * Use formSelect view helper by default
@@ -52,9 +59,9 @@ class Dfi_Form_Element_SelectChained extends Zend_Form_Element_Select
     public function render(Zend_View $view = null)
     {
         if ($view) {
-            $view->addHelperPath(Dfi_View_Helper_FormSelectChained::getPath(),'Dfi_View_Helper');
+            $view->addHelperPath(FormSelectChained::getPath(),'Dfi_View_Helper');
         } else {
-            $this->getView()->addHelperPath(Dfi_View_Helper_FormSelectChained::getPath(),'Dfi_View_Helper');
+            $this->getView()->addHelperPath(FormSelectChained::getPath(),'Dfi_View_Helper');
         }
 
         return parent::render($view);

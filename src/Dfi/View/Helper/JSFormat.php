@@ -1,6 +1,9 @@
 <?php
+namespace Dfi\View\Helper;
 
-class Dfi_View_Helper_JSFormat extends Zend_View_Helper_Abstract
+use Zend_View_Helper_Abstract;
+
+class JSFormat extends Zend_View_Helper_Abstract
 {
 
 

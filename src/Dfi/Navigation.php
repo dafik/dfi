@@ -1,6 +1,26 @@
 <?php
+namespace Dfi;
 
-class Dfi_Navigation
+use Dfi\Auth\Acl;
+use Dfi\Iface\Helper;
+use Dfi\Iface\Model\Sys\Module;
+use Dfi\Iface\Model\Sys\User;
+use Dfi\Iface\Provider\Sys\ModuleProvider;
+use Zend_Acl;
+use Zend_Auth;
+use Zend_Controller_Front;
+use Zend_Navigation;
+use Zend_Navigation_Container;
+use Zend_Navigation_Page;
+use Zend_Navigation_Page_Mvc;
+use Zend_Navigation_Page_Uri;
+use Zend_Registry;
+use Zend_View_Helper_Navigation;
+use Zend_View_Helper_Navigation_Breadcrumbs;
+use Zend_View_Helper_Navigation_Menu;
+use Zend_View_Interface;
+
+class Navigation
 {
     /**
      * @var Zend_Navigation
@@ -16,7 +36,7 @@ class Dfi_Navigation
     /**
      * Singelton instance
      *
-     * @var Dfi_Navigation
+     * @var Navigation
      */
     private static $_instance;
 
@@ -34,27 +54,32 @@ class Dfi_Navigation
     /**
      * Singelton constructor
      *
-     * @return Dfi_Navigation
+     * @return Navigation
      */
     public static function getInstance()
     {
-        if (self::$_instance instanceof Dfi_Navigation) {
+        if (self::$_instance instanceof Navigation) {
             return self::$_instance;
         }
-        return self::$_instance = new Dfi_Navigation();
+        return self::$_instance = new Navigation();
     }
 
     private function createNavigation()
     {
 
-        $this->moduleConf = Dfi_Auth_Acl::getMapModules();
+        $this->moduleConf = Acl::getMapModules();
         $nav = New Zend_Navigation();
 
-        $modules = SysModuleQuery::create()
+        $providerName = Helper::getClass("iface.provider.sys.module");
+        /** @var ModuleProvider $provider */
+        $provider = $providerName::create();
+
+
+        $modules = $provider
             ->filterByTreeLevel(1)
             ->orderByTreeLeft()->find();
         foreach ($modules as $module) {
-            /* @var $module SysModule */
+            /* @var $module Module */
             $page = $this->createPage($module);
             $nav->addPage($page);
             if ($module->hasChildren()) {
@@ -73,10 +98,10 @@ class Dfi_Navigation
     }
 
     /**
-     * @param SysModule $module
+     * @param Module $module
      * @return Zend_Navigation_Page
      */
-    private function createPage(SysModule $module)
+    private function createPage(Module $module)
     {
         $resourceId = $module->getId();
         if ($module->isMvcPage()) {
@@ -117,11 +142,11 @@ class Dfi_Navigation
         return $page;
     }
 
-    private function addChildren(Zend_Navigation_Container $nav, SysModule $module)
+    private function addChildren(Zend_Navigation_Container $nav, Module $module)
     {
 
         $children = $module->getChildren();
-        /* @var $module SysModule */
+        /* @var $module Module */
         foreach ($children as $module) {
 
             $page = $this->createPage($module);
@@ -131,7 +156,7 @@ class Dfi_Navigation
                     $this->addChildren($page, $module);
                 } else {
 
-                    /** @var SysModule $child */
+                    /** @var Module $child */
                     $child = $module->getFirstChild();
                     $page = $this->createPage($child);
                 }
@@ -180,7 +205,7 @@ class Dfi_Navigation
                 $acl = Zend_Registry::get('acl');
                 /* @var $acl Zend_Acl */
                 $identity = Zend_Auth::getInstance()->getIdentity();
-                /* @var $identity SysUser */
+                /* @var $identity User */
 
                 if ($acl && $identity) {
                     ;

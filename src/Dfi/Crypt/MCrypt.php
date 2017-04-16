@@ -1,6 +1,14 @@
 <?php
 
-class Dfi_Crypt_MCrypt implements Dfi_Crypt_Interface
+namespace Dfi\Crypt;
+
+use Bootstrap;
+use Exception;
+use Zend_Config;
+use Zend_Registry;
+use Zend_View;
+
+class MCrypt implements McryptInterface
 {
     const EXTENSION = 'mcrypt';
     const CRYPT = 'crypt';

@@ -1,6 +1,9 @@
 <?php
 
-class Dfi_View_Helper_FormIcon extends Zend_View_Helper_FormText
+namespace Dfi\View\Helper;
+use Zend_View_Helper_FormText;
+
+class FormIcon extends Zend_View_Helper_FormText
 {
     /**
      * Generates a 'text' element.

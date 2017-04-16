@@ -1,18 +1,28 @@
 <?
 
-class Dfi_Asterisk_Helper
+namespace Dfi\Asterisk;
+
+use Dfi\Iface\Provider\Pbx\QueueProvider;
+
+class Helper
 {
     public static function getQueuesList()
     {
 
-        $queuesPredictive = PbxQueueQuery::create()
+        $queueProviderName = \Dfi\Iface\Helper::getClass("iface.provider.pbx.queue");
+        /** @var QueueProvider $queueProvider */
+        $queueProvider = $queueProviderName::create();
+
+        $queuesPredictive = $queueProvider
             ->filTerByType('predictive')
             ->filterByIsActive(true)
             ->select(array('Name'))
             ->find()
             ->toArray();
 
-        $queuesIncoming = PbxQueueQuery::create()
+        /** @var QueueProvider $queueProvider */
+        $queueProvider = $queueProviderName::create();
+        $queuesIncoming = $queueProvider
             ->filTerByType('incoming')
             ->filterByIsActive(true)
             ->select(array('Name'))

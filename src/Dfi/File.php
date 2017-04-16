@@ -1,6 +1,7 @@
 <?
+namespace Dfi;
 
-class Dfi_File
+class File
 {
     public static function isWriteAble($filename)
     {

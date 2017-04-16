@@ -1,4 +1,6 @@
 <?php
+namespace Dfi\Form\Decorator;
+use Zend_Form_Decorator_HtmlTag;
 
 /**
  * Ez_Form_Decorator_BootstrapTag
@@ -17,7 +19,7 @@
  * Any other options passed are processed as HTML attributes of the tag.
  *
  */
-class Dfi_Form_Decorator_BootstrapTag extends Zend_Form_Decorator_HtmlTag
+class BootstrapTag extends Zend_Form_Decorator_HtmlTag
 {
     /**
      * Render content wrapped in an HTML tag

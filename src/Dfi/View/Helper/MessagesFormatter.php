@@ -1,10 +1,13 @@
 <?php
+namespace Dfi\View\Helper;
+use Zend_View_Helper_Abstract;
+
 /**
  * Messages helper
  *
  */
 
-class Dfi_View_Helper_MessagesFormatter extends Zend_View_Helper_Abstract
+class MessagesFormatter extends Zend_View_Helper_Abstract
 {
     /**
      * Formats given messages in a paragraph with given class

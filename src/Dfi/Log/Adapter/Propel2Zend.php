@@ -1,6 +1,11 @@
 <?php
 
-class Dfi_Log_Adapter_Propel2Zend implements BasicLogger
+namespace Dfi\Log\Adapter;
+
+use BasicLogger;
+use Zend_Log;
+
+class Propel2Zend implements BasicLogger
 {
     /**
      * Instance of mojavi logger
@@ -99,7 +104,7 @@ class Dfi_Log_Adapter_Propel2Zend implements BasicLogger
     {
         if (is_null($this->logger)) {
             $x = 1;
-           // $this->logger = LogManager::getLogger('propel');
+            // $this->logger = LogManager::getLogger('propel');
         }
 
         // get a backtrace to pass class, function, file, & line to Mojavi logger

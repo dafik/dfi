@@ -1,6 +1,16 @@
 <?php
 
-class Dfi_Auth_Adapter_Db implements Dfi_Auth_Adapter_AdapterInterface
+namespace Dfi\Auth\Adapter;
+
+use Dfi\App\Config;
+use Dfi\Auth\Adapter\PasswordHasher\PasswordHasherInterface;
+use Dfi\Iface\Helper;
+use Dfi\Iface\Model\Sys\User;
+use Dfi\Iface\Model\Sys\UserProvider;
+use Exception;
+use Zend_Auth_Result;
+
+class Db implements AdapterInterface
 {
     protected $_password;
     protected $_options;
@@ -8,7 +18,7 @@ class Dfi_Auth_Adapter_Db implements Dfi_Auth_Adapter_AdapterInterface
 
     public function __construct(array $options = array(), $username = null, $password = null)
     {
-        $options = Dfi_App_Config::getConfig(true, 'main.auth');
+        $options = Config::getConfig(true, 'main.auth');
 
 
         $this->setOptions($options);
@@ -42,7 +52,7 @@ class Dfi_Auth_Adapter_Db implements Dfi_Auth_Adapter_AdapterInterface
      * Sets the username for binding
      *
      * @param  string $username The username for binding
-     * @return Dfi_Auth_Adapter_Db Provides a fluent interface
+     * @return Db Provides a fluent interface
      */
     public function setUsername($username)
     {
@@ -65,7 +75,7 @@ class Dfi_Auth_Adapter_Db implements Dfi_Auth_Adapter_AdapterInterface
      * Sets the passwort for the account
      *
      * @param  string $password The password of the account being authenticated
-     * @return Dfi_Auth_Adapter_Db Provides a fluent interface
+     * @return Db Provides a fluent interface
      */
     public function setPassword($password)
     {
@@ -103,11 +113,8 @@ class Dfi_Auth_Adapter_Db implements Dfi_Auth_Adapter_AdapterInterface
             return new Zend_Auth_Result($code, '', $messages);
         } else {
             try {
-                $modelClass = $this->_options['table'];
-                /*                if (false === strpos($modelClass, 'models\Cc\\')) {
-
-                                    $modelClass = 'models\Cc\\' . $modelClass;
-                                }*/
+                $modelClass = Helper::getClass("iface.provider.sys.user");
+                /** @var User $model */
                 $model = new $modelClass;
             } catch (Exception $e) {
                 $code = Zend_Auth_Result::FAILURE_UNCATEGORIZED;
@@ -159,12 +166,13 @@ class Dfi_Auth_Adapter_Db implements Dfi_Auth_Adapter_AdapterInterface
             $hash = $this->_options['hash'];
         }
 
+        $providerName = Helper::getClass("iface.provider.sys.user");
 
-        $queryclass = $modelClass . 'Query';
-        /** @noinspection PhpUndefinedMethodInspection */
-        $qry = $queryclass::create();
-        $method = 'findOneBy' . $this->_options['field']['login'];
-        $obj = $qry->$method($this->_username);
+        /** @var UserProvider $provider */
+        $provider = $providerName::create();
+
+
+        $obj = $provider->findOneByLogin($username);
 
 
         if (!$obj) {
@@ -173,6 +181,7 @@ class Dfi_Auth_Adapter_Db implements Dfi_Auth_Adapter_AdapterInterface
             return new Zend_Auth_Result($code, '', $messages);
         }
 
+        /** @var PasswordHasherInterface $hasher */
         $hasher = $modelClass::getPasswordHasher();
 
         $sHash = $obj->$getter();

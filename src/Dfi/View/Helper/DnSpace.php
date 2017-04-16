@@ -1,10 +1,12 @@
 <?php
+namespace Dfi\View\Helper;
+use Zend_View_Helper_Abstract;
 
 /**
  * Helper for rendering a pager footer.
  *
  */
-class Dfi_View_Helper_DnSpace extends Zend_View_Helper_Abstract
+class DnSpace extends Zend_View_Helper_Abstract
 {
 
 

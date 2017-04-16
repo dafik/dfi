@@ -1,5 +1,10 @@
 <?php
 
+namespace Dfi\Form\Subform;
+
+use Dfi\Form\Decorator as FormDecorator;
+use Zend_Form;
+
 /**
  * Default Decorators Set
  *
@@ -19,7 +24,7 @@
  * );
  *
  */
-class Dfi_Form_SubForm_Decorator extends Dfi_Form_Decorator
+class Decorator extends FormDecorator
 {
     /**
      * Form Element Decorator

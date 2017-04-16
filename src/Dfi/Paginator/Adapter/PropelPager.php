@@ -1,7 +1,11 @@
 <?php
+namespace  Dfi\Paginator\Adapter;
 
 
-class Dfi_Paginator_Adapter_PropelPager implements Zend_Paginator_Adapter_Interface
+use PropelModelPager;
+use Zend_Paginator_Adapter_Interface;
+
+class PropelPager implements Zend_Paginator_Adapter_Interface
 {
     /**
      * @var PropelModelPager

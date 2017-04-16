@@ -1,6 +1,10 @@
 <?php
+namespace Dfi;
 
-class Dfi_Ldap extends Zend_Ldap
+use Zend_Ldap;
+use Zend_Ldap_Exception;
+
+class Ldap extends Zend_Ldap
 {
 
     const TIMEOUT = 5;

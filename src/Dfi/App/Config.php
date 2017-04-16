@@ -1,6 +1,12 @@
-<?php
+<?
+namespace Dfi\App;
 
-class Dfi_App_Config
+use Exception;
+use Zend_Config;
+use Zend_Config_Ini;
+use Zend_Registry;
+
+class Config
 {
 
     /**

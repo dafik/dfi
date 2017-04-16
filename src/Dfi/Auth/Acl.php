@@ -1,6 +1,17 @@
 <?
 
-class Dfi_Auth_Acl
+namespace Dfi\Auth;
+
+use Criteria;
+use Dfi\Iface\Helper;
+use Dfi\Iface\Model\Sys\Module;
+use Dfi\Iface\Model\Sys\Role;
+use Dfi\Iface\Provider\Sys\ModuleProvider;
+use Dfi\Iface\Provider\Sys\RoleProvider;
+use Exception;
+use Zend_Controller_Request_Abstract;
+
+class Acl
 {
     const FILE_ACL = 'configs/acl/acl-conf.php';
     const FILE_MODULES = 'configs/acl/modules-conf.php';
@@ -14,11 +25,15 @@ class Dfi_Auth_Acl
 
     private static function generateAclMap()
     {
-        $roles = SysRoleQuery::create()->find();
+        $providerName = Helper::getClass("iface.provider.sys.role");
+        /** @var RoleProvider $provider */
+        $provider = $providerName::create();
+
+        $roles = $provider->find();
         $map = array();
 
         foreach ($roles as $role) {
-            /* @var $role SysRole */
+            /* @var $role Role */
             $map[$role->getId()] = $role->getEffectiveModules();
         }
         self::write(self::FILE_ACL, $map);
@@ -26,7 +41,11 @@ class Dfi_Auth_Acl
 
     private static function generateModuleMap()
     {
-        $modules = SysModuleQuery::create()
+        $providerName = Helper::getClass("iface.provider.sys.module");
+        /** @var ModuleProvider $provider */
+        $provider = $providerName::create();
+
+        $modules = $provider
             ->filterByModule(null, Criteria::ISNOTNULL)
             ->filterByModule(null, Criteria::ISNOTNULL)
             ->filterByModule(null, Criteria::ISNOTNULL)
@@ -35,7 +54,7 @@ class Dfi_Auth_Acl
         $map = array();
 
         foreach ($modules as $module) {
-            /* @var $module SysModule */
+            /* @var $module Module */
             if (!isset($map[$module->getModule()])) {
                 $map[$module->getModule()] = array();
             }

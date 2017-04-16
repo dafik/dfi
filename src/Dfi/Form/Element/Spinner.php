@@ -1,6 +1,9 @@
 <?php
+namespace Dfi\Form\Element;
 
-class Dfi_Form_Element_Spinner extends Zend_Form_Element_Text
+use Zend_Form_Element_Text;
+
+class Spinner extends Zend_Form_Element_Text
 {
     public $helper = 'formSpinner';
 

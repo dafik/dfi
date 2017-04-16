@@ -1,6 +1,7 @@
 <?php
+namespace Dfi\View\Helper\DynamicForm;
 
-class Dfi_View_Helper_DynamicForm_Modal
+class Modal
 {
     /**
      * @var string
@@ -23,27 +24,27 @@ class Dfi_View_Helper_DynamicForm_Modal
     protected $buttons;
 
     /**
-     * @var Dfi_View_Helper_DynamicForm_Callback
+     * @var Callback
      */
     protected $getTitle;
 
     /**
-     * @var Dfi_View_Helper_DynamicForm_Map
+     * @var Map
      */
     protected $dialogOptions;
 
     /**
-     * @var Dfi_View_Helper_DynamicForm_Callback
+     * @var Callback
      */
     protected $openSuccessCallback;
 
     /**
-     * @var Dfi_View_Helper_DynamicForm_Callback
+     * @var Callback
      */
     protected $afterOpenCallback;
 
     /**
-     * @var Dfi_View_Helper_DynamicForm_Callback
+     * @var Callback
      */
     protected $beforeCloseCallback;
 
@@ -55,7 +56,7 @@ class Dfi_View_Helper_DynamicForm_Modal
 
     /**
      * @static
-     * @return Dfi_View_Helper_DynamicForm_Modal
+     * @return Modal
      */
     public static function create()
     {
@@ -64,17 +65,17 @@ class Dfi_View_Helper_DynamicForm_Modal
 
 
     /**
-     * @param Dfi_View_Helper_DynamicForm_Callback $afterOpenCallback
-     * @return Dfi_View_Helper_DynamicForm_Modal
+     * @param Callback $afterOpenCallback
+     * @return Modal
      */
-    public function setAfterOpenCallback(Dfi_View_Helper_DynamicForm_Callback $afterOpenCallback)
+    public function setAfterOpenCallback(Callback $afterOpenCallback)
     {
         $this->afterOpenCallback = $afterOpenCallback;
         return $this;
     }
 
     /**
-     * @return \Dfi_View_Helper_DynamicForm_Callback
+     * @return Callback
      */
     public function getAfterOpenCallback()
     {
@@ -83,17 +84,17 @@ class Dfi_View_Helper_DynamicForm_Modal
 
 
     /**
-     * @param Dfi_View_Helper_DynamicForm_Callback $beforeCloseCallback
-     * @return Dfi_View_Helper_DynamicForm_Modal
+     * @param Callback $beforeCloseCallback
+     * @return Modal
      */
-    public function setBeforeCloseCallback(Dfi_View_Helper_DynamicForm_Callback $beforeCloseCallback)
+    public function setBeforeCloseCallback(Callback $beforeCloseCallback)
     {
         $this->beforeCloseCallback = $beforeCloseCallback;
         return $this;
     }
 
     /**
-     * @return \Dfi_View_Helper_DynamicForm_Callback
+     * @return Callback
      */
     public function getBeforeCloseCallback()
     {
@@ -102,10 +103,10 @@ class Dfi_View_Helper_DynamicForm_Modal
 
 
     /**
-     * @param Dfi_View_Helper_DynamicForm_Button $button
-     * @return Dfi_View_Helper_DynamicForm_Modal
+     * @param Button $button
+     * @return Modal
      */
-    public function addButton(Dfi_View_Helper_DynamicForm_Button $button)
+    public function addButton(Button $button)
     {
         $this->buttons[] = $button;
         return $this;
@@ -121,17 +122,17 @@ class Dfi_View_Helper_DynamicForm_Modal
 
 
     /**
-     * @param Dfi_View_Helper_DynamicForm_Map $dialogOptions
-     * @return Dfi_View_Helper_DynamicForm_Modal
+     * @param Map $dialogOptions
+     * @return Modal
      */
-    public function setDialogOptions(Dfi_View_Helper_DynamicForm_Map $dialogOptions)
+    public function setDialogOptions(Map $dialogOptions)
     {
         $this->dialogOptions = $dialogOptions;
         return $this;
     }
 
     /**
-     * @return \Dfi_View_Helper_DynamicForm_Map
+     * @return Map
      */
     public function getDialogOptions()
     {
@@ -140,17 +141,17 @@ class Dfi_View_Helper_DynamicForm_Modal
 
 
     /**
-     * @param Dfi_View_Helper_DynamicForm_Callback $getTitle
-     * @return Dfi_View_Helper_DynamicForm_Modal
+     * @param Callback $getTitle
+     * @return Modal
      */
-    public function setGetTitle(Dfi_View_Helper_DynamicForm_Callback $getTitle)
+    public function setGetTitle(Callback $getTitle)
     {
         $this->getTitle = $getTitle;
         return $this;
     }
 
     /**
-     * @return \Dfi_View_Helper_DynamicForm_Callback
+     * @return Callback
      */
     public function getGetTitle()
     {
@@ -159,17 +160,17 @@ class Dfi_View_Helper_DynamicForm_Modal
 
 
     /**
-     * @param Dfi_View_Helper_DynamicForm_Callback $openSuccessCallback
-     * @return Dfi_View_Helper_DynamicForm_Modal
+     * @param Callback $openSuccessCallback
+     * @return Modal
      */
-    public function setOpenSuccessCallback(Dfi_View_Helper_DynamicForm_Callback $openSuccessCallback)
+    public function setOpenSuccessCallback(Callback $openSuccessCallback)
     {
         $this->openSuccessCallback = $openSuccessCallback;
         return $this;
     }
 
     /**
-     * @return \Dfi_View_Helper_DynamicForm_Callback
+     * @return Callback
      */
     public function getOpenSuccessCallback()
     {
@@ -179,7 +180,7 @@ class Dfi_View_Helper_DynamicForm_Modal
 
     /**
      * @param $openUrl
-     * @return Dfi_View_Helper_DynamicForm_Modal
+     * @return Modal
      */
     public function setOpenUrl($openUrl)
     {
@@ -198,7 +199,7 @@ class Dfi_View_Helper_DynamicForm_Modal
 
     /**
      * @param $selector
-     * @return Dfi_View_Helper_DynamicForm_Modal
+     * @return Modal
      */
     public function setSelector($selector)
     {
@@ -217,7 +218,7 @@ class Dfi_View_Helper_DynamicForm_Modal
 
     /**
      * @param $title
-     * @return Dfi_View_Helper_DynamicForm_Modal
+     * @return Modal
      */
     public function setTitle($title)
     {
@@ -235,7 +236,7 @@ class Dfi_View_Helper_DynamicForm_Modal
 
     /**
      * @param $array
-     * @return Dfi_View_Helper_DynamicForm_Modal
+     * @return Modal
      */
     public function setOpenUrlParams($array)
     {

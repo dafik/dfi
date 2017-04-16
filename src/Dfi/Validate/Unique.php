@@ -1,5 +1,10 @@
 <?
-class Dfi_Validate_Unique extends Zend_Validate_Abstract{
+namespace Dfi\Validate;
+
+use Criteria;
+use Zend_Validate_Abstract;
+
+class Unique extends Zend_Validate_Abstract{
   	/**
      * Validation failure message key for when the value contains non-digit characters
      */

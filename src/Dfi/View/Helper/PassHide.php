@@ -1,10 +1,12 @@
 <?php
+namespace Dfi\View\Helper;
+use Zend_View_Helper_Abstract;
 
 /**
  * Helper for rendering a pager footer.
  *
  */
-class Dfi_View_Helper_PassHide extends Zend_View_Helper_Abstract
+class PassHide extends Zend_View_Helper_Abstract
 {
 
 

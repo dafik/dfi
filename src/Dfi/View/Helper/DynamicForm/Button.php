@@ -1,4 +1,5 @@
 <?php
+namespace Dfi\View\Helper\DynamicForm;
 
 /**
  * Created by IntelliJ IDEA.
@@ -7,7 +8,7 @@
  * Time: 09:42
  * To change this template use File | Settings | File Templates.
  */
-class Dfi_View_Helper_DynamicForm_Button
+class Button
 {
 
     /**
@@ -26,27 +27,27 @@ class Dfi_View_Helper_DynamicForm_Button
     protected $url;
 
     /**
-     * @var Dfi_View_Helper_DynamicForm_Callback
+     * @var Callback
      */
     protected $successCallback;
 
     /**
-     * @var Dfi_View_Helper_DynamicForm_Callback
+     * @var Callback
      */
     protected $formCallback;
 
     /**
-     * @var Dfi_View_Helper_DynamicForm_Callback
+     * @var Callback
      */
     protected $errorCallback;
 
     /**
-     * @var Dfi_View_Helper_DynamicForm_Callback
+     * @var Callback
      */
     protected $buttonCallback;
 
     /**
-     * @var Dfi_View_Helper_DynamicForm_Callback
+     * @var Callback
      */
     protected $reloadCallback;
 
@@ -55,7 +56,7 @@ class Dfi_View_Helper_DynamicForm_Button
 
     /**
      * @static
-     * @return Dfi_View_Helper_DynamicForm_Button
+     * @return Button
      */
     public static function create()
     {
@@ -65,7 +66,7 @@ class Dfi_View_Helper_DynamicForm_Button
 
     /**
      * @param $buttonCallback
-     * @return Dfi_View_Helper_DynamicForm_Button
+     * @return Button
      */
     public function setButtonCallback($buttonCallback)
     {
@@ -74,7 +75,7 @@ class Dfi_View_Helper_DynamicForm_Button
     }
 
     /**
-     * @return \Dfi_View_Helper_DynamicForm_Callback
+     * @return Callback
      */
     public function getButtonCallback()
     {
@@ -84,7 +85,7 @@ class Dfi_View_Helper_DynamicForm_Button
 
     /**
      * @param $errorCallback
-     * @return Dfi_View_Helper_DynamicForm_Button
+     * @return Button
      */
     public function setErrorCallback($errorCallback)
     {
@@ -93,7 +94,7 @@ class Dfi_View_Helper_DynamicForm_Button
     }
 
     /**
-     * @return \Dfi_View_Helper_DynamicForm_Callback
+     * @return Callback
      */
     public function getErrorCallback()
     {
@@ -103,7 +104,7 @@ class Dfi_View_Helper_DynamicForm_Button
 
     /**
      * @param $formCallback
-     * @return Dfi_View_Helper_DynamicForm_Button
+     * @return Button
      */
     public function setFormCallback($formCallback)
     {
@@ -112,7 +113,7 @@ class Dfi_View_Helper_DynamicForm_Button
     }
 
     /**
-     * @return \Dfi_View_Helper_DynamicForm_Callback
+     * @return Callback
      */
     public function getFormCallback()
     {
@@ -120,7 +121,7 @@ class Dfi_View_Helper_DynamicForm_Button
     }
 
     /**
-     * @param \Dfi_View_Helper_DynamicForm_Callback $reloadCallback
+     * @param Callback $reloadCallback
      * @return $this
      */
     public function setReloadCallback($reloadCallback)
@@ -130,7 +131,7 @@ class Dfi_View_Helper_DynamicForm_Button
     }
 
     /**
-     * @return \Dfi_View_Helper_DynamicForm_Callback
+     * @return Callback
      */
     public function getReloadCallback()
     {
@@ -140,7 +141,7 @@ class Dfi_View_Helper_DynamicForm_Button
 
     /**
      * @param $name
-     * @return Dfi_View_Helper_DynamicForm_Button
+     * @return Button
      */
     public function setName($name)
     {
@@ -158,7 +159,7 @@ class Dfi_View_Helper_DynamicForm_Button
 
     /**
      * @param $successCallback
-     * @return Dfi_View_Helper_DynamicForm_Button
+     * @return Button
      */
     public function setSuccessCallback($successCallback)
     {
@@ -167,7 +168,7 @@ class Dfi_View_Helper_DynamicForm_Button
     }
 
     /**
-     * @return \Dfi_View_Helper_DynamicForm_Callback
+     * @return Callback
      */
     public function getSuccessCallback()
     {
@@ -177,7 +178,7 @@ class Dfi_View_Helper_DynamicForm_Button
 
     /**
      * @param $type
-     * @return Dfi_View_Helper_DynamicForm_Button
+     * @return Button
      */
     public function setType($type)
     {
@@ -195,7 +196,7 @@ class Dfi_View_Helper_DynamicForm_Button
 
     /**
      * @param $url
-     * @return Dfi_View_Helper_DynamicForm_Button
+     * @return Button
      */
     public function setUrl($url)
     {

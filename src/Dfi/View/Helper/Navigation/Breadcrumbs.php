@@ -1,6 +1,11 @@
 <?php
+namespace Dfi\View\Helper\Navigation;
 
-class Dfi_View_Helper_Navigation_Breadcrumbs extends Zend_View_Helper_Navigation_Breadcrumbs
+use Zend_Navigation_Container;
+use Zend_Navigation_Page;
+use Zend_View_Helper_Navigation_Breadcrumbs;
+
+class Breadcrumbs extends Zend_View_Helper_Navigation_Breadcrumbs
 
 {
 

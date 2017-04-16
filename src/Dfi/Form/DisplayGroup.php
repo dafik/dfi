@@ -1,6 +1,9 @@
 <?php
+namespace Dfi\Form;
 
-class Dfi_Form_DisplayGroup extends Zend_Form_DisplayGroup
+use Zend_Form_DisplayGroup;
+
+class DisplayGroup extends Zend_Form_DisplayGroup
 {
     /**
      * @return mixed

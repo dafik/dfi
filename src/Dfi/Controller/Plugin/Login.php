@@ -1,11 +1,21 @@
 <?php
 
-class Dfi_Controller_Plugin_Login extends Zend_Controller_Plugin_Abstract
+namespace Dfi\Controller\Plugin;
+
+use Dfi\App\Config;
+use Dfi\Auth\Storage\Cookie;
+use Zend_Auth;
+use Zend_Controller_Plugin_Abstract;
+use Zend_Controller_Request_Abstract;
+use Zend_Controller_Request_Http;
+use Zend_Layout;
+
+class Login extends Zend_Controller_Plugin_Abstract
 {
 
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
-        Zend_Auth::getInstance()->setStorage(new Dfi_Auth_Storage_Cookie('user'));
+        Zend_Auth::getInstance()->setStorage(new Cookie('user'));
 
         /** @var Zend_Controller_Request_Http $request */
         $request = $this->getRequest();
@@ -31,7 +41,7 @@ class Dfi_Controller_Plugin_Login extends Zend_Controller_Plugin_Abstract
                 if ($request->getControllerName() == 'index' && $request->getActionName() == 'index') {
                     if (!Zend_Layout::getMvcInstance()) {
 
-                        $layoutPath = Dfi_App_Config::get('layout.layoutPath');
+                        $layoutPath = Config::get('layout.layoutPath');
                         Zend_Layout::startMvc($layoutPath);
                     }
                 }

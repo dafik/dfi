@@ -1,11 +1,15 @@
 <?php
+namespace Dfi\View\Helper\Form;
+use Zend_Filter_Exception;
+use Zend_Filter_PregReplace;
+use Zend_View_Helper_FormElement;
 
 /**
  * Ez_Form_Decorator_BootstrapErrors
  *
  * Wraps errors in span with class help-inline
  */
-class Dfi_View_Helper_Form_MultiCheckboxDataTable extends Zend_View_Helper_FormElement
+class MultiCheckboxDataTable extends Zend_View_Helper_FormElement
 {
     /**
      * Input type to use

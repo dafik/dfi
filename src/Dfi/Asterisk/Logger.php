@@ -1,5 +1,10 @@
 <?php
-class Dfi_Asterisk_Logger
+namespace Dfi\Asterisk;
+
+use Exception;
+use Zend_Log;
+
+class Logger
 {
 
 	/**

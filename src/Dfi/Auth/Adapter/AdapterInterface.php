@@ -1,7 +1,10 @@
 <?php
+namespace Dfi\Auth\Adapter;
 
 
-interface  Dfi_Auth_Adapter_AdapterInterface extends Zend_Auth_Adapter_Interface
+use Zend_Auth_Adapter_Interface;
+
+interface  AdapterInterface extends Zend_Auth_Adapter_Interface
 {
 
     public function setPassword($password);

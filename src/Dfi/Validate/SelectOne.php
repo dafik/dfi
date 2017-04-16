@@ -1,6 +1,10 @@
 <?php
+namespace Dfi\Validate;
 
-class Dfi_Validate_SelectOne extends Zend_Validate_Abstract
+
+use Zend_Validate_Abstract;
+
+class SelectOne extends Zend_Validate_Abstract
 {
     /**
      * Validation failure message key for when the value contains non-digit characters

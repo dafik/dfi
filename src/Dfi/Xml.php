@@ -1,6 +1,14 @@
 <?php
+namespace Dfi;
 
-class Dfi_Xml
+use DOMDocument;
+use DOMXPath;
+use Exception;
+use LibXMLError;
+use SimpleXMLElement;
+use XMLWriter;
+
+class Xml
 {
 
 
@@ -312,7 +320,7 @@ class Dfi_Xml
     {
         if ($value) {
             if (!$xml) {
-                $xml = simplexml_load_string(Dfi_Xml::from_array(array()));
+                $xml = simplexml_load_string(Xml::from_array(array()));
             }
             $elements = $xml->xpath($xpathQuery);
 

@@ -1,6 +1,17 @@
 <?php
+namespace Dfi\Auth;
 
-class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
+use Dfi\App\Config;
+use Dfi\Auth\Adapter\AdapterInterface;
+use Dfi\Controller\Action\Helper\Messages;
+use Dfi\Iface\Model\Sys\User;
+use Dfi\Iface\Model\Sys\UserProvider;
+use Exception;
+use Zend_Auth_Adapter_Interface;
+use Zend_Auth_Result;
+use Zend_Translate;
+
+class Adapter implements Zend_Auth_Adapter_Interface
 {
 //    const NOT_FOUND_MESSAGE = "Account not found";
 //    const BAD_PW_MESSAGE = "Password is invalid";
@@ -13,7 +24,7 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
 
     /**
      *
-     * @var Dfi_Auth_UserInterface
+     * @var User
      */
     protected $user;
 
@@ -36,18 +47,18 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
     protected $translator;
 
     /**
-     * @var Dfi_Auth_UserProviderInterface
+     * @var UserProvider
      */
     protected $provider;
 
-    public function __construct(Dfi_Auth_UserProviderInterface $provider, $username, $password)
+    public function __construct(UserProvider $provider, $username, $password)
     {
         $this->username = $username;
         $this->password = $password;
 
         $this->provider = $provider;
 
-        if (Dfi_App_Config::get('main.useFakeLogin')) {
+        if (Config::get('main.useFakeLogin')) {
             $this->useFakeLogin = true;
         }
     }
@@ -68,7 +79,7 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
                         $result = $adapter->authenticate();
                         if (Zend_Auth_Result::SUCCESS !== $result->getCode()) {
                             $m = array_pop($result->getMessages());
-                            Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage('debug', $m);
+                            Messages::getInstance()->addMessage('debug', $m);
                             throw new Exception(($m ? $m : $this->getMessage(self::WRONG_PW)));
                         }
                     }
@@ -103,11 +114,11 @@ class Dfi_Auth_Adapter implements Zend_Auth_Adapter_Interface
     }
 
     /**
-     * @param Dfi_Auth_UserInterface $user
-     * @return Dfi_Auth_Adapter_AdapterInterface
+     * @param User $user
+     * @return AdapterInterface
      * @throws Exception
      */
-    private function getAdapter(Dfi_Auth_UserInterface $user)
+    private function getAdapter(User $user)
     {
         $adapter = $user->getAuthAdapter();
         $adapter->setPassword($this->password);

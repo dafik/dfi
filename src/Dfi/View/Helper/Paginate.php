@@ -1,10 +1,13 @@
 <?php
+namespace Dfi\View\Helper;
+use PropelModelPager;
+use Zend_View_Helper_Abstract;
 
 /**
  * Helper for rendering a pager footer.
  *
  */
-class Dfi_View_Helper_Paginate extends Zend_View_Helper_Abstract
+class Paginate extends Zend_View_Helper_Abstract
 {
 
 

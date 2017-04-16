@@ -1,6 +1,11 @@
 <?php
+namespace Dfi\Form\Decorator;
 
-class Dfi_Form_Decorator_BootstrapWizzard extends Zend_Form_Decorator_HtmlTag
+use Zend_Form_Decorator_HtmlTag;
+use Zend_Form_DisplayGroup;
+use Zend_Form_Element;
+
+class BootstrapWizzard extends Zend_Form_Decorator_HtmlTag
 {
     /**
      * Render content wrapped in an HTML tag

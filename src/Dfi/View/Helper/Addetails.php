@@ -1,10 +1,13 @@
 <?php
+namespace Dfi\View\Helper;
+use DateTime;
+use Zend_View_Helper_Abstract;
 
 /**
  * Helper for ad
  *
  */
-class Dfi_View_Helper_Addetails extends Zend_View_Helper_Abstract
+class Addetails extends Zend_View_Helper_Abstract
 {
     public function addetails($value, $type)
     {

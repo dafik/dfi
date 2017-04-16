@@ -1,6 +1,12 @@
 <?php
+namespace Dfi\View\Helper\Navigation;
 
-class Dfi_View_Helper_Navigation_Menu extends Zend_View_Helper_Navigation_Menu
+use RecursiveIteratorIterator;
+use Zend_Navigation_Container;
+use Zend_Navigation_Page;
+use Zend_View_Helper_Navigation_Menu;
+
+class Menu extends Zend_View_Helper_Navigation_Menu
 {
 
 

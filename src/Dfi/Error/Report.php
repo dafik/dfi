@@ -1,7 +1,16 @@
 <?php
 
+namespace Dfi\Error;
 
-class Dfi_Error_Report
+
+use Dfi\App\Config;
+use Dfi\Iface\Helper;
+use Dfi\Iface\Model\Debug\Log;
+use Exception;
+use Propel;
+use Zend_Loader;
+
+class Report
 {
     private static $modelName = null;
     const DEFAULT_MODEL_NAME = 'DebugLog';
@@ -14,7 +23,8 @@ class Dfi_Error_Report
 
         try {
             self::checkPropel();
-            $log = new DebugLog();
+            /** @var Log $log */
+            $log = Helper::getObject('iface.debug.log');
             $log->setMessage($message);
             $log->setDescription($description);
             $log->setVariables($variables);
@@ -36,7 +46,9 @@ class Dfi_Error_Report
 
         try {
             self::checkPropel();
-            $log = new DebugLog();
+            /** @var Log $log */
+            $log = Helper::getObject('iface.debug.log');
+
             if ($e instanceof Exception) {
                 $log->setMessage($e->getMessage());
                 $log->setDescription(isset($e->xdebug_message) ? $e->xdebug_message : $e->getMessage() . ' : ' . $e->getFile() . ' : (' . $e->getLine() . ')' . "\n" . $e->getTraceAsString());
@@ -79,11 +91,11 @@ class Dfi_Error_Report
             require_once APPLICATION_PATH . '/configs/constants.php';
             define('APPLICATION_ENV', 'production');
 
-            if (Zend_Loader::isReadable(Dfi_App_Config::get('db.config'))) {
+            if (Zend_Loader::isReadable(Config::get('db.config'))) {
 
                 try {
                     require_once _LIBRARY_PATH . 'propel/Propel.php';
-                    Propel::configure(Dfi_App_Config::get('db.config'));
+                    Propel::configure(Config::get('db.config'));
 
                 } catch (Exception $e) {
                     throw new Exception('Can\'t setup database: ' . $e->getMessage());

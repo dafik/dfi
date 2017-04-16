@@ -1,4 +1,5 @@
 <?php
+namespace Dfi\View\Helper\DynamicForm;
 /**
  * Created by IntelliJ IDEA.
  * User: z.wieczorek
@@ -6,7 +7,7 @@
  * Time: 09:45
  * To change this template use File | Settings | File Templates.
  */
-class Dfi_View_Helper_DynamicForm_Map
+class Map
 {
 
     /**
@@ -17,7 +18,7 @@ class Dfi_View_Helper_DynamicForm_Map
 
     /**
      * @static
-     * @return Dfi_View_Helper_DynamicForm_Map
+     * @return Map
      */
     public static function create()
     {
@@ -27,7 +28,7 @@ class Dfi_View_Helper_DynamicForm_Map
 
     /**
      * @param array $items
-     * @return Dfi_View_Helper_DynamicForm_Map
+     * @return Map
      * @internal param array $item
      */
     public function addItems($items = array())

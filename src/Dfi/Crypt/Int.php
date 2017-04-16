@@ -1,9 +1,11 @@
 <?
+namespace Dfi\Crypt;
+
 /**
  * Class for encoding / decoding ids
  *
  */
-class Dfi_Crypt_Int implements Dfi_Crypt_Interface
+class Int implements McryptInterface
 {
 
     /**

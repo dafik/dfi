@@ -1,6 +1,11 @@
 <?php
+namespace Dfi;
 
-class Dfi_Form extends Zend_Form
+use Zend_Form;
+use Zend_Form_Element;
+use Zend_Form_Exception;
+
+class Form extends Zend_Form
 {
     /**
      * @var mixed

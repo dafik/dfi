@@ -1,15 +1,37 @@
 <?
 
-class Hr_AD_DGM
+namespace Dfi\Ldap;
+
+use Dfi\App\Config;
+use Dfi\Controller\Action\Helper\Messages;
+use Dfi\Iface\Helper;
+use Dfi\Iface\Model\Pbx\AccountSip;
+use Dfi\Iface\Provider\Pbx\AccountSipProvider;
+use Dfi\Ldap;
+use Exception;
+use Zend_Auth_Adapter_Ldap;
+use Zend_Config_Ini;
+use Zend_Ldap_Attribute;
+use Zend_Ldap_Collection;
+use Zend_Ldap_Exception;
+use Zend_Ldap_Filter;
+use Zend_Ldap_Filter_And;
+use Zend_Log;
+use Zend_Log_Filter_Priority;
+use Zend_Registry;
+
+class AD
 {
 
     /**
      * Singelton instance
      *
-     * @var Hr_AD_DGM
+     * @var AD
      */
     private static $_instance;
     private $_connected = false;
+
+
     private $_ldap = array();
 
     private function __construct()
@@ -20,14 +42,14 @@ class Hr_AD_DGM
     /**
      * Singelton constructor
      *
-     * @return Hr_AD_DGM
+     * @return AD
      */
     public static function getInstance()
     {
-        if (self::$_instance instanceof Hr_AD_DGM) {
+        if (self::$_instance instanceof AD) {
             return self::$_instance;
         }
-        return self::$_instance = new Hr_AD_DGM();
+        return self::$_instance = new AD();
     }
 
     /**
@@ -36,7 +58,7 @@ class Hr_AD_DGM
      */
     public function test()
     {
-        return Hr_AD_DGM::getInstance()->getUserByLogin('d.ni');
+        return AD::getInstance()->getUserByLogin('d.ni');
     }
 
     public static function getSipInfoByAD($login, $password)
@@ -47,16 +69,19 @@ class Hr_AD_DGM
             'password' => '',
             'message' => ''
         );
-        $auth = Hr_AD_DGM::getInstance()->auth($login, $password);
+        $auth = AD::getInstance()->auth($login, $password);
         if ($auth) {
-            $user = Hr_AD_DGM::getInstance()->getUserByLogin($login);
+            $user = AD::getInstance()->getUserByLogin($login);
             if ($user) {
                 if (isset($user['telephonenumber']) && isset($user['telephonenumber'][0])) {
                     $sip = $user['telephonenumber'][0];
                     if ($sip) {
                         $sipInfo['sip'] = $sip;
-                        $account = PbxAccountSipQuery::create()->filterByNumber($sip)->findOne();
-                        /* @var $account PbxAccountSip */
+                        /* @var $accountProvider AccountSipProvider */
+                        $accountProvider = (Helper::getClass('iface.pbx.accountSip'))::create();
+                        /* @var $account AccountSip */
+                        $account = $accountProvider->filterByNumber($sip)->findOne();
+
                         if ($account) {
                             $sipInfo['ddi'] = $account->getDdiNumber();
                             $sipInfo['password'] = $account->getPassword();
@@ -84,15 +109,17 @@ class Hr_AD_DGM
             'ddi' => 0,
             'message' => ''
         );
-        $user = Hr_AD_DGM::getInstance()->getUserByLogin($login);
+        $user = AD::getInstance()->getUserByLogin($login);
         if ($user) {
             if (isset($user['telephonenumber']) && isset($user['telephonenumber'][0])) {
                 $sip = $user['telephonenumber'][0];
                 if ($sip) {
                     $sipInfo['sip'] = $sip;
 
-                    $account = PbxAccountSipQuery::create()->filterByNumber($sip)->findOne();
-                    /* @var $account PbxAccountSip */
+                    /** @var AccountSipProvider $accountProvider */
+                    $accountProvider = (Helper::getClass('iface.pbx.accountSip'))::create();
+                    /* @var $account AccountSip */
+                    $account = $accountProvider->filterByNumber($sip)->findOne();
                     if ($account) {
                         $sipInfo['ddi'] = $account->getDdiNumber();
                     } else {
@@ -117,16 +144,19 @@ class Hr_AD_DGM
             'message' => '',
             'isPjSip' => 0
         );
-        $auth = Hr_AD_DGM::getInstance()->auth($login, $password);
+        $auth = AD::getInstance()->auth($login, $password);
         if ($auth) {
-            $user = Hr_AD_DGM::getInstance()->getUserByLogin($userLogin);
+            $user = AD::getInstance()->getUserByLogin($userLogin);
             if ($user) {
                 if (isset($user['telephonenumber']) && isset($user['telephonenumber'][0])) {
                     $sip = $user['telephonenumber'][0];
                     if ($sip) {
                         $sipInfo['sip'] = $sip;
-                        $account = PbxAccountSipQuery::create()->filterByNumber($sip)->findOne();
-                        /* @var $account PbxAccountSip */
+                        /* @var $accountProvider AccountSipProvider */
+                        $accountProvider = (Helper::getClass('iface.pbx.accountSip'))::create();
+
+                        $account = $accountProvider->filterByNumber($sip)->findOne();
+                        /* @var $account AccountSip */
                         if ($account) {
                             $sipInfo['ddi'] = $account->getDdiNumber();
                             $sipInfo['password'] = $account->getPassword();
@@ -172,7 +202,7 @@ class Hr_AD_DGM
             }
             return $result->isValid();
         } catch (Exception $e) {
-            Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage('debug', $e->getMessage());
+            Messages::getInstance()->addMessage('debug', $e->getMessage());
             return false;
         }
     }
@@ -198,7 +228,7 @@ class Hr_AD_DGM
     public function resetPassword($login)
     {
         $options = array(
-            'unicodePwd' => $this->encodeUnicodePassword(Dfi_App_Config::get('ad.defaultPassword')),
+            'unicodePwd' => $this->encodeUnicodePassword(Config::get('ad.defaultPassword')),
             'pwdLastSet' => 0
         );
         $res = $this->updateByLogin($login, $options);
@@ -401,7 +431,7 @@ class Hr_AD_DGM
     public static function getDgmGroupAsArray($filterByShiftGroups = false)
     {
 
-        $groups = Hr_AD_DGM::getInstance()->getGroups();
+        $groups = AD::getInstance()->getGroups();
 
         $tmp = $groups->toArray();
         $groupsArray = array();
@@ -549,7 +579,7 @@ class Hr_AD_DGM
     /**
      *
      * @param null|string $controller
-     * @return Zend_Ldap
+     * @return Ldap
      */
     private function getLdap($controller = null)
     {
@@ -590,7 +620,7 @@ class Hr_AD_DGM
         $config = $this->getConfig();
 
         if ($controller) {
-            $ldap = new Dfi_Ldap();
+            $ldap = new Ldap();
 
             if (isset($config['servers'][$controller])) {
                 $options = $config['servers'][$controller];
@@ -608,7 +638,7 @@ class Hr_AD_DGM
                 throw new Exception('controller not found');
             }
         } else {
-            $ldap = new Dfi_Ldap();
+            $ldap = new Ldap();
             foreach ($config['servers'] as $name => $options) {
 
                 $ldap->setOptions($options);

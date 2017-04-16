@@ -1,5 +1,6 @@
 <?php
-class Dfi_View_Helper_DynamicForm_Callback
+namespace Dfi\View\Helper\DynamicForm;
+class Callback
 {
     /**
      * @var array
@@ -16,7 +17,7 @@ class Dfi_View_Helper_DynamicForm_Callback
      * default arguments selector,dialog,data
      *
      * @static
-     * @return Dfi_View_Helper_DynamicForm_Callback
+     * @return Callback
      */
     public static function create()
     {
@@ -26,7 +27,7 @@ class Dfi_View_Helper_DynamicForm_Callback
 
     /**
      * @param $argument
-     * @return Dfi_View_Helper_DynamicForm_Callback
+     * @return Callback
      */
     public function addArgument($argument)
     {
@@ -45,7 +46,7 @@ class Dfi_View_Helper_DynamicForm_Callback
 
     /**
      * @param $step
-     * @return Dfi_View_Helper_DynamicForm_Callback
+     * @return Callback
      */
     public function addStep($step)
     {

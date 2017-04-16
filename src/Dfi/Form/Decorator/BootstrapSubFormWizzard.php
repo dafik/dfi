@@ -1,6 +1,11 @@
 <?php
 
-class Dfi_Form_Decorator_BootstrapSubFormWizzard extends Zend_Form_Decorator_HtmlTag
+namespace Dfi\Form\Decorator;
+use Dfi\Form\DisplayGroup;
+use Zend_Form_Decorator_HtmlTag;
+use Zend_Form_DisplayGroup;
+
+class BootstrapSubFormWizzard extends Zend_Form_Decorator_HtmlTag
 {
     private static $activeDisplayed;
     private static $activeTab;
@@ -78,7 +83,7 @@ class Dfi_Form_Decorator_BootstrapSubFormWizzard extends Zend_Form_Decorator_Htm
     }
 
     /**
-     * @param $group Dfi_Form_DisplayGroup
+     * @param $group DisplayGroup
      * @return bool
      */
     private function groupHasErrors($group)

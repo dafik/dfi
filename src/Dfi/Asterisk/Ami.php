@@ -1,16 +1,23 @@
 <?
+
+namespace Dfi\Asterisk;
+
+use Dfi\App\Config;
+use Dfi\Controller\Action\Helper\Messages;
+use Dfi\Iface\Provider\Pbx\AstConfigProvider;
+use Exception;
 use PAMI\Autoloader\Autoloader;
 use PAMI\Client\Impl\ClientImpl;
 use PAMI\Message\Action\CommandAction;
 use PAMI\Message\OutgoingMessage;
+use Zend_Config_Ini;
 
-Autoloader::register();
 
-class Dfi_Asterisk_Ami
+class Ami
 {
     /**
      * AMI Client object
-     * @var Dfi_Asterisk_Client
+     * @var Client
      */
     private static $amiClient;
 
@@ -18,13 +25,13 @@ class Dfi_Asterisk_Ami
     {
         try {
             $client = self::getAmiClient();
-            if (!Dfi_App_Config::getString('asterisk.fake', true)) {
+            if (!Config::getString('asterisk.fake', true)) {
                 $res = $client->send(new CommandAction('core reload'));
             } else {
                 $res = 'fake';
             }
         } catch (Exception $e) {
-            Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage('debug', $e->getMessage());
+            Messages::getInstance()->addMessage('debug', $e->getMessage());
             $res = $e;
         }
         return $res;
@@ -34,13 +41,13 @@ class Dfi_Asterisk_Ami
     {
         try {
             $client = self::getAmiClient();
-            if (!Dfi_App_Config::getString('asterisk.fake', true)) {
+            if (!Config::getString('asterisk.fake', true)) {
                 $res = $client->send(new CommandAction('dialplan reload'));
             } else {
                 $res = 'fake';
             }
         } catch (Exception $e) {
-            Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage('debug', $e->getMessage());
+            Messages::getInstance()->addMessage('debug', $e->getMessage());
             $res = $e;
         }
         return $res;
@@ -50,13 +57,13 @@ class Dfi_Asterisk_Ami
     {
         try {
             $client = self::getAmiClient();
-            if (!Dfi_App_Config::getString('asterisk.fake', true)) {
+            if (!Config::getString('asterisk.fake', true)) {
                 $res = $client->send(new CommandAction('sip reload'));
             } else {
                 $res = 'fake';
             }
         } catch (Exception $e) {
-            Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage('debug', $e->getMessage());
+            Messages::getInstance()->addMessage('debug', $e->getMessage());
             $res = $e;
         }
         return $res;
@@ -66,13 +73,13 @@ class Dfi_Asterisk_Ami
     {
         try {
             $client = self::getAmiClient();
-            if (!Dfi_App_Config::getString('asterisk.fake', true)) {
+            if (!Config::getString('asterisk.fake', true)) {
                 $res = $client->send(new CommandAction('queue reload all'));
             } else {
                 $res = 'fake';
             }
         } catch (Exception $e) {
-            Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage('debug', $e->getMessage());
+            Messages::getInstance()->addMessage('debug', $e->getMessage());
             $res = $e;
         }
         return $res;
@@ -86,14 +93,14 @@ class Dfi_Asterisk_Ami
     {
         try {
             $client = self::getAmiClient();
-            if (!Dfi_App_Config::get('asterisk.fake')) {
+            if (!Config::get('asterisk.fake')) {
                 $res = $client->send($message);
                 //sleep(5);
                 return $res;
             }
             return true;
         } catch (Exception $e) {
-            Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage('debug', $e->getMessage());
+            Messages::getInstance()->addMessage('debug', $e->getMessage());
             return false;
         }
     }
@@ -157,7 +164,7 @@ class Dfi_Asterisk_Ami
     public static function getDialplan($name)
     {
 
-        $res = Dfi_Asterisk_Ami::send(new \PAMI\Message\Action\CommandAction('dialplan show ' . $name));
+        $res = Ami::send(new \PAMI\Message\Action\CommandAction('dialplan show ' . $name));
 
         $lines = $res->getRawContent();
 
@@ -210,9 +217,13 @@ class Dfi_Asterisk_Ami
     {
         $found = [];
 
-        $res = Dfi_Asterisk_Ami::send(new \PAMI\Message\Action\CommandAction('core show config mappings'));
+        $res = Ami::send(new \PAMI\Message\Action\CommandAction('core show config mappings'));
         if (!$res instanceof \PAMI\Message\Response\ResponseMessage) {
-            $cat = AstConfigQuery::create()
+
+            $providerClass = \Dfi\Iface\Helper::getClass('iface.provider.pbx.astConfig');
+            /** @var AstConfigProvider $provider */
+            $provider = $providerClass::create();
+            $cat = $provider
                 ->select('FileName')
                 ->distinct()
                 ->find();
@@ -254,25 +265,25 @@ class Dfi_Asterisk_Ami
 
     /**
      * return AMI client and create if not exist
-     * @return Dfi_Asterisk_Client
+     * @return Client
      */
     private static function getAmiClient()
     {
-        if (!Dfi_Asterisk_Ami::$amiClient instanceof ClientImpl) {
+        if (!Ami::$amiClient instanceof ClientImpl) {
 
             $config = self::getConfig();
             $c = new Zend_Config_Ini(APPLICATION_PATH . '/configs/sys/log4php-pami.conf.php');
             $config["log4php.properties"] = $c->toArray();
 
-            $config["log4php.properties"]['appenders']['appender']['default']['file'] = Dfi_App_Config::get('paths.log') . 'ami.log';
+            $config["log4php.properties"]['appenders']['appender']['default']['file'] = Config::get('paths.log') . 'ami.log';
 
-            $client = new Dfi_Asterisk_Client($config);
-            if (!Dfi_App_Config::getString('asterisk.fake', true)) {
+            $client = new Client($config);
+            if (!Config::getString('asterisk.fake', true)) {
                 $client->open();
             }
 
-            Dfi_Asterisk_Ami::$amiClient = $client;
+            Ami::$amiClient = $client;
         }
-        return Dfi_Asterisk_Ami::$amiClient;
+        return Ami::$amiClient;
     }
 }

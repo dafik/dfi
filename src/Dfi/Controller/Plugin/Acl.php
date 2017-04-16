@@ -1,6 +1,13 @@
 <?
+namespace Dfi\Controller\Plugin;
 
-class Dfi_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract
+use Dfi\Auth\Acl as DfiAcl;
+use Zend_Auth;
+use Zend_Controller_Plugin_Abstract;
+use Zend_Controller_Request_Abstract;
+use Zend_Registry;
+
+class Acl extends Zend_Controller_Plugin_Abstract
 {
 
     public function preDispatch(Zend_Controller_Request_Abstract $request)
@@ -15,7 +22,7 @@ class Dfi_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract
 
             $roleId = Zend_Auth::getInstance()->getIdentity()->getSysRole()->getId();
 
-            $privilageName = Dfi_Auth_Acl::getModulesIdsByRequest($request);
+            $privilageName = DfiAcl::getModulesIdsByRequest($request);
 
             if ($roleId && $privilageName) {
 

@@ -13,8 +13,8 @@
     "php": ">=5.3.2"
   },
   "autoload": {
-    "psr-0": {
-      "Dfi_": "src/"
+    "psr-4": {
+      "Dfi": "src/"
     }
   },
   "include-path": [

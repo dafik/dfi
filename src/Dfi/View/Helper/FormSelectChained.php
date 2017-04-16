@@ -1,6 +1,10 @@
 <?php
+namespace Dfi\View\Helper;
 
-class Dfi_View_Helper_FormSelectChained extends Zend_View_Helper_FormSelect
+
+use Zend_View_Helper_FormSelect;
+
+class FormSelectChained extends Zend_View_Helper_FormSelect
 {
 
     /**

@@ -1,6 +1,11 @@
 <?php
+namespace Dfi\Ldap;
 
-class Dfi_Ldap_Config
+use Exception;
+use Zend_Config;
+use Zend_Config_Ini;
+
+class Config
 {
     public static function getConfig($asArray = true, $path = false, $default = null, $mode = APPLICATION_ENV)
     {

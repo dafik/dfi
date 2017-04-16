@@ -1,6 +1,17 @@
 <?php
 
-class Dfi_Auth_Storage_Cookie implements Zend_Auth_Storage_Interface
+namespace Dfi\Auth\Storage;
+
+use DateTime;
+use Dfi\Controller\Action\Helper\Messages;
+use Dfi\Crypt\MCrypt;
+use Dfi\Iface\Model\Sys\User;
+use Exception;
+use Zend_Auth_Storage_Exception;
+use Zend_Auth_Storage_Interface;
+use Zend_Controller_Front;
+
+class Cookie implements Zend_Auth_Storage_Interface
 {
     protected $userId;
     protected $user;
@@ -63,7 +74,7 @@ class Dfi_Auth_Storage_Cookie implements Zend_Auth_Storage_Interface
             if (isset($_COOKIE['_u']) && $_COOKIE['_u'] && $_COOKIE['_u'] != 'deleted') {
 
                 $base = base64_decode($_COOKIE['_u']);
-                $decrypted = Dfi_Crypt_MCrypt::decode($base);
+                $decrypted = MCrypt::decode($base);
                 list($userId, $token) = explode('-', $decrypted);
 
                 $time = time();
@@ -72,7 +83,7 @@ class Dfi_Auth_Storage_Cookie implements Zend_Auth_Storage_Interface
 
                     $queryClass = ucfirst($this->model) . 'Peer';
                     $user = $queryClass::retrieveByPK($userId);
-                    /** @var $user SysUser */
+                    /** @var $user User */
                     if ($user) {
 
                         $this->userId = $user->getPrimaryKey();
@@ -81,17 +92,17 @@ class Dfi_Auth_Storage_Cookie implements Zend_Auth_Storage_Interface
                     } else {
                         if (!in_array($controller, array('login', 'logout'))) {
 
-                            Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage(Dfi_Controller_Action_Helper_Messages::TYPE_DEBUG, 'bad cookie user');
+                            Messages::getInstance()->addMessage(Messages::TYPE_DEBUG, 'bad cookie user');
                         }
                     }
                 } else {
                     if (!in_array($controller, array('login', 'logout'))) {
-                        Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage(Dfi_Controller_Action_Helper_Messages::TYPE_DEBUG, 'cookie expired: ' . $base . ' dec: ' . $decrypted . ' token:' . $token . ' diff:' . ($time - $token) / 60);
+                        Messages::getInstance()->addMessage(Messages::TYPE_DEBUG, 'cookie expired: ' . $base . ' dec: ' . $decrypted . ' token:' . $token . ' diff:' . ($time - $token) / 60);
                     }
                 }
             } else {
                 if (!in_array($controller, array('login', 'logout'))) {
-                    //Dfi_Controller_Action_Helper_Messages::getInstance()->addMessage(Dfi_Controller_Action_Helper_Messages::TYPE_DEBUG, 'cookie auth not set');
+                    //Messages::getInstance()->addMessage(Messages::TYPE_DEBUG, 'cookie auth not set');
                 }
             }
         } catch (Exception $e) {
@@ -126,7 +137,7 @@ class Dfi_Auth_Storage_Cookie implements Zend_Auth_Storage_Interface
                     $response = Zend_Controller_Front::getInstance()->getResponse();
                     $date = new DateTime();
                     $date->modify('+1200 seconds');
-                    $response->setHeader('Set-Cookie', '_u = ' . base64_encode(Dfi_Crypt_MCrypt::encode($user->getPrimaryKey() . '-' . time())) . '; Expires=' . $date->format(DATE_COOKIE) . '; path = /');
+                    $response->setHeader('Set-Cookie', '_u = ' . base64_encode(MCrypt::encode($user->getPrimaryKey() . '-' . time())) . '; Expires=' . $date->format(DATE_COOKIE) . '; path = /');
                     $this->headersSent = true;
                 } else {
                     headers_sent($file, $line);

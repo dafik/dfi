@@ -1,6 +1,9 @@
 <?php
+namespace Dfi\Form\Decorator;
+use Zend_Form;
+use Zend_Form_Decorator_HtmlTag;
 
-class Dfi_Form_Decorator_BootstrapWidget extends Zend_Form_Decorator_HtmlTag
+class BootstrapWidget extends Zend_Form_Decorator_HtmlTag
 {
     /**
      * Render content wrapped in an HTML tag

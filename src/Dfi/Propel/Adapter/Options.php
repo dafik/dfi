@@ -1,6 +1,10 @@
 <?php
+namespace Dfi\Propel;
 
-class Dfi_Propel_Adapter_Options
+
+use ColumnMap;
+
+class Options
 {
     public static function  get($model)
     {

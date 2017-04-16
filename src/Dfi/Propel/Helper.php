@@ -1,6 +1,11 @@
 <?php
+namespace Dfi\Propel;
 
-class Dfi_Propel_Helper
+use ColumnMap;
+use RelationMap;
+use TableMap;
+
+class Helper
 {
     private static $scores = array();
 

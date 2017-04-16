@@ -1,6 +1,11 @@
 <?php
 
-class Dfi_Propel_Map_ColumnMap extends ColumnMap
+namespace Dfi\Propel\Map;
+
+
+use ColumnMap as PropelColumnMap;
+
+class ColumnMap extends PropelColumnMap
 {
     protected $description;
 

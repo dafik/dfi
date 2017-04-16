@@ -1,6 +1,9 @@
 <?php
+namespace Dfi\View\Helper;
 
-class Dfi_View_Helper_Nav extends Zend_View_Helper_Abstract
+use Zend_View_Helper_Abstract;
+
+class Nav extends Zend_View_Helper_Abstract
 {
     public function nav($config)
     {
