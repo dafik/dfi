@@ -14,7 +14,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Dfi": "src/"
+      "Dfi\\": "src/"
     }
   },
   "include-path": [
