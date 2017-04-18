@@ -1,5 +1,5 @@
 <?php
-namespace Ext;
+namespace Dfi;
 
 use Criteria;
 use Exception;

@@ -1,15 +1,14 @@
 <?php
-namespace Dfi\View\Helper\Form;
+namespace Dfi\View\Helper;
 use Zend_Filter_Exception;
 use Zend_Filter_PregReplace;
 use Zend_View_Helper_FormElement;
-
 /**
  * Ez_Form_Decorator_BootstrapErrors
  *
  * Wraps errors in span with class help-inline
  */
-class MultiCheckboxDataTable extends Zend_View_Helper_FormElement
+class FormMultiCheckboxDataTable extends Zend_View_Helper_FormElement
 {
     /**
      * Input type to use
@@ -43,7 +42,7 @@ class MultiCheckboxDataTable extends Zend_View_Helper_FormElement
      * @return string The radio buttons XHTML.
      * @throws Zend_Filter_Exception
      */
-    public function form_MultiCheckboxDataTable($name, $value = null, $attribs = null, $options = null, $listsep = "<br />\n")
+    public function FormMultiCheckboxDataTable($name, $value = null, $attribs = null, $options = null, $listsep = "<br />\n")
     {
 
         $info = $this->_getInfo($name, $value, $attribs, $options, $listsep);

@@ -1,5 +1,5 @@
 <?
-namespace Dfi\Auth\Adapter\PasswordHasher;
+namespace Dfi\Auth\PasswordHasher;
 
 interface PasswordHasherInterface
 {

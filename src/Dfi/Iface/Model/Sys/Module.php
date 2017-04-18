@@ -17,4 +17,10 @@ interface Module extends Model
     public function getId();
 
     public function getName();
+
+    public function hasChildren();
+
+    public function countChildren();
+
+    public function getFirstChild();
 }

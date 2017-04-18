@@ -922,23 +922,23 @@ class Decorator
                 'Zend_Form_Element_Text',
                 'Zend_Form_Element_Textarea',
                 'Zend_Form_Element_Password',
-                'Dfi_Form_Element_Spinner'
+                'Dfi\\Form\\Element\\Spinner'
             ))) {
                 $classToAdd[] = 'form-control';
             }
-            if ($e->getType() == 'Dfi_Form_Element_DateClockPicker') {
+            if ($e->getType() == 'Dfi\\Form\\Element\\DateClockPicker') {
                 $classToAdd[] = 'form-control';
                 //$e->removeDecorator('BootstrapTag');
             }
 
             if (false !== in_array($e->getType(), array(
                     'Zend_Form_Element_Select',
-                    'Dfi_Form_Element_List',
-                    'Dfi_Form_Element_SelectChained',
+                    'Dfi\\Form\\Element\\List',
+                    'Dfi\\Form\\Element\\SelectChained',
                     /*'Zend_Form_Element_Multiselect',*/
-                    'Dfi_Form_Element_Multiselect',
-                    'Dfi_Form_Element_Multilist',
-                    'Dfi_Form_Element_Select'
+                    'Dfi\\Form\\Element\\Multiselect',
+                    'Dfi\\Form\\Element\\Multilist',
+                    'Dfi\\Form\\Element\\Select'
                 ))
             ) {
                 $classToAdd[] = 'select2';
@@ -996,12 +996,12 @@ class Decorator
 
         if (self::BOOTSTRAP == $format || self::BOOTSTRAP_MINIMAL == $format) {
             $form->addElementPrefixPath(
-                'Dfi_Form_Decorator',
+                'Dfi\\Form\\Decorator',
                 'Dfi/Form/Decorator',
                 Zend_Form::DECORATOR
             );
             $form->addPrefixPath(
-                'Dfi_Form_Decorator',
+                'Dfi\\Form\\Decorator',
                 'Dfi/Form/Decorator',
                 Zend_Form::DECORATOR);
         }

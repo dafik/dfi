@@ -64,12 +64,12 @@ class Decorator extends FormDecorator
 
         if (self::BOOTSTRAP == $format || self::BOOTSTRAP_MINIMAL == $format) {
             $form->addElementPrefixPath(
-                'Dfi_Form_Decorator',
+                'Dfi\\Form\\Decorator',
                 'Dfi/Form/Decorator',
                 Zend_Form::DECORATOR
             );
             $form->addPrefixPath(
-                'Dfi_Form_Decorator',
+                'Dfi\\Form\\Decorator',
                 'Dfi/Form/Decorator',
                 Zend_Form::DECORATOR);
         }

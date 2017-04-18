@@ -1,4 +1,5 @@
 <?php
+
 namespace Dfi;
 
 use Dfi\Auth\Acl;
@@ -83,7 +84,7 @@ class Navigation
             $page = $this->createPage($module);
             $nav->addPage($page);
             if ($module->hasChildren()) {
-                if ($module->countChildren() > 1) {
+                if ($module->countChildren() > 0) {
                     $this->addChildren($page, $module);
                 } else {
                     $child = $module->getFirstChild();
@@ -186,8 +187,8 @@ class Navigation
     {
 
         if (!$this->isSetUp) {
-            $helperName = 'Dfi_View_Helper_Navigation';
-            $view->addHelperPath(_BASE_PATH . 'vendor/dafik/dfi/src/' . str_replace('_', '/', $helperName), $helperName);
+            $helperName = 'Dfi\\View\\Helper\\Navigation';
+            $view->addHelperPath(_BASE_PATH . 'vendor/dafik/dfi/src/' . str_replace('\\', '/', $helperName), $helperName);
         }
 
         /** @var $helper Zend_View_Helper_Navigation */
@@ -198,7 +199,7 @@ class Navigation
             $helper->navigation($this->navigation);
 
 
-            $aclPlugin = Zend_Controller_Front::getInstance()->getPlugin('Dfi_Controller_Plugin_Acl');
+            $aclPlugin = Zend_Controller_Front::getInstance()->getPlugin('Dfi\\Controller\\Plugin\\Acl');
 
             if ($aclPlugin) {
 

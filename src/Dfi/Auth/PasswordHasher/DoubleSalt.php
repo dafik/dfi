@@ -1,6 +1,6 @@
 <?php
 
-namespace Dfi\Auth\Adapter\PasswordHasher;
+namespace Dfi\Auth\PasswordHasher;
 
 
 use Dfi\App\Config;

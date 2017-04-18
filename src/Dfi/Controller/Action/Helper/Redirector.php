@@ -3,7 +3,7 @@ namespace Dfi\Controller\Action\Helper;
 
 use Zend_Controller_Action_Helper_Redirector;
 
-class Dfi_Controller_Action_Helper_Redirector extends Zend_Controller_Action_Helper_Redirector {
+class Redirector extends Zend_Controller_Action_Helper_Redirector {
 
 	public function redirectAndExit()
 	{

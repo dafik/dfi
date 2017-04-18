@@ -113,7 +113,7 @@ class Db implements AdapterInterface
             return new Zend_Auth_Result($code, '', $messages);
         } else {
             try {
-                $modelClass = Helper::getClass("iface.provider.sys.user");
+                $modelClass = Helper::getClass("iface.model.sys.user");
                 /** @var User $model */
                 $model = new $modelClass;
             } catch (Exception $e) {

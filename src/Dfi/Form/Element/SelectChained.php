@@ -59,9 +59,9 @@ class SelectChained extends Zend_Form_Element_Select
     public function render(Zend_View $view = null)
     {
         if ($view) {
-            $view->addHelperPath(FormSelectChained::getPath(),'Dfi_View_Helper');
+            $view->addHelperPath(FormSelectChained::getPath(),'Dfi\\View\\Helper');
         } else {
-            $this->getView()->addHelperPath(FormSelectChained::getPath(),'Dfi_View_Helper');
+            $this->getView()->addHelperPath(FormSelectChained::getPath(),'Dfi\\View\\Helper');
         }
 
         return parent::render($view);

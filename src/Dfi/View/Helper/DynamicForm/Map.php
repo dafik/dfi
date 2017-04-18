@@ -34,8 +34,8 @@ class Map
     public function addItems($items = array())
     {
         $allowed = array(
-            'Dfi_View_Helper_DynamicForm_Callback',
-            'Dfi_View_Helper_DynamicForm_Map',
+            'Dfi\\View\\Helper\\DynamicForm\\Callback',
+            'Dfi\\View\\Helper\\DynamicForm\\Map',
             'String'
         );
 

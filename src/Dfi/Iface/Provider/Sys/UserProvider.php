@@ -1,6 +1,6 @@
 <?php
 
-namespace Dfi\Iface\Model\Sys;
+namespace Dfi\Iface\Provider\Sys;
 
 use Dfi\Iface\Provider;
 use PropelObjectCollection;
