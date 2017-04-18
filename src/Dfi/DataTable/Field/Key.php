@@ -70,7 +70,7 @@ class Key extends FieldAbstract implements FieldInterface
         return $value;
     }
 
-    public function getColumns($query = null)
+    public function getColumns(ModelCriteria $query = null)
     {
         return [$this->key];
     }
@@ -81,7 +81,7 @@ class Key extends FieldAbstract implements FieldInterface
         $query->orderBy($this->key, $direction);
     }
 
-    public function applyFilter($query, $value, $operator)
+    public function applyFilter(ModelCriteria $query, $value, $operator)
     {
         if ($this->getOption('filter') == 'date-range') {
 

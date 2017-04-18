@@ -5,7 +5,7 @@ use Dfi\App\Config;
 use Dfi\Auth\Adapter\AdapterInterface;
 use Dfi\Controller\Action\Helper\Messages;
 use Dfi\Iface\Model\Sys\User;
-use Dfi\Iface\Model\Sys\UserProvider;
+use Dfi\Iface\Provider\Sys\UserProvider;
 use Exception;
 use Zend_Auth_Adapter_Interface;
 use Zend_Auth_Result;

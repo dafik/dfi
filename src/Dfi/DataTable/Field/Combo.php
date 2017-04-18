@@ -45,7 +45,7 @@ class Combo extends FieldAbstract implements FieldInterface
         return $values;
     }
 
-    public function getColumns($query = null)
+    public function getColumns(ModelCriteria $query = null)
     {
         $columns = [];
         foreach ($this->fields as $filed) {

@@ -53,7 +53,7 @@ class Join extends FieldAbstract implements FieldInterface
         return implode($this->glue, $values);
     }
 
-    public function getColumns($query = null)
+    public function getColumns(ModelCriteria $query = null)
     {
         $columns = [];
         foreach ($this->fields as $filed) {
@@ -70,7 +70,7 @@ class Join extends FieldAbstract implements FieldInterface
     }
 
 
-    public function applyFilter($query, $value, $operator)
+    public function applyFilter(ModelCriteria $query, $value, $operator)
     {
         if ($this->hasOption('filterField') || $this->getFilter()->getFilterField()) {
             parent::applyFilter($query, $value, $operator);

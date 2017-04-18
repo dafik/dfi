@@ -6,6 +6,7 @@ use Criteria;
 use Dfi\Iface\Provider;
 use Exception;
 use Dfi\DataTable\Filter;
+use ModelCriteria;
 
 
 abstract class FieldAbstract implements FieldInterface
@@ -77,13 +78,13 @@ abstract class FieldAbstract implements FieldInterface
 
 
     /**
-     * @param Provider $query
+     * @param ModelCriteria $query
      * @param $value
      * @param $operator
      * @param bool $key
      * @throws Exception
      */
-    public function applyFilter($query, $value, $operator, $key = false)
+    public function applyFilter(ModelCriteria $query, $value, $operator, $key = false)
     {
         if ($this->filter) {
             $this->applyFilterObject($query, $value, $operator, $key = false);
@@ -202,12 +203,12 @@ abstract class FieldAbstract implements FieldInterface
 
     }
 
-    public function getAsColumns($query = null)
+    public function getAsColumns(ModelCriteria $query = null)
     {
         return [];
     }
 
-    public function getColumns($query = null)
+    public function getColumns(ModelCriteria $query = null)
     {
         return [];
     }

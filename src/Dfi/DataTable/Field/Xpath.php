@@ -82,7 +82,7 @@ class Xpath extends FieldAbstract implements FieldInterface
         return $value;
     }
 
-    public function getAsColumns($query = null)
+    public function getAsColumns(ModelCriteria $query = null)
     {
         return [$this->getUniqueName() => $this->getExpression($query)];
     }
@@ -118,7 +118,7 @@ class Xpath extends FieldAbstract implements FieldInterface
 
     }
 
-    public function applyFilter(Provider $query, $value, $operator)
+    public function applyFilter(ModelCriteria  $query, $value, $operator)
     {
         if ($this->getOption('filter') == 'date-range') {
 

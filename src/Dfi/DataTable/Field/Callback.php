@@ -65,7 +65,7 @@ class Callback extends FieldAbstract implements FieldInterface
         $this->helperMethod = $helperMethod;
     }
 
-    public function getColumns($query = null)
+    public function getColumns(ModelCriteria $query = null)
     {
         return $this->dataHelper->getColumns();
     }
