@@ -1,13 +1,6 @@
 <?php
 namespace Dfi\View\Helper\DynamicForm;
 
-/**
- * Created by IntelliJ IDEA.
- * User: z.wieczorek
- * Date: 12.02.13
- * Time: 09:42
- * To change this template use File | Settings | File Templates.
- */
 class Button
 {
 
@@ -51,6 +44,11 @@ class Button
      */
     protected $reloadCallback;
 
+    /**
+     * @var Callback
+     */
+    protected $beforeSendCallback;
+
 
     protected $options = [];
 
@@ -75,7 +73,7 @@ class Button
     }
 
     /**
-     * @return Callback
+     * @return \Callback
      */
     public function getButtonCallback()
     {
@@ -94,7 +92,7 @@ class Button
     }
 
     /**
-     * @return Callback
+     * @return \Callback
      */
     public function getErrorCallback()
     {
@@ -113,7 +111,7 @@ class Button
     }
 
     /**
-     * @return Callback
+     * @return \Callback
      */
     public function getFormCallback()
     {
@@ -121,7 +119,7 @@ class Button
     }
 
     /**
-     * @param Callback $reloadCallback
+     * @param \Callback $reloadCallback
      * @return $this
      */
     public function setReloadCallback($reloadCallback)
@@ -131,7 +129,7 @@ class Button
     }
 
     /**
-     * @return Callback
+     * @return \Callback
      */
     public function getReloadCallback()
     {
@@ -168,7 +166,7 @@ class Button
     }
 
     /**
-     * @return Callback
+     * @return \Callback
      */
     public function getSuccessCallback()
     {
@@ -234,11 +232,28 @@ class Button
      * @param $option
      * @param $value
      * @return $this
-     * @internal param array $options
      */
     public function setOption($option, $value)
     {
         $this->options[$option] = $value;
+        return $this;
+    }
+
+    /**
+     * @return Callback
+     */
+    public function getBeforeSendCallback()
+    {
+        return $this->beforeSendCallback;
+    }
+
+    /**
+     * @param Callback $beforeSendCallback
+     * @return $this
+     */
+    public function setBeforeSendCallback($beforeSendCallback)
+    {
+        $this->beforeSendCallback = $beforeSendCallback;
         return $this;
     }
 

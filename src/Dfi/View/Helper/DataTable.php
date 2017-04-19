@@ -159,7 +159,7 @@ class DataTable extends Zend_View_Helper_FormText
                 $columnDefinition = $this->renderColumnDefinitions();
 
                 $script .= 'function ' . $this->dataTableFunctionName . '(frm) {' . "\n";
-                $script .= '    frm.test();' . "\n";
+                //$script .= '    frm.test();' . "\n";
                 $script .= implode("\n", $this->getTemplates()) . "\n";
                 $script .= 'return ' . $columnDefinition . "\n";
                 $script .= '}' . "\n";

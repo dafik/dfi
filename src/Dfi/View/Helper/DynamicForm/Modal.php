@@ -1,6 +1,10 @@
 <?php
 namespace Dfi\View\Helper\DynamicForm;
 
+use Dfi\Error\Exception;
+use Dfi\Exception\AppException;
+use Dfi\View\Helper\DynamicForm\Callback as Clback;
+
 class Modal
 {
     /**
@@ -19,12 +23,12 @@ class Modal
     protected $openUrl;
 
     /**
-     * @var array of Dfi_View_Helper_DynamicForm_Button
+     * @var Button[]
      */
     protected $buttons;
 
     /**
-     * @var Callback
+     * @var Clback
      */
     protected $getTitle;
 
@@ -34,25 +38,54 @@ class Modal
     protected $dialogOptions;
 
     /**
-     * @var Callback
+     * @var Clback
+     */
+    protected $titleCallback;
+
+    /**
+     * @var Clback
      */
     protected $openSuccessCallback;
 
     /**
-     * @var Callback
+     * @var Clback
      */
     protected $afterOpenCallback;
 
     /**
-     * @var Callback
+     * @var Clback
      */
     protected $beforeCloseCallback;
 
+    /**
+     * @var Clback
+     */
+    protected $beforeModalCallback;
 
     /**
      * @var  array
      */
     protected $openUrlParams = [];
+
+
+    protected $autoOpen = false;
+
+    /**
+     * @return boolean
+     */
+    public function isAutoOpen()
+    {
+        return $this->autoOpen;
+    }
+
+    /**
+     * @param boolean $autoOpen
+     */
+    public function setAutoOpen($autoOpen)
+    {
+        $this->autoOpen = $autoOpen;
+    }
+
 
     /**
      * @static
@@ -65,17 +98,17 @@ class Modal
 
 
     /**
-     * @param Callback $afterOpenCallback
+     * @param Clback $afterOpenCallback
      * @return Modal
      */
-    public function setAfterOpenCallback(Callback $afterOpenCallback)
+    public function setAfterOpenCallback($afterOpenCallback)
     {
         $this->afterOpenCallback = $afterOpenCallback;
         return $this;
     }
 
     /**
-     * @return Callback
+     * @return Clback
      */
     public function getAfterOpenCallback()
     {
@@ -84,21 +117,39 @@ class Modal
 
 
     /**
-     * @param Callback $beforeCloseCallback
+     * @param callable|Clback $beforeCloseCallback
      * @return Modal
      */
-    public function setBeforeCloseCallback(Callback $beforeCloseCallback)
+    public function setBeforeCloseCallback($beforeCloseCallback)
     {
         $this->beforeCloseCallback = $beforeCloseCallback;
         return $this;
     }
 
     /**
-     * @return Callback
+     * @return Clback
      */
     public function getBeforeCloseCallback()
     {
         return $this->beforeCloseCallback;
+    }
+
+    /**
+     * @param Clback $beforeModalCallback
+     * @return Modal
+     */
+    public function setBeforeModalCallback($beforeModalCallback)
+    {
+        $this->beforeModalCallback = $beforeModalCallback;
+        return $this;
+    }
+
+    /**
+     * @return Clback
+     */
+    public function getBeforeModalCallback()
+    {
+        return $this->beforeModalCallback;
     }
 
 
@@ -141,36 +192,55 @@ class Modal
 
 
     /**
-     * @param Callback $getTitle
+     * @param Clback $getTitle
      * @return Modal
      */
-    public function setGetTitle(Callback $getTitle)
+    public function setGetTitle($getTitle)
     {
+        throw  new AppException('deprected - use setTitleCallback');
         $this->getTitle = $getTitle;
         return $this;
     }
 
     /**
-     * @return Callback
+     * @return Clback
      */
     public function getGetTitle()
     {
         return $this->getTitle;
     }
 
+    /**
+     * @return Clback
+     */
+    public function getTitleCallback()
+    {
+        return $this->titleCallback;
+    }
 
     /**
-     * @param Callback $openSuccessCallback
+     * @param Clback $titleCallback
+     * @return $this
+     */
+    public function setTitleCallback($titleCallback)
+    {
+        $this->titleCallback = $titleCallback;
+        return $this;
+    }
+
+
+    /**
+     * @param Clback $openSuccessCallback
      * @return Modal
      */
-    public function setOpenSuccessCallback(Callback $openSuccessCallback)
+    public function setOpenSuccessCallback($openSuccessCallback)
     {
         $this->openSuccessCallback = $openSuccessCallback;
         return $this;
     }
 
     /**
-     * @return Callback
+     * @return Clback
      */
     public function getOpenSuccessCallback()
     {

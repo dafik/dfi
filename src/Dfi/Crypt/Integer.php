@@ -5,7 +5,7 @@ namespace Dfi\Crypt;
  * Class for encoding / decoding ids
  *
  */
-class Int implements McryptInterface
+class Integer implements CryptInterface
 {
 
     /**

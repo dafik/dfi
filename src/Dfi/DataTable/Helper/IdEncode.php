@@ -3,7 +3,7 @@
 namespace Dfi\DataTable\Helper;
 
 
-use Dfi\Crypt\Int;
+use Dfi\Crypt\Integer;
 
 class IdEncode
 {
@@ -13,6 +13,6 @@ class IdEncode
      */
     public static function run($id)
     {
-        return Int::encode($id);
+        return Integer::encode($id);
     }
 }

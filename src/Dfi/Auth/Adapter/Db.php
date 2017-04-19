@@ -3,10 +3,10 @@
 namespace Dfi\Auth\Adapter;
 
 use Dfi\App\Config;
-use Dfi\Auth\Adapter\PasswordHasher\PasswordHasherInterface;
+use Dfi\Auth\PasswordHasher\PasswordHasherInterface;
 use Dfi\Iface\Helper;
 use Dfi\Iface\Model\Sys\User;
-use Dfi\Iface\Model\Sys\UserProvider;
+use Dfi\Iface\Provider\Sys\UserProvider;
 use Exception;
 use Zend_Auth_Result;
 

@@ -110,39 +110,54 @@ class Resource
 
         $controller = ucfirst($controller) . 'Controller.php';
         $loadFile = _BASE_PATH . 'application/modules/' . $module . '/controllers/' . $controller;
-
-
-        if (Zend_Loader::isReadable($loadFile)) {
-            /** @noinspection PhpIncludeInspection */
-            include_once $loadFile;
-        }
-
-        if ($module == 'default') {
-            $controller = substr($controller, 0, -4);
-        } else {
-            $controller = ucfirst($module) . '_' . substr($controller, 0, -4);
-        }
         $res = array();
+
         try {
-            $reflection = new ReflectionClass($controller);
-            $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
 
+            if (!class_exists($controller) && Zend_Loader::isReadable($loadFile)) {
+                /** @noinspection PhpIncludeInspection */
 
-            foreach ($methods as $method) {
-                $method = $method->name;
-                if (false !== strpos($method, 'Action')) {
-                    $name = str_replace('Action', '', $method);
-                    $res[$name] = $name;
+                $cmd = "php -f " . $loadFile . " -l 2> /dev/null ";
+                $message = '/No syntax errors detected/';
+
+                $result = exec($cmd);
+                if (preg_match($message, $result)) {
+                    include_once $loadFile;
+                } else {
+                    throw new \Exception($result);
                 }
+
             }
-        } catch (ReflectionException $e) {
-            //TODO $x = 1;
+
+            if ($module == 'default') {
+                $controller = substr($controller, 0, -4);
+            } else {
+                $controller = ucfirst($module) . '_' . substr($controller, 0, -4);
+            }
+
+            try {
+                $reflection = new ReflectionClass($controller);
+                $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
+
+
+                foreach ($methods as $method) {
+                    $method = $method->name;
+                    if (false !== strpos($method, 'Action')) {
+                        $name = str_replace('Action', '', $method);
+                        $res[$name] = $name;
+                    }
+                }
+            } catch (ReflectionException $e) {
+                //TODO $x = 1;
+            }
+        } catch (Exception $e) {
+            $x = 1;
         }
 
         return $res;
     }
 
-    private function getFiles($path, $notAllowed = array(), $substring = 0)
+    private static function getFiles($path, $notAllowed = array(), $substring = 0)
     {
         $notDirs = array(
             '.',

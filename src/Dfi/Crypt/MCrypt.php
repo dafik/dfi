@@ -8,7 +8,7 @@ use Zend_Config;
 use Zend_Registry;
 use Zend_View;
 
-class MCrypt implements McryptInterface
+class MCrypt implements CryptInterface
 {
     const EXTENSION = 'mcrypt';
     const CRYPT = 'crypt';

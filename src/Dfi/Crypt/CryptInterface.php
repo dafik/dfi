@@ -12,7 +12,7 @@ namespace Dfi\Crypt;
  * Class for encoding / decoding ids
  *
  */
-interface McryptInterface
+interface CryptInterface
 {
     /**
      * decode hash
