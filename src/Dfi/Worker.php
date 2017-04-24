@@ -46,25 +46,50 @@ class Worker
     }
 
 
-    public function run()
+    public function run($runInBackground = true)
     {
+        $res = false;
 
-        $command = "/usr/bin/php -f " . realpath(APPLICATION_PATH . "/../vendor/dafik/dfi/src/Dfi/Worker/Task.php") . ' "' . $this->guid . '" "' . $this->file . '" "' . implode("\" \"", $this->args) . "\"";
-        //$command = "/usr/bin/php -f " . realpath(APPLICATION_PATH . "/../data/sleep.php");
-        //$fullCommand = 'bash -c \'exec nohup setsid ' . $command . ' > ' . realpath(APPLICATION_PATH . "/../data/worker/log") . ' 2>&1 &\'';
-        $fullCommand = 'nohup ' . $command . ' > /dev/null 2>&1 &';
-        $res = exec($fullCommand);
-
-/*
-        $outputFile = realpath(APPLICATION_PATH . "/../data/") . "/w.log";
-        $pidFile = realpath(APPLICATION_PATH . "/../data/") . "/w.pid";
-
-        $full = sprintf("%s > %s 2>&1 & echo $! >> %s", $fullCommand, $outputFile, $pidFile)  ;
-
-        $res = exec($full);*/
+        if ($runInBackground) {
 
 
+            $phpOptions = [
+                '-n',
+                '-dextension=mysqlnd.so',
+                '-dextension=pdo.so',
+                '-dextension=pdo_mysql.so',
+                '-dextension=json.so',
+                '-dextension=dom.so',
+                '-dextension=simplexml.so',
+                '-dextension=xmlwriter.so',
+                '-f'
+            ];
+
+
+            $command = "/usr/bin/php " . implode(" ", $phpOptions) . realpath(APPLICATION_PATH . "/../vendor/dafik/dfi/src/Dfi/Worker/Task.php") . ' "' . $this->guid . '" "' . $this->file . '" "' . implode("\" \"", $this->args) . "\"";
+            //$command = "/usr/bin/php -f " . realpath(APPLICATION_PATH . "/../data/sleep.php");
+            //$fullCommand = 'bash -c \'exec nohup setsid ' . $command . ' > ' . realpath(APPLICATION_PATH . "/../data/worker/log") . ' 2>&1 &\'';
+            $fullCommand = 'nohup ' . $command . ' > /dev/null 2>&1 &';
+            $res = exec($fullCommand, $out, $result);
+
+            /*
+                    $outputFile = realpath(APPLICATION_PATH . "/../data/") . "/w.log";
+                    $pidFile = realpath(APPLICATION_PATH . "/../data/") . "/w.pid";
+
+                    $full = sprintf("%s > %s 2>&1 & echo $! >> %s", $fullCommand, $outputFile, $pidFile)  ;
+
+                    $res = exec($full);*/
+        } else {
+
+            $dtkPath = realpath(APPLICATION_PATH . "/../vendor/dafik/dtk/src/");
+
+            $class = new $this->file;
+            $class->setFile($this->args[0]);
+
+            $res = $class->import();
+
+
+        }
+        return $res;
     }
-
-
 }

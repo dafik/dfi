@@ -71,7 +71,7 @@ class Adapter implements Zend_Auth_Adapter_Interface
     public function authenticate()
     {
         try {
-            $this->user = $this->provider->findByByLogin($this->username);
+            $this->user = $this->provider->findOneByLogin($this->username);
             if ($this->user) {
                 if ($this->user->getActive()) {
                     if (!$this->useFakeLogin) {

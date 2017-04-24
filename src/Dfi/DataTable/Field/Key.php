@@ -85,7 +85,7 @@ class Key extends FieldAbstract implements FieldInterface
     {
         if ($this->getOption('filter') == 'date-range') {
 
-            list($min, $max) = explode('do', $value);
+            list($min, $max) = explode(' do ', $value);
             $min = trim($min);
             if (strlen($min) == '10') {
                 $min .= ' 00:00:00';

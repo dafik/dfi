@@ -2,6 +2,7 @@
 
 namespace Dfi\Iface\Provider\Sys;
 
+use Dfi\Iface\Model\Sys\User;
 use Dfi\Iface\Provider;
 use PropelObjectCollection;
 
