@@ -6,12 +6,12 @@
  * Time: 13:40
  */
 
-namespace Dfi\Iface\Model\Pbx;
+namespace Dfi\Iface\Model\Asterisk;
 
 
 use Dfi\Iface\Model;
 
-interface AstConfig extends Model
+interface Config extends Model
 {
 
 

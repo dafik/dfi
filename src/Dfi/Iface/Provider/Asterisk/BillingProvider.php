@@ -1,6 +1,6 @@
 <?php
 
-namespace Dfi\Iface\Provider\Pbx;
+namespace Dfi\Iface\Provider\Asterisk;
 
 use Criteria;
 use Dfi\Iface\Provider;
@@ -174,6 +174,7 @@ interface BillingProvider extends Provider
      * @return BillingProvider The current query, for fluid interface
      */
     public function filterByDuration($duration = null, $comparison = null);
+
 
 
 }

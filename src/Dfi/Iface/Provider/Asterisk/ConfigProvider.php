@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Dfi\Iface\Provider\Pbx;
+namespace Dfi\Iface\Asterisk\Pbx;
 
 
 use Criteria;
@@ -13,35 +13,35 @@ use Dfi\Iface\Provider;
  * Date: 12.04.17
  * Time: 13:30
  */
-interface AstConfigProvider extends Provider
+interface ConfigProvider extends Provider
 {
 
     /**
      * @param $getFileName
      * @param string $comparision
-     * @return AstConfigProvider
+     * @return ConfigProvider
      */
     public function filterByFilename($getFileName, $comparision = Criteria::EQUAL);
 
     /**
-     * @return AstConfigProvider
+     * @return ConfigProvider
      */
     public function orderByCategory();
 
     /**
      * @param $category
      * @param string $comparision
-     * @return AstConfigProvider
+     * @return ConfigProvider
      */
     public function filterByCategory($category, $comparision = Criteria::EQUAL);
 
     /**
-     * @return AstConfigProvider
+     * @return ConfigProvider
      */
     public function orderByVarMetric();
 
     /**
-     * @return AstConfigProvider
+     * @return ConfigProvider
      */
     public function orderByCatMetric();
 }

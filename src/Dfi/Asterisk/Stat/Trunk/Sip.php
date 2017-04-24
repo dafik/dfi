@@ -3,7 +3,7 @@
 namespace Dfi\Asterisk\Stat\Trunk;
 
 use Dfi\Asterisk\Stat\ConfigAbstract;
-use Dfi\Iface\Model\Pbx\Trunk;
+use Dfi\Iface\Model\Asterisk\Trunk;
 
 
 class Sip extends ConfigAbstract

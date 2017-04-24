@@ -4,8 +4,8 @@ namespace Dfi\Asterisk\Stat;
 
 use Criteria;
 use Dfi\Iface\Helper;
-use Dfi\Iface\Model\Pbx\AstConfig;
-use Dfi\Iface\Provider\Pbx\AstConfigProvider;
+use Dfi\Iface\Model\Asterisk\Config;
+use Dfi\Iface\Provider\Pbx\ConfigProvider;
 
 class Generic extends ConfigAbstract
 {
@@ -29,7 +29,7 @@ class Generic extends ConfigAbstract
     {
 
         $providerName = Helper::getClass("iface.provider.pbx.astConfig");
-        /** @var AstConfigProvider $provider */
+        /** @var ConfigProvider $provider */
         $provider = $providerName::create();
 
         $entries = $provider
@@ -58,7 +58,7 @@ class Generic extends ConfigAbstract
         $c = [];
 
         $providerName = Helper::getClass("iface.provider.pbx.astConfig");
-        /** @var AstConfigProvider $provider */
+        /** @var ConfigProvider $provider */
         $provider = $providerName::create();
 
         $entries = $provider
@@ -72,7 +72,7 @@ class Generic extends ConfigAbstract
             $class = get_called_class();
 
 
-            /** @var AstConfig $row */
+            /** @var Config $row */
             foreach ($entries as $row) {
                 $category = $row->getCategory();
 

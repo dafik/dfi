@@ -1,4 +1,5 @@
 <?php
+
 namespace Dfi\DataTable\Field;
 
 
@@ -56,8 +57,15 @@ class Combo extends FieldAbstract implements FieldInterface
 
     public function setOrder(ModelCriteria $query, $direction)
     {
-        // TODO: Implement setOrder() method.
-        throw new Exception('not implemented');
+
+
+        if ($this->getOption("orderField")) {
+            $query->orderBy($this->getOption("orderField"), $direction);
+        } else {
+            // TODO: Implement setOrder() method.
+            throw new Exception('not implemented');
+
+        }
     }
 
 }
