@@ -6,7 +6,7 @@ namespace Dfi\Asterisk\Stat;
 use Dfi\Asterisk\Ami;
 use Dfi\Iface\Helper;
 use Dfi\Iface\Model;
-use Dfi\Iface\Provider\Pbx\AstConfigProvider;
+use Dfi\Iface\Provider\Pbx\ConfigProvider;
 use Exception;
 use PDO;
 use Propel;
@@ -116,7 +116,7 @@ abstract class ConfigAbstract
     public static function getCategories()
     {
         $providerName = Helper::getClass("iface.provider.pbx.astConfig");
-        /** @var AstConfigProvider $provider */
+        /** @var ConfigProvider $provider */
         $provider = $providerName::create();
 
         return $provider
@@ -134,7 +134,7 @@ abstract class ConfigAbstract
     public static function retrieveByCategory($category)
     {
         $providerName = Helper::getClass("iface.provider.pbx.astConfig");
-        /** @var AstConfigProvider $provider */
+        /** @var ConfigProvider $provider */
         $provider = $providerName::create();
 
         $entries = $provider

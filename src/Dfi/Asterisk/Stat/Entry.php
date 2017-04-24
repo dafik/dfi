@@ -1,7 +1,7 @@
 <?php
 namespace Dfi\Asterisk\Stat;
 
-use Dfi\Iface\Model\Pbx\AstConfig;
+use Dfi\Iface\Model\Asterisk\Config;
 use PDO;
 
 class Entry
@@ -53,7 +53,7 @@ class Entry
     private $isDeleted = false;
 
     /**
-     * @param null|array|AstConfig $row
+     * @param null|array|Config $row
      */
     public function __construct($row = null)
     {

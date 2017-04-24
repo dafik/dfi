@@ -4,7 +4,7 @@ namespace Dfi\Asterisk;
 
 use Dfi\App\Config;
 use Dfi\Controller\Action\Helper\Messages;
-use Dfi\Iface\Provider\Pbx\AstConfigProvider;
+use Dfi\Iface\Provider\Pbx\ConfigProvider;
 use Exception;
 use PAMI\Autoloader\Autoloader;
 use PAMI\Client\Impl\ClientImpl;
@@ -221,7 +221,7 @@ class Ami
         if (!$res instanceof \PAMI\Message\Response\ResponseMessage) {
 
             $providerClass = \Dfi\Iface\Helper::getClass('iface.provider.pbx.astConfig');
-            /** @var AstConfigProvider $provider */
+            /** @var ConfigProvider $provider */
             $provider = $providerClass::create();
             $cat = $provider
                 ->select('FileName')

@@ -1,4 +1,5 @@
 <?php
+
 namespace Dfi\Asterisk;
 
 
@@ -8,7 +9,7 @@ use Criteria;
 use DateTime;
 use Dfi\App\Config;
 use Dfi\Crypt\MCrypt;
-use Dfi\Iface\Provider\Pbx\BillingProvider;
+use Dfi\Iface\Provider\Asterisk\BillingProvider;
 use Exception;
 use Zend_Controller_Front;
 
@@ -201,7 +202,7 @@ class ConnectionsFilter
             $response->setHeader('Set-Cookie', self::COOKIE_SELECTOR . ' = ' . $base64 . '; expires= ' . date('r', time() + 60 * 20) . ';path = /; httponly');
 
         } catch (Exception $e) {
-
+            $x = 1;
         }
     }
 
@@ -216,6 +217,8 @@ class ConnectionsFilter
             /** @var BillingProvider $query */
             $query = call_user_func([$className . 'ArchiveQuery', 'create']);
         }
+
+        $x = $query instanceof BillingProvider;
 
 
         $this->filterByDate($query);

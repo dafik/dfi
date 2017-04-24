@@ -5,7 +5,7 @@ namespace Dfi\Ldap;
 use Dfi\App\Config;
 use Dfi\Controller\Action\Helper\Messages;
 use Dfi\Iface\Helper;
-use Dfi\Iface\Model\Pbx\AccountSip;
+use Dfi\Iface\Model\Asterisk\AccountSip;
 use Dfi\Iface\Provider\Pbx\AccountSipProvider;
 use Dfi\Ldap;
 use Exception;

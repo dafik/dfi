@@ -9,11 +9,14 @@
 namespace Dfi\Iface;
 
 
+use Criteria;
 use ModelCriteria;
+use PropelException;
 use PropelObjectCollection;
 
 interface Provider
 {
+
     /**
      * Adds a condition on a column based on a pseudo SQL clause
      * but keeps it for later use with combine()
@@ -57,6 +60,20 @@ interface Provider
      * @return ModelCriteria The current object, for fluid interface
      */
     public function where($clause, $value = null, $bindingType = null);
+
+
+    /**
+     * Combine several named criterions with a logical operator
+     *
+     * @param array $criterions array of the name of the criterions to combine
+     * @param string $operator logical operator, either Criteria::LOGICAL_AND, or Criteria::LOGICAL_OR
+     * @param string $name optional name to combine the criterion later
+     *
+     * @return ModelCriteria
+     *
+     * @throws PropelException
+     */
+    public function combine($criterions = array(), $operator = "AND", $name = null);
 
     public function findOne();
 

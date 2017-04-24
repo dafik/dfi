@@ -3,9 +3,8 @@
 namespace Dfi\DataTable\Field;
 
 use Criteria;
-use Dfi\Iface\Provider;
-use Exception;
 use Dfi\DataTable\Filter;
+use Exception;
 use ModelCriteria;
 
 
@@ -14,6 +13,117 @@ abstract class FieldAbstract implements FieldInterface
 
     protected $options = [];
     protected $key;
+
+
+    protected $ops = [
+        /** Comparison type. */
+        Criteria::EQUAL => "=",
+
+        /** Comparison type. */
+        Criteria::NOT_EQUAL => "<>",
+
+        /** Comparison type. */
+        Criteria::ALT_NOT_EQUAL => "!=",
+
+        /** Comparison type. */
+        Criteria::GREATER_THAN => ">",
+
+        /** Comparison type. */
+        Criteria::LESS_THAN => "<",
+
+        /** Comparison type. */
+        Criteria::GREATER_EQUAL => ">=",
+
+        /** Comparison type. */
+        Criteria::LESS_EQUAL => "<=",
+
+        /** Comparison type. */
+        Criteria::LIKE => " LIKE ",
+
+        /** Comparison type. */
+        Criteria::NOT_LIKE => " NOT LIKE ",
+
+        /** Comparison for array column types */
+        Criteria::CONTAINS_ALL => "CONTAINS_ALL",
+
+        /** Comparison for array column types */
+        Criteria::CONTAINS_SOME => "CONTAINS_SOME",
+
+        /** Comparison for array column types */
+        Criteria::CONTAINS_NONE => "CONTAINS_NONE",
+
+        /** PostgreSQL comparison type */
+        Criteria::ILIKE => " ILIKE ",
+
+        /** PostgreSQL comparison type */
+        Criteria::NOT_ILIKE => " NOT ILIKE ",
+
+        /** Comparison type. */
+        Criteria::CUSTOM => "CUSTOM",
+
+        /** Comparison type */
+        Criteria::RAW => "RAW",
+
+        /** Comparison type for update */
+        Criteria::CUSTOM_EQUAL => "CUSTOM_EQUAL",
+
+        /** Comparison type. */
+        Criteria::DISTINCT => "DISTINCT",
+
+        /** Comparison type. */
+        Criteria::IN => " IN ",
+
+        /** Comparison type. */
+        Criteria::NOT_IN => " NOT IN ",
+
+        /** Comparison type. */
+        Criteria::ALL => "ALL",
+
+        /** Comparison type. */
+        Criteria::JOIN => "JOIN",
+
+        /** Binary math operator: AND */
+        Criteria::BINARY_AND => "&",
+
+        /** Binary math operator: OR */
+        Criteria::BINARY_OR => "\|",
+
+        /** "Order by" qualifier - ascending */
+        Criteria::ASC => "ASC",
+
+        /** "Order by" qualifier - descending */
+        Criteria::DESC => "DESC",
+
+        /** "IS NULL" null comparison */
+        Criteria::ISNULL => " IS NULL ",
+
+        /** "IS NOT NULL" null comparison */
+        Criteria::ISNOTNULL => " IS NOT NULL ",
+
+        /** "CURRENT_DATE" ANSI SQL function */
+        Criteria::CURRENT_DATE => "CURRENT_DATE",
+
+        /** "CURRENT_TIME" ANSI SQL function */
+        Criteria::CURRENT_TIME => "CURRENT_TIME",
+
+        /** "CURRENT_TIMESTAMP" ANSI SQL function */
+        Criteria::CURRENT_TIMESTAMP => "CURRENT_TIMESTAMP",
+
+        /** "LEFT JOIN" SQL statement */
+        Criteria::LEFT_JOIN => "LEFT JOIN",
+
+        /** "RIGHT JOIN" SQL statement */
+        Criteria::RIGHT_JOIN => "RIGHT JOIN",
+
+        /** "INNER JOIN" SQL statement */
+        Criteria::INNER_JOIN => "INNER JOIN",
+
+        /** logical OR operator */
+        Criteria::LOGICAL_OR => "OR",
+
+        /** logical AND operator */
+        Criteria::LOGICAL_AND => "AND"
+    ];
 
 
     /**
@@ -100,7 +210,23 @@ abstract class FieldAbstract implements FieldInterface
         }
 
         if ($this->hasOption('filter') && $this->getOption('filter') == 'number') {
-            $operator = Criteria::EQUAL;
+            $ops = array_values($this->ops);
+            $v = implode("|", $ops);
+
+            if (preg_match_all('/' . $v . '/', $value, $matches)) {
+                foreach ($matches[0] as $match) {
+                    $value = str_replace($match, '', $value);
+                    if ($match == '|') {
+                        $match = "\|";
+                    }
+                    $operator = array_search($match, $this->ops);
+
+
+                }
+
+            } else {
+                $operator = Criteria::EQUAL;
+            }
         }
 
 

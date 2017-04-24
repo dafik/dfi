@@ -1,4 +1,5 @@
 <?php
+
 namespace Dfi\View\Helper;
 
 use Dfi\DataTable as DfiDataTable;
@@ -99,6 +100,9 @@ class DataTable extends Zend_View_Helper_FormText
                     if (array_key_exists('filterData', $options)) {
                         $aoColumn['values'] = $selectColumn->getOption('filterData');
                     }
+                    if (array_key_exists('search', $options)) {
+                        $aoColumn['search'] = $selectColumn->getOption('search');
+                    }
                 } else {
                     $aoColumn = array('type' => $selectColumn->getFilter()->getType());
                     $aoColumn['values'] = $selectColumn->getFilter()->getFilterOptions();
@@ -198,7 +202,7 @@ class DataTable extends Zend_View_Helper_FormText
             $format = new JSFormat();
 
             $out = '<script>' . "\n" . $format->JSFormat($script) . '</script>' . "\n";
-            $out .= '<script>' . "\n" . $format->JSFormat($modalsScript . $scripts, [ 'frmProcess' => 'processObj', 'window' => 'window']) . '</script>' . "\n";
+            $out .= '<script>' . "\n" . $format->JSFormat($modalsScript . $scripts, ['frmProcess' => 'processObj', 'window' => 'window']) . '</script>' . "\n";
 
             return $out;
         }

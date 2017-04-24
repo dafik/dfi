@@ -1,7 +1,7 @@
 <?php
 namespace Dfi\Asterisk\Stat;
 
-use Dfi\Iface\Model\Pbx\AccountSip;
+use Dfi\Iface\Model\Asterisk\AccountSip;
 
 class User extends ConfigAbstract
 {
