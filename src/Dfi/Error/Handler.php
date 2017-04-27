@@ -39,7 +39,7 @@ class Handler
             
             try {
                 $e = new ErrorException($error['message'], 0, 1, $error['file'], $error['line']);
-                //$guid = Dfi_Error_Report::saveException($e);
+                //$guid = Dfi\Error\Report::saveException($e);
             } catch (Exception $e) {
                 $guid = false;
             }

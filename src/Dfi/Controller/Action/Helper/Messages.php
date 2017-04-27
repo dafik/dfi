@@ -30,7 +30,7 @@ class Messages extends Zend_Controller_Action_Helper_Abstract
      */
     private $view;
     /**
-     * Dfi_Controller_Action_Helper_Messages
+     * Dfi\Controller\Action\Helper\Messages
      *
      * @var Messages
      */
