@@ -53,6 +53,9 @@ class Worker
         if ($runInBackground) {
 
 
+            $logFile = realpath(APPLICATION_PATH . "/../data/worker") . '/' . $this->guid . '.log';
+            $errorLog = realpath(APPLICATION_PATH . "/../data/worker") . '/' . $this->guid . '.error.log';
+
             $phpOptions = [
                 '-n',
                 '-dextension=mysqlnd.so',
@@ -62,23 +65,18 @@ class Worker
                 '-dextension=dom.so',
                 '-dextension=simplexml.so',
                 '-dextension=xmlwriter.so',
+                '-dextension=iconv.so',
+                '-dlog_errors=On',
+                '-derror_reporting=E_ALL',
+                '-derror_log=' . $errorLog,
+
                 '-f'
             ];
-
-
             $command = "/usr/bin/php " . implode(" ", $phpOptions) . realpath(APPLICATION_PATH . "/../vendor/dafik/dfi/src/Dfi/Worker/Task.php") . ' "' . $this->guid . '" "' . $this->file . '" "' . implode("\" \"", $this->args) . "\"";
-            //$command = "/usr/bin/php -f " . realpath(APPLICATION_PATH . "/../data/sleep.php");
-            //$fullCommand = 'bash -c \'exec nohup setsid ' . $command . ' > ' . realpath(APPLICATION_PATH . "/../data/worker/log") . ' 2>&1 &\'';
-            $fullCommand = 'nohup ' . $command . ' > /dev/null 2>&1 &';
-            $res = exec($fullCommand, $out, $result);
+            $fullCommand = 'nohup ' . $command . ' > ' . $logFile . ' 2>&1 & echo $!';
+            $pid = exec($fullCommand);
 
-            /*
-                    $outputFile = realpath(APPLICATION_PATH . "/../data/") . "/w.log";
-                    $pidFile = realpath(APPLICATION_PATH . "/../data/") . "/w.pid";
 
-                    $full = sprintf("%s > %s 2>&1 & echo $! >> %s", $fullCommand, $outputFile, $pidFile)  ;
-
-                    $res = exec($full);*/
         } else {
 
             $dtkPath = realpath(APPLICATION_PATH . "/../vendor/dafik/dtk/src/");
