@@ -37,7 +37,7 @@ class Task
         $this->makeLog();
 
 
-        $importer->import();
+        $importer->run();
     }
 
     private function makeLog()
