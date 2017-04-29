@@ -84,7 +84,7 @@ class Worker
             $class = new $this->file;
             $class->setFile($this->args[0]);
 
-            $res = $class->import();
+            $res = $class->run();
 
 
         }
