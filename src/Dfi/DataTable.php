@@ -1,4 +1,5 @@
 <?php
+
 namespace Dfi;
 
 use Criteria;
@@ -491,6 +492,15 @@ class DataTable
     {
         $this->requestAction = $requestAction;
     }
+
+    /**
+     * @return string
+     */
+    public function getRequestAction(): string
+    {
+        return $this->requestAction;
+    }
+
 
     public function getHttpRequestParams()
     {

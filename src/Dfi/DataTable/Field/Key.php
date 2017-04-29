@@ -1,4 +1,5 @@
 <?php
+
 namespace Dfi\DataTable\Field;
 
 use ModelCriteria;
@@ -31,7 +32,7 @@ class Key extends FieldAbstract implements FieldInterface
 
     public function getValue($row, &$errors, $key = false)
     {
-        $value = false;
+        $value = null;
         if (!$key) {
             $key = $this->key;
         }
