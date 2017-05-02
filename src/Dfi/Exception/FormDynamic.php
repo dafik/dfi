@@ -1,11 +1,12 @@
 <?php
+
 namespace Dfi\Exception;
 
 use Exception;
-use Dfi\Form\Dynamic\DynamicAbstract;
+use LogicException;
 use SimpleXMLElement;
 
-class FormDynamic extends \Exception
+class FormDynamic extends LogicException
 {
     /**
      * @var SimpleXMLElement
@@ -19,7 +20,7 @@ class FormDynamic extends \Exception
         foreach ($dbg as $trace) {
             if (isset($trace['object'])) {
                 $obj = $trace['object'];
-                if ($obj instanceof DynamicAbstract) {
+                if ($obj instanceof FormDynamic) {
                     $xml = $obj->getXML();
                     $this->xml = $xml;
                     return;

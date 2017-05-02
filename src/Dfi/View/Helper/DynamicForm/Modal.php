@@ -1,7 +1,7 @@
 <?php
 namespace Dfi\View\Helper\DynamicForm;
 
-use Dfi\Error\Exception;
+
 use Dfi\Exception\AppException;
 use Dfi\View\Helper\DynamicForm\Callback as Clback;
 

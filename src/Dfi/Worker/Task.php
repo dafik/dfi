@@ -8,9 +8,6 @@
 
 namespace Dfi\Worker;
 
-
-use Dtk\Importer\Base;
-
 class Task
 {
     public function __construct($arg)
@@ -27,7 +24,8 @@ class Task
 
     public function run()
     {
-        /** @var Base $importer */
+        //TODO export to interface
+
         $importer = new $this->importerClass();
         $importer->setFile($this->importFile);
         $importer->setGuid($this->guid);

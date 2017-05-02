@@ -9,7 +9,11 @@
 namespace Dfi\DataTable\Field;
 
 
+use Criteria;
+use Dfi\Iface\Provider;
+use Exception;
 use ModelCriteria;
+use PropelException;
 
 class Expression extends FieldAbstract implements FieldInterface
 {

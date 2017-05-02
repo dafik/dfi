@@ -4,12 +4,12 @@ namespace Dfi\Asterisk;
 
 use Dfi\App\Config;
 use Dfi\Controller\Action\Helper\Messages;
-use Dfi\Iface\Provider\Pbx\ConfigProvider;
+use Dfi\Iface\Provider\Pbx\AstConfigProvider;
 use Exception;
-use PAMI\Autoloader\Autoloader;
 use PAMI\Client\Impl\ClientImpl;
 use PAMI\Message\Action\CommandAction;
 use PAMI\Message\OutgoingMessage;
+use PAMI\Message\Response\ResponseMessage;
 use Zend_Config_Ini;
 
 
@@ -87,7 +87,7 @@ class Ami
 
     /**
      * @param OutgoingMessage $message
-     * @return PAMI\Message\Response\ResponseMessage
+     * @return ResponseMessage
      */
     public static function send(OutgoingMessage $message)
     {
@@ -221,7 +221,7 @@ class Ami
         if (!$res instanceof \PAMI\Message\Response\ResponseMessage) {
 
             $providerClass = \Dfi\Iface\Helper::getClass('iface.provider.pbx.astConfig');
-            /** @var ConfigProvider $provider */
+            /** @var AstConfigProvider $provider */
             $provider = $providerClass::create();
             $cat = $provider
                 ->select('FileName')

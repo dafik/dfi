@@ -497,7 +497,7 @@ class DataTable
     /**
      * @return string
      */
-    public function getRequestAction(): string
+    public function getRequestAction()
     {
         return $this->requestAction;
     }
