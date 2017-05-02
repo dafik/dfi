@@ -206,7 +206,7 @@ class ConnectionsFilter
         }
     }
 
-    public function filter($isAdvancedSearch = false)
+    public function filter()
     {
         $className = Config::get('asterisk.billingTable');
 
@@ -221,18 +221,18 @@ class ConnectionsFilter
         $x = $query instanceof BillingProvider;
 
 
-        $this->filterByDate($query);
+        //$this->filterByDate($query);
         $this->filterBySource($query);
         $this->filterByDestination($query);
-        if ($isAdvancedSearch) {
-            $this->filterByContext($query);
-            $this->filterByChannel($query);
-            $this->filterByState($query);
-            $this->filterByDirection($query);
-            $this->filterByDuration($query);
 
-            $this->filterByCustom($query);
-        }
+        $this->filterByContext($query);
+        $this->filterByChannel($query);
+        $this->filterByState($query);
+        $this->filterByDirection($query);
+        $this->filterByDuration($query);
+
+        $this->filterByCustom($query);
+
         return $query;
     }
 
@@ -298,10 +298,10 @@ class ConnectionsFilter
 
     private function filterByContext(BillingProvider $query)
     {
-        if (isset($this->options['context_sub']['context'])) {
-            $op = trim($this->options['context_sub']['context_op']);
+        if (isset($this->options['context_sub']['cntx'])) {
+            $op = trim($this->options['context_sub']['cntx_op']);
             $op = constant('Criteria::' . $op);
-            $val = $this->prepareValues($op, $this->options['context_sub']['context']);
+            $val = $this->prepareValues($op, $this->options['context_sub']['cntx']);
 
             if ($op) {
                 $query->filterByDcontext($val, $op);
