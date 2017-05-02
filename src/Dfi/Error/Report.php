@@ -24,7 +24,7 @@ class Report
         try {
             self::checkPropel();
             /** @var Log $log */
-            $log = Helper::getObject('iface.debug.log');
+            $log = Helper::getObject('iface.model.debug.log');
             $log->setMessage($message);
             $log->setDescription($description);
             $log->setVariables($variables);
@@ -47,7 +47,7 @@ class Report
         try {
             self::checkPropel();
             /** @var Log $log */
-            $log = Helper::getObject('iface.debug.log');
+            $log = Helper::getObject('iface.model.debug.log');
 
             if ($e instanceof Exception) {
                 $log->setMessage($e->getMessage());
