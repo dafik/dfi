@@ -10,13 +10,13 @@ use Zend_Form_Exception;
  * Default Decorators Set
  *
  * General usage:
- * Dfi_Form_Decorator::setFormDecorator($form, 'div', 'submit', 'cancel');
- * Dfi_Form_Decorator::setFormDecorator(
+ * Dfi\Form\Decorator::setFormDecorator($form, 'div', 'submit', 'cancel');
+ * Dfi\Form\Decorator::setFormDecorator(
  *   Instance of form,
  *   Decorator Mode - 3 different options:
- *      - Dfi_Form_Decorator::TABLE     (html table style)
- *      - Dfi_Form_Decorator::DIV       (div style)
- *      - Dfi_Form_Decorator::BOOTSTRAP (twitter bootstrap style)
+ *      - Dfi\Form\Decorator::TABLE     (html table style)
+ *      - Dfi\Form\Decorator::DIV       (div style)
+ *      - Dfi\Form\Decorator::BOOTSTRAP (twitter bootstrap style)
  *   Name of submit button,
  *   Name of cancel button
  * );

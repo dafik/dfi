@@ -31,7 +31,7 @@ class Logger
 	}
 	
 	public function __call($name , array $arguments){
-		throw new Exception('Dfi_Asterisk_Logger method:'.$name.' not implemented;');
+		throw new Exception('Dfi\Asterisk\Logger method:'.$name.' not implemented;');
 	}
 }
 

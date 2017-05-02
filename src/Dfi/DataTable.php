@@ -1,4 +1,5 @@
 <?php
+
 namespace Dfi;
 
 use Criteria;
@@ -134,12 +135,13 @@ class DataTable
         } catch (Exception $e) {
             $errors[] = $e->getMessage();
         }
+
+        $data = new stdClass();
         try {
 
             /** @var PropelModelPager $pager */
             $pager = $this->query->paginate($this->page, $this->maxPerPage);
 
-            $data = new stdClass();
 
             //$data->draw = $this->request->getParam('_');
             //integerJS	The draw counter that this object is a response to - from the draw parameter sent as part of the data request. Note that it is strongly recommended for security reasons that you cast this parameter to an integer, rather than simply echoing back to the client what it sent in the draw parameter, in order to prevent Cross Site Scripting (XSS) attacks.
@@ -303,7 +305,7 @@ class DataTable
 
         foreach ($columns as $column) {
             if (substr($column, 0, 13) != 'ExtractValue(' && false != strpos($column, '.')) {
-                list($table, $column) = explode('.', $column);
+                list($table) = explode('.', $column);
                 if ($table != $baseTable && 'models\Cc\\' . $table != $baseTable) {
                     if (!array_key_exists($table, $joins)) {
                         $query->joinWith($table, Criteria::LEFT_JOIN);
@@ -492,6 +494,15 @@ class DataTable
         $this->requestAction = $requestAction;
     }
 
+    /**
+     * @return string
+     */
+    public function getRequestAction(): string
+    {
+        return $this->requestAction;
+    }
+
+
     public function getHttpRequestParams()
     {
         $params = $this->httpRequest->getParams();
@@ -509,3 +520,4 @@ class DataTable
     }
 
 }
+

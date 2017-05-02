@@ -37,7 +37,7 @@ class Task
         $this->makeLog();
 
 
-        $importer->import();
+        $importer->run();
     }
 
     private function makeLog()
@@ -48,6 +48,7 @@ class Task
         $data->file = $this->importerClass;
         $data->guid = $this->guid;
         $data->args = [$this->importFile];
+        $data->pid = getmypid();
         $data->progress = 0;
 
         file_put_contents($path, json_encode($data));
