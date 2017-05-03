@@ -185,6 +185,8 @@ class DataTable extends Zend_View_Helper_FormText
                 $modalHelper = $view->getHelper('dynamicForm');
                 /** @var Modal $modal */
                 foreach ($this->dt->getModals() as $modal) {
+                    $selector = "#" . $this->id . ' ' . $modal->getSelector();
+                    $modal->setSelector($selector);
                     $modalsScript .= $modalHelper->getMainScript($modal);
                 }
                 $modalsScript .= '})' . "\n";

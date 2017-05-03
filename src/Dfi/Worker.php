@@ -63,6 +63,7 @@ class Worker
                 '-dextension=pdo_mysql.so',
                 '-dextension=json.so',
                 '-dextension=dom.so',
+                '-dextension=xml.so',
                 '-dextension=simplexml.so',
                 '-dextension=xmlwriter.so',
                 '-dextension=iconv.so',

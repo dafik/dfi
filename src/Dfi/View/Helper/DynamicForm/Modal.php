@@ -1,4 +1,5 @@
 <?php
+
 namespace Dfi\View\Helper\DynamicForm;
 
 
@@ -275,6 +276,26 @@ class Modal
     {
         $this->selector = $selector;
         return $this;
+    }
+
+    /**
+     * @param string $prefix
+     */
+    public function prependSelector($prefix)
+    {
+        if ($prefix) {
+            $this->setSelector($this->selector ? $prefix . ' ' . $this->selector : $prefix);
+        }
+    }
+
+    /**
+     * @param string $suffix
+     */
+    public function appendSelector($suffix)
+    {
+        if ($suffix) {
+            $this->setSelector($this->selector ? $this->selector . ' ' . $suffix : $suffix);
+        }
     }
 
     /**
