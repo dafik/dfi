@@ -8,13 +8,18 @@
 
 namespace Dfi\Worker;
 
+
 class Task
 {
+    private $guid;
+    private $taskClass;
+    private $taskFile;
+
     public function __construct($arg)
     {
         $this->guid = $arg[0];
-        $this->importerClass = $arg[1];
-        $this->importFile = $arg[2];
+        $this->taskClass = $arg[1];
+        $this->taskFile = $arg[2];
     }
 
     public function __destruct()
@@ -26,16 +31,17 @@ class Task
     {
         //TODO export to interface
 
-        $importer = new $this->importerClass();
-        $importer->setFile($this->importFile);
-        $importer->setGuid($this->guid);
-        $importer->setLogPath(BASE_PATH . 'data/worker');
-        $importer->setMakeLog(true);
+        /** @var TaskInterface $object */
+        $object = new $this->taskClass();
+        $object->setFile($this->taskFile);
+        $object->setGuid($this->guid);
+        $object->setLogPath(BASE_PATH . 'data/worker');
+        $object->setMakeLog(true);
 
         $this->makeLog();
 
 
-        $importer->run();
+        $object->run();
     }
 
     private function makeLog()
@@ -43,9 +49,9 @@ class Task
         $path = BASE_PATH . '/data/worker/' . $this->guid;
 
         $data = new \stdClass();
-        $data->file = $this->importerClass;
+        $data->file = $this->taskClass;
         $data->guid = $this->guid;
-        $data->args = [$this->importFile];
+        $data->args = [$this->taskFile];
         $data->pid = getmypid();
         $data->progress = 0;
 
