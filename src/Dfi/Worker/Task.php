@@ -9,6 +9,8 @@
 namespace Dfi\Worker;
 
 
+use Dfi\Exception\AppException;
+
 class Task
 {
     private $guid;
@@ -40,8 +42,17 @@ class Task
 
         $this->makeLog();
 
+        try {
 
-        $object->run();
+            $object->run();
+        } catch (AppException $e) {
+            $path = BASE_PATH . '/data/worker/' . $this->guid;
+            $current = json_decode(file_get_contents($path));
+
+            $current->error = $e->getMessage();
+            file_put_contents($path, json_encode($current));
+
+        }
     }
 
     private function makeLog()

@@ -7,11 +7,20 @@ use Dfi\DataTable\ColumnDefinition;
 use Dfi\DataTable\Field\FieldAbstract;
 use Dfi\View\Helper\DynamicForm\Modal;
 use stdClass;
+use Zend_Exception;
+use Zend_Registry;
+use Zend_Translate;
+use Zend_Translate_Adapter;
 use Zend_View;
 use Zend_View_Helper_FormText;
 
 class DataTable extends Zend_View_Helper_FormText
 {
+
+    protected static $_translatorDefault;
+
+    protected $_translator;
+    protected $_translatorDisabled;
 
     /**
      * @var DfiDataTable
@@ -52,14 +61,13 @@ class DataTable extends Zend_View_Helper_FormText
         $options ['ajax'] = json_encode(array("url" => $this->dt->getAjax(), "type" => "POST"));
 
         if ($this->hasColumnDefinition()) {
-            $options ['datatable-function'] = $this->dataTableFunctionName;
+            $options ['data-table-function'] = $this->dataTableFunctionName;
         }
 
         if ($this->dt->getHasFilter()) {
             $this->dt->setClasses(array_merge($this->dt->getClasses(), array('table-columnfilter')));
 
-            $options ['columnFilter'] = $this->renderColumnFilter();
-            $options ['columnFilter-select2'] = true;
+            $options ['column-filter'] = $this->renderColumnFilter();
         }
 
         $attribs = [];
@@ -129,6 +137,9 @@ class DataTable extends Zend_View_Helper_FormText
         if (count($columnNames) > 0) {
             $html .= '<tr>' . "\n";
             foreach ($columnNames as $columnName) {
+                if ($this->getTranslator()) {
+                    $columnName = $this->getTranslator()->translate($columnName);
+                }
                 if (false !== strpos($columnName, 'checker')) {
                     $html .= '<th class="checkbox-column"><input type="checkbox" class="uniform"></th>' . "\n";
                 } else {
@@ -295,8 +306,105 @@ class DataTable extends Zend_View_Helper_FormText
     }
 
 
+///translator
+
+    public static function setDefaultTranslator($translator = null)
+    {
+        if (null === $translator) {
+            self::$_translatorDefault = null;
+        } elseif ($translator instanceof Zend_Translate_Adapter) {
+            self::$_translatorDefault = $translator;
+        } elseif ($translator instanceof Zend_Translate) {
+            self::$_translatorDefault = $translator->getAdapter();
+        } else {
+            // require_once 'Zend/Form/Exception.php';
+            throw new Zend_Exception('Invalid translator specified');
+        }
+    }
+
+    /**
+     * Retrieve translator object
+     *
+     * @return Zend_Translate|null
+     */
+    public function getTranslator()
+    {
+        if ($this->translatorIsDisabled()) {
+            return null;
+        }
+
+        if (null === $this->_translator) {
+            return self::getDefaultTranslator();
+        }
+
+        return $this->_translator;
+    }
+
+    /**
+     * Does this form have its own specific translator?
+     *
+     * @return bool
+     */
+    public function hasTranslator()
+    {
+        return (bool)$this->_translator;
+    }
+
+    /**
+     * Get global default translator object
+     *
+     * @return null|Zend_Translate
+     */
+    public static function getDefaultTranslator()
+    {
+        if (null === self::$_translatorDefault) {
+            // require_once 'Zend/Registry.php';
+            if (Zend_Registry::isRegistered('translator')) {
+                $translator = Zend_Registry::get('translator');
+                if ($translator instanceof Zend_Translate_Adapter) {
+                    return $translator;
+                } elseif ($translator instanceof Zend_Translate) {
+                    return $translator->getAdapter();
+                }
+            }
+        }
+        return self::$_translatorDefault;
+    }
+
+    /**
+     * Is there a default translation object set?
+     *
+     * @return boolean
+     */
+    public
+    static function hasDefaultTranslator()
+    {
+        return (bool)self::$_translatorDefault;
+    }
+
+    /**
+     * Indicate whether or not translation should be disabled
+     *
+     * @param  bool $flag
+     * @return DataTable
+     */
+    public
+    function setDisableTranslator($flag)
+    {
+        $this->_translatorDisabled = (bool)$flag;
+        return $this;
+    }
+
+    /**
+     * Is translation disabled?
+     *
+     * @return bool
+     */
+    public
+    function translatorIsDisabled()
+    {
+        return $this->_translatorDisabled;
+    }
+
+
 }
-/*"columnDefs": [ {
-    "targets": 0,
-      "searchable": false
-    } ]*/

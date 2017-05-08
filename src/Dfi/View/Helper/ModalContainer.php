@@ -16,7 +16,7 @@ class ModalContainer extends Zend_View_Helper_Abstract
     public function modalContainer($tag = 'div', $mode = self::OPEN)
     {
         if ($mode == self::OPEN) {
-            return '<' . $tag . ($this->view->makeDTid ? ' id="' . $this->view->makeDTid . '"' : '') . '>';
+            return '<' . $tag . ($this->view->modalId ? ' id="' . $this->view->modalId . '"' : '') . '>';
         } else {
             return '<' . $tag . '>';
         }
