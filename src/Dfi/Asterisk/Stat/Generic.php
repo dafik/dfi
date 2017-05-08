@@ -11,8 +11,6 @@ class Generic extends ConfigAbstract
 {
     public function __construct($config, $name, $catMetric = null)
     {
-        parent::__construct();
-
         $this->filename = $config;
         $this->category = $name;
         if (null !== $catMetric) {
