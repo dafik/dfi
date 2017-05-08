@@ -1,7 +1,9 @@
 <?
+
 namespace Dfi\Controller\Plugin;
 
-use Dfi\Auth\Acl as DfiAcl;
+use Dfi\Auth\Acl as AuthAcl;
+use Dfi\Auth\Bypass;
 use Zend_Auth;
 use Zend_Controller_Plugin_Abstract;
 use Zend_Controller_Request_Abstract;
@@ -13,29 +15,27 @@ class Acl extends Zend_Controller_Plugin_Abstract
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
 
-        if ($this->isBypassRequest($request->getModuleName(), $request->getControllerName(), $request->getActionName())) {
+        /** @var \Zend_Controller_Request_Http $request */
+        $bypass = Bypass::isBypass($request);
+
+        if ($bypass) {
             return;
         }
 
         if (Zend_Auth::getInstance()->hasIdentity()) {
             $acl = Zend_Registry::get('acl');
 
-            $roleId = Zend_Auth::getInstance()->getIdentity()->getSysRole()->getId();
-
-            $privilageName = DfiAcl::getModulesIdsByRequest($request);
+            $roleId = Zend_Auth::getInstance()->getIdentity()->getRoleId();
+            $privilageName = AuthAcl::getModulesIdsByRequest($request);
 
             if ($roleId && $privilageName) {
-
-                if ($acl->isAllowed($roleId, $privilageName)) {
-                    return;
+                if (!$acl->isAllowed($roleId, $privilageName)) {
+                    $request->setModuleName('default');
+                    $request->setControllerName('Error');
+                    $request->setActionName('forbidden');
                 }
-
             }
-
         }
-        $request->setModuleName('default');
-        $request->setControllerName('Error');
-        $request->setActionName('forbidden');
     }
 
     private function isBypassRequest($module, $controller, $action)

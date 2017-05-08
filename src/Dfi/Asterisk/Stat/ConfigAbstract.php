@@ -211,7 +211,17 @@ abstract class ConfigAbstract
     private static function getPdo()
     {
 
-        return Propel::getConnection();
+
+        $configClass = Helper::getClass("iface.provider.pbx.astConfig");
+
+        /** @var \AstConfigQuery $qry */
+        $qry = $configClass::create();
+        $peer = $qry->getModelPeerName();
+
+        $con = Propel::getConnection($peer::DATABASE_NAME, Propel::CONNECTION_READ);
+        return $con;
+
+        //return Propel::getConnection();
     }
 
 
