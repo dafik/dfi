@@ -1,39 +1,54 @@
 <?
+
 namespace Dfi\Form\Element;
+
 use Criteria;
+use Dfi\Filter\NullFilter;
 use Exception;
-use Zend_Form_Element_Select;
+use ModelCriteria;
+use TableMap;
 use Zend_View_Interface;
 
-class Lists extends Zend_Form_Element_Select
+class Lists extends Select
 {
     const SET_MODEL_NAME_NOT_SET = 'you must set model name first';
 
     private $modelName;
     private $modelField;
     private $modelValueField;
+
+    /**
+     * @var  ModelCriteria
+     */
     private $criteria;
-    private $orderByFields = array();
     private $correctName = false;
     private $objectList = array();
     private $listGenerated = false;
-    private $defaultLabel = 'wybierz';
 
-    private $alredyInSetMultioptions = false;
+    private $selects = array();
+
+    public function __construct($spec, $options = null)
+    {
+        $this->setDisableOptionsTranslator(true);
+        parent::__construct($spec, $options);
+        $this->addFilter(new NullFilter());
+    }
+
 
     public function render(Zend_View_Interface $view = null)
     {
+        $this->setDisableTranslator(true);
         if (count($this->getMultiOptions()) == 0) {
-            $this->setMultiOptions();
+            $this->setMultiOptions(array());
         }
-
+        $this->setDisableTranslator(false);
         return parent::render($view);
     }
 
     public function setValue($value)
     {
         if (count($this->getMultiOptions()) == 0) {
-            $this->setMultiOptions();
+            $this->setMultiOptions(array());
         }
         parent::setValue($value);
     }
@@ -41,31 +56,25 @@ class Lists extends Zend_Form_Element_Select
     public function isValid($value, $context = null)
     {
         if (count($this->getMultiOptions()) == 0) {
-            $this->setMultiOptions();
+            $this->setMultiOptions(array());
         }
         return parent::isValid($value, $context);
     }
 
-    public function setMultiOptions(array $options = [])
+    public function setMultiOptions(array $options)
     {
+        $this->setDisableTranslator(true);
         parent::setMultiOptions($this->generateMultiOptions());
-    }
-
-    public function addMultiOption($option, $value = '')
-    {
-        if (count($this->getMultiOptions()) == 0 && !$this->alredyInSetMultioptions) {
-            $this->alredyInSetMultioptions = true;
-            $this->setMultiOptions();
-            $this->alredyInSetMultioptions = false;
-        }
-        parent::addMultiOption($option, $value);
+        $this->setDisableTranslator(false);
     }
 
     public function setModelName($modelName)
     {
+        if (!$modelName) {
+            throw new Exception('model cant be empty');
+        }
         try {
-            $name = ucfirst($modelName);
-            new $name;
+            $model = new $modelName;
         } catch (Exception $e) {
             throw new Exception('model ' . $modelName . ' doesn\'t exist');
         }
@@ -75,26 +84,43 @@ class Lists extends Zend_Form_Element_Select
 
     public function setModelField($modelField)
     {
-        $functionName = 'get' . ucfirst($modelField);
-        if (null == $this->modelName) {
-            throw new Exception(self::SET_MODEL_NAME_NOT_SET);
+        if (!$modelField) {
+            throw new Exception('model filed cant be empty');
         }
-        $name = ucfirst($this->modelName);
-        $model = new $name;
 
-        if (method_exists($model, $functionName)) {
-            $this->modelField = $modelField;
-            return true;
+        if (!is_array($modelField)) {
+            $modelField = array($modelField);
         }
-        throw new Exception($functionName . ' function doesn\'t exists');
+
+        foreach ($modelField as $field) {
+
+            $functionName = 'get' . ucfirst($field);
+            if (null == $this->modelName) {
+                throw new Exception(self::SET_MODEL_NAME_NOT_SET . ' in' . $this->getName());
+            }
+            $name = $this->modelName;
+            $model = new $name;
+
+            if (method_exists($model, $functionName)) {
+                $this->modelField[] = $field;
+            } else {
+                throw new Exception($functionName . ' function doesn\'t exists');
+            }
+        }
+        return true;
+
     }
 
     public function setModelValueField($nameValue)
     {
-        if (null == $this->modelName) {
-            throw new Exception(self::SET_MODEL_NAME_NOT_SET);
+        if (!$nameValue) {
+            throw new Exception('model value cant be empty');
         }
-        $name = ucfirst($this->modelName);
+
+        if (null == $this->modelName) {
+            throw new Exception(self::SET_MODEL_NAME_NOT_SET . ' in' . $this->getName());
+        }
+        $name = $this->modelName;
         $peerName = $name . 'Peer';
 
         $cons = constant($peerName . '::' . strtoupper($nameValue));
@@ -109,88 +135,117 @@ class Lists extends Zend_Form_Element_Select
         $this->criteria = $c;
     }
 
-    public function setOrderByFields(array $orderBy)
-    {
-        $this->orderByFields = $orderBy;
-    }
-
-    public function setDefaultLabel($v)
-    {
-        $this->defaultLabel = $v;
-    }
-
     private function generateMultiOptions()
     {
         if (!$this->correctName) {
-            throw new Exception('method require valid model name to be set first');
+            throw new Exception('method require valid model name to be set first in: ' . $this->getName());
         }
-        //$objectList =$this->getObjectList();
-        $options = $this->propelObject2array($this->getObjectList(), $this->modelValueField, $this->modelField);
-        //$options = $this->propelObject2array($this->getObjectList());
+        $data = $this->getDataList();
+        $options = $this->generateOptions($data);
         return $options;
     }
 
-    private function getObjectList()
+    private function getDataList()
     {
         if (!$this->listGenerated) {
             if ($this->criteria instanceof Criteria) {
-                $c = $this->criteria;
+                $name = $this->modelName . 'Query';
+                /** @var ModelCriteria $c */
+                $c = $name::create();
+                $c->mergeWith($this->criteria);
             } else {
-                $c = new Criteria();
+                $name = $this->modelName . 'Query';
+                $c = $name::create();
             }
-            $peerClass = ucfirst($this->modelName) . 'Peer';
-
-            foreach ($this->orderByFields as $orderByField => $direction) {
-                $const = constant($peerClass . '::' . strtoupper($orderByField));
-                if (null != $const) {
-                    if (strtoupper($direction) == 'ASC') {
-                        $c->addAscendingOrderByColumn($const);
-                    }
-                    if (strtoupper($direction) == 'DESC') {
-                        $c->addDescendingOrderByColumn($const);
-                    }
-                } else {
-                    throw new Exception('couldn\'t find field: ' . $orderByField . ' in ' . $peerClass . ' class');
-                }
+            if (!$c instanceof ModelCriteria) {
+                throw new Exception('old method');
             }
+            $this->criteria = $c;
+
+            $this->configureSelect();
 
 
-            $objects = call_user_func(array($peerClass, 'doSelect'), $c);
+            $objects = $c->find()->toArray();;
             $this->objectList = $objects;
             $this->listGenerated = true;
         }
         return $this->objectList;
     }
 
-    public function propelObject2array(array $objectList, $pk = null, $displayField = null)
+    private function generateOptions(array $objectList)
     {
         $list = array();
-        $list['x'] = $this->defaultLabel;
+        $list['null'] = 'wybierz';
+
+        $pk = $this->modelValueField;
+        $select = $this->selects;
+        unset($select[array_search($pk, $select)]);
 
         if (count($objectList) > 0) {
-            $object = $objectList[0];
-            if (null === $pk) {
-
-                $pks = $object->getPeer()->getTableMap()->getPrimaryKeyColumns();
-
-                $pkColumn = $pks[0];
-                $pk = $pkColumn->getPhpName();
-            }
-            $pkMethod = 'get' . ucfirst($pk);
-            if (null === $displayField) {
-                if (method_exists($object, 'getName')) {
-                    $displayField = 'name';
-                } elseif (null != $this->modelField) {
-                    $displayField = $this->modelField;
-                } else {
-                    throw new Exception('can\'t found displayfield');
-                }
-            }
-            $displayFieldMethod = 'get' . ucfirst($displayField);
             foreach ($objectList as $object) {
-                $list[$object->$pkMethod()] = $object->$displayFieldMethod();
+                $out = [];
+                foreach ($select as $arg) {
+                    $out[] = $object[$arg];
+                }
+
+                $list[$object[$pk]] = implode(' ', $out);
             }
         }
         return $list;
     }
+
+
+    private function configureSelect()
+    {
+        $selects = [];
+
+        if (!$this->modelValueField) {
+            $pks = $this->getTableMap()->getPrimaryKeyColumns();
+            if (count($pks) > 1) {
+                throw new Exception('auto guess model value field failed : to many pks');
+            }
+
+            $pkColumn = $pks[0];
+            $this->modelValueField = $pkColumn->getPhpName();
+        }
+        $selects[] = $this->modelValueField;
+
+        if (!$this->modelField) {
+            $map = $this->getTableMap();
+            foreach ($map->getColumns() as $column) {
+                if (false !== strpos('name', strtolower($column->getPhpName()))) {
+                    $this->modelField = $column->getPhpName();
+                    break;
+                }
+            }
+        }
+        if (!$this->modelField) {
+            throw new Exception('auto guess model field failed : name column not found');
+        }
+        if (is_string($this->modelField)) {
+            $this->modelField = [$this->modelField];
+        }
+
+        $selects = array_unique(array_merge($selects, $this->modelField));
+        $this->selects = $selects;
+
+        $this->criteria->select($selects);
+    }
+
+    /**
+     * @return TableMap
+     */
+    private function getTableMap()
+    {
+        $name = $this->modelName . 'Query';
+        /** @var ModelCriteria $c */
+        $c = $name::create();
+        return $c->getTableMap();
+    }
+
+    public function getMultiOptions()
+    {
+        return parent::getMultiOptions(); // TODO: Change the autogenerated stub
+    }
+
 }
