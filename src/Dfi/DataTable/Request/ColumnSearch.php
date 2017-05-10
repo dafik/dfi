@@ -1,4 +1,5 @@
 <?
+
 namespace Dfi\DataTable\Request;
 
 use Criteria;
@@ -21,7 +22,11 @@ class ColumnSearch
         $this->regex = filter_var($regex, FILTER_VALIDATE_BOOLEAN);
         $this->value = $value;
         if (false !== strpos($value, '%')) {
-            $this->operator = Criteria::LIKE;
+            if (substr(trim($value), 0, 1) == "!") {
+                $this->operator = Criteria::NOT_LIKE;
+            } else {
+                $this->operator = Criteria::LIKE;
+            }
         }
 
     }
