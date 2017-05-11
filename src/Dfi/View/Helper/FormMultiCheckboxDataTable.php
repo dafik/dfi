@@ -112,8 +112,8 @@ class FormMultiCheckboxDataTable extends Zend_View_Helper_FormElement
         $xhtml = '<table class="table table-striped table-condensed table-hover table-columnfilter table-checkable datatable"
         data-widget="false"
        data-paging="false"
-       data-columnFilter=\'' . $columnFilterJson . '\'
-       data-columnFilter-select2="true"
+       data-column-filter=\'' . $columnFilterJson . '\'
+       data-columnf-filter-select2="true"
        data-searching="true"
        width="100%">';
         $xhtml .= '<thead><tr>';
