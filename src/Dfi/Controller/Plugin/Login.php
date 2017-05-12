@@ -15,7 +15,7 @@ class Login extends Zend_Controller_Plugin_Abstract
 
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
-        Zend_Auth::getInstance()->setStorage(new Cookie('user'));
+        Zend_Auth::getInstance()->setStorage(new Cookie('SysUser'));
 
         /** @var Zend_Controller_Request_Http $request */
         $request = $this->getRequest();
@@ -87,13 +87,10 @@ class Login extends Zend_Controller_Plugin_Abstract
 
         return array(
             'default' => array(
-                'error' => array('error' => 0, 'forbiden' => 0)
+                'error' => array('error' => 0, 'forbiden' => 0),
+                'login' => array('index' => 0, 'return' => 0)
             ),
-            'admin' => array(
-                'login' => array('index' => 0, 'return' => 0),
-                'logout' => array('index' => 0),
-                'error' => array('error' => 0, 'forbiden' => 0)
-            )
+
         );
 
     }
