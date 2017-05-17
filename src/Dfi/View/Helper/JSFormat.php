@@ -13,14 +13,14 @@ class JSFormat extends Zend_View_Helper_Abstract
         $code = preg_replace('/  +/', ' ', $code);
 
         /* defining the various scopes we care about for this excercise */
-        define('CODE', 0); /* normal JS code */
-        define('STRING_DBL', 1); /* double quoted string */
-        define('STRING_SGL', 2); /* single quoted string */
-        define('REGEXP', 3); /* regexp literal */
-        define('ESCAPE', 4); /* some escape char (backslash) */
-        define ('MULTI_LINE_COMMENT', 5);
-        define ('SINGLE_LINE_COMMENT', 6);
-        define ('REGEXP_CHAR_CLASS', 7); /* inside a [ ... ] clause in a regular expression. Requires its own scope because /[/]/ is a valid regexp */
+        defined('CODE') || define('CODE', 0); /* normal JS code */
+        defined('STRING_DBL') || define('STRING_DBL', 1); /* double quoted string */
+        defined('STRING_SGL') || define('STRING_SGL', 2); /* single quoted string */
+        defined('REGEXP') || define('REGEXP', 3); /* regexp literal */
+        defined('ESCAPE') || define('ESCAPE', 4); /* some escape char (backslash) */
+        defined('MULTI_LINE_COMMENT') || define ('MULTI_LINE_COMMENT', 5);
+        defined('SINGLE_LINE_COMMENT') || define ('SINGLE_LINE_COMMENT', 6);
+        defined('REGEXP_CHAR_CLASS') || define ('REGEXP_CHAR_CLASS', 7); /* inside a [ ... ] clause in a regular expression. Requires its own scope because /[/]/ is a valid regexp */
         $debug = false;
         $start = time();
 
