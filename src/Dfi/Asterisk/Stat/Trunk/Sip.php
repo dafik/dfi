@@ -23,10 +23,10 @@ class Sip extends ConfigAbstract
         return $this->category;
     }
 
-    public static function create(Trunk $trunk)
+    public static function create(Trunk $queue)
     {
-        $pbxTrunk = parent::create($trunk);
-        $pbxTrunk->applyDefinitions($trunk->getDefinition());
+        $pbxTrunk = parent::create($queue);
+        $pbxTrunk->applyDefinitions($queue->getDefinition());
         return $pbxTrunk;
     }
 }

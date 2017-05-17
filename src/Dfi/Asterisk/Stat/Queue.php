@@ -29,10 +29,10 @@ class Queue extends ConfigAbstract
         return $this->category;
     }
 
-    public static function create(Queue $trunk)
+    public static function create(\Dfi\Iface\Model\Pbx\Queue $queue)
     {
-        $pbxQueue = parent::create($trunk);
-        $pbxQueue->applyDefinitions($trunk->getDefinition());
+        $pbxQueue = parent::create($queue);
+        $pbxQueue->applyDefinitions($queue->getDefinition());
         return $pbxQueue;
     }
 }

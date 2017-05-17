@@ -275,7 +275,8 @@ class Ami
             $c = new Zend_Config_Ini(APPLICATION_PATH . '/configs/sys/log4php-pami.conf.php');
             $config["log4php.properties"] = $c->toArray();
 
-            $config["log4php.properties"]['appenders']['appender']['default']['file'] = Config::get('paths.log') . 'ami.log';
+            $config["log4php.properties"]['appenders']['default']['params']['file'] = Config::get('paths.log') . 'ami.log';
+            $config["log4php.properties"]['appenders']['default']["class"] = "LoggerAppenderFile";
 
             $client = new Client($config);
             if (!Config::getString('asterisk.fake', true)) {

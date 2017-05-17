@@ -11,11 +11,8 @@ namespace Dfi\Iface\Model\Pbx;
 
 use Dfi\Iface\Model;
 
-interface Context extends Model
+interface Queue extends Model
 {
 
 
-    public function getName();
-
-    public function getPbxExtensions($orderByRank);
 }

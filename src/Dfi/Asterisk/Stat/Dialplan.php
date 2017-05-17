@@ -3,10 +3,10 @@
 namespace Dfi\Asterisk\Stat;
 
 use Dfi\Iface\Helper;
-use Dfi\Iface\Model\Asterisk\Config;
-use Dfi\Iface\Model\Asterisk\Context;
-use Dfi\Iface\Model\Asterisk\Extension;
-use Dfi\Iface\Model\Asterisk\Priority;
+use Dfi\Iface\Model\Pbx\AstConfig;
+use Dfi\Iface\Model\Pbx\Context;
+use Dfi\Iface\Model\Pbx\Extension;
+use Dfi\Iface\Model\Pbx\Priority;
 use Dfi\Iface\Provider\Pbx\ExtensionProvider;
 use Dfi\Iface\Provider\Pbx\PriorityProvider;
 use PropelException;
@@ -81,7 +81,7 @@ class Dialplan extends ConfigAbstract
         return $this->category;
     }
 
-    public static function create(Context $ctx)
+    public static function create(Context $ctx, $addDefaults = false, $doIntersect = false)
     {
         $dialplan = new self($ctx->getName());
 
@@ -126,7 +126,7 @@ class Dialplan extends ConfigAbstract
         $countProperties = $provider->filterByPbxContext($ctx)->count();
         $countEntries = $this->countEntries();
         if ($countProperties < $countEntries) {
-            /** @var Config $entry */
+            /** @var AstConfig $entry */
             foreach ($this->getEntriesArray() as $entry) {
                 $entry->delete();
             }
