@@ -6,7 +6,7 @@
  * Time: 13:40
  */
 
-namespace Dfi\Iface\Model\Asterisk;
+namespace Dfi\Iface\Model\Pbx;
 
 
 use Dfi\Iface\Model;

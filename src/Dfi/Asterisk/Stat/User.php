@@ -37,10 +37,10 @@ class User extends ConfigAbstract
         return $this->category;
     }
 
-    public static function create(AccountSip $trunk, $addDefaults, $doIntersect = false)
+    public static function create(AccountSip $queue, $addDefaults, $doIntersect = false)
     {
-        $pbxAccount = parent::create($trunk, $addDefaults);
-        $pbxAccount->applyDefinitions($trunk->getDefinition());
+        $pbxAccount = parent::create($queue, $addDefaults);
+        $pbxAccount->applyDefinitions($queue->getDefinition());
 
         return $pbxAccount;
     }

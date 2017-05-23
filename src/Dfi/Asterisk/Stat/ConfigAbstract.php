@@ -432,10 +432,15 @@ abstract class ConfigAbstract
                 $res[] = $entry;
             }
         }
-
-
         return $res;
+    }
 
+    /**
+     * @return array
+     */
+    public static function getTransTable()
+    {
+        return static::$transTable;
     }
 
 
