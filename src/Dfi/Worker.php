@@ -58,6 +58,7 @@ class Worker
 
             $phpOptions = [
                 '-n',
+                '-d memory_limit=-1',
                 '-dextension=mysqlnd.so',
                 '-dextension=pdo.so',
                 '-dextension=pdo_mysql.so',
