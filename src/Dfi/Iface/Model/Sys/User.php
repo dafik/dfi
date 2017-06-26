@@ -23,4 +23,10 @@ interface User
 
     public function getPrimaryKey();
 
+
+    /**
+     * @return string
+     */
+    public function getLogin();
+
 }

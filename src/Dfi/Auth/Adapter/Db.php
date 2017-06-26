@@ -9,6 +9,7 @@ use Dfi\Iface\Model\Sys\User;
 use Dfi\Iface\Provider\Sys\UserProvider;
 use Exception;
 use Zend_Auth_Result;
+use Zend_Translate;
 
 class Db implements AdapterInterface
 {
@@ -72,7 +73,7 @@ class Db implements AdapterInterface
     }
 
     /**
-     * Sets the passwort for the account
+     * Sets the password for the account
      *
      * @param  string $password The password of the account being authenticated
      * @return Db Provides a fluent interface
@@ -205,5 +206,25 @@ class Db implements AdapterInterface
     public static function canChangePassword()
     {
         return true;
+    }
+
+    public function changePassword($currentPassword, $newPassword)
+    {
+        return false;
+    }
+
+    public function setTranslator(Zend_Translate $translator)
+    {
+        $this->translator = $translator;
+    }
+
+    public static function isUsingPasswordHasher()
+    {
+        return true;
+    }
+
+    public static function canChangePasswordBySelf()
+    {
+        return false;
     }
 }
