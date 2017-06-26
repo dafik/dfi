@@ -25,7 +25,7 @@ class ValidContract extends HookAbstract implements HookInterface
     public function isValid(User $user)
     {
         $url = $this->url . $user->getLogin();
-        $url = $this->url . "d.prowadzisz";
+        //$url = $this->url . "d.prowadzisz";
 
 
         $client = new \Zend_Http_Client($url);
@@ -37,7 +37,7 @@ class ValidContract extends HookAbstract implements HookInterface
             $validUntil = date_create($m->validUntil);
             if ($validUntil) {
                 $validUntil->modify("-7 days");
-                $validUntil->modify("-7 years");
+                //$validUntil->modify("-7 years");
                 $now = new \DateTime();
                 if ($now >= $validUntil) {
                     $this->warning[] = "Umowa kończy sie $m->validUntil";

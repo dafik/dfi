@@ -15,9 +15,9 @@ abstract class HookAbstract implements HookInterface
 {
 
     protected $level = self::LEVEL_ERROR;
-    protected $message;
-    protected $warning;
-    protected $error;
+    protected $message = [];
+    protected $warning = [];
+    protected $error = [];
 
     private $filterValue;
     private $filterBy;
