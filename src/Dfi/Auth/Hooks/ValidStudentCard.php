@@ -26,10 +26,9 @@ class ValidStudentCard extends HookAbstract implements HookInterface
     {
         $url = $this->url . $user->getLogin();
 
-        $client = new \Zend_Http_Client($url);
+        $client = new \Zend_Http_Client($url, ['adapter' => 'Zend_Http_Client_Adapter_Curl']);
 
         $response = $client->request();
-        /** @var ValidStudentCardResponse $m */
         $m = json_decode($response->getBody());
 
         $result = true;
@@ -66,37 +65,4 @@ class ValidStudentCard extends HookAbstract implements HookInterface
         }
 
     }
-}
-
-class  ValidStudentCardResponse
-{
-    /**
-     * @var bool
-     */
-    public $isStudent;
-
-    /**
-     * @var bool
-     */
-    public $hasSchoolId;
-
-    /**
-     * @var bool
-     */
-    public $hasSchoolIdDate;
-
-    /**
-     * @var bool
-     */
-    public $hasValidSchoolIdDate;
-
-    /**
-     * @var bool
-     */
-    public $isError;
-
-    /**
-     * @var  [string]
-     */
-    public $message;
 }

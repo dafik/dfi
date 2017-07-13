@@ -28,7 +28,7 @@ class ValidContract extends HookAbstract implements HookInterface
         //$url = $this->url . "d.prowadzisz";
 
 
-        $client = new \Zend_Http_Client($url);
+        $client = new \Zend_Http_Client($url, ['adapter' => 'Zend_Http_Client_Adapter_Curl']);
 
         $response = $client->request();
         $m = json_decode($response->getBody());
