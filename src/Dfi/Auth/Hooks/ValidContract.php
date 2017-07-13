@@ -13,7 +13,7 @@ use Dfi\Iface\Model\Sys\User;
 
 class ValidContract extends HookAbstract implements HookInterface
 {
-    protected $url = "http://hrnew.local/soap/server/hascontractbylogin?login=";
+    protected $url = "";
 
     public function setOptions($options)
     {
