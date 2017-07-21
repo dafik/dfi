@@ -85,17 +85,17 @@ class  DataVersion
      */
     private static function makeDomFromNewData($newData)
     {
-        $newXmlString = Xml::castToXmlString($newData);
+        $newXmlString = Xml::castToXmlString($newData, 'current');
         $newXml = Xml::asSimpleXml($newXmlString);
 
-        $x = Xml::asSimpleXml('<current></current>');
-        /** @var SimpleXMLElement $value */
-        foreach ($newXml as $key => $value) {
-            if ((string)$value != '') {
-                $x->addChild($key, $value);
+        /*    $x = Xml::asSimpleXml('<current></current>');
+
+            foreach ($newXml as $key => $value) {
+                if ((string)$value != '') {
+                    $x->addChild($key, $value);
+                }
             }
-        }
-        $newXml = $x;
+            $newXml = $x;*/
 
         //new DOM document definition
         $dom = new DOMDocument();

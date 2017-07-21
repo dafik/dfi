@@ -80,7 +80,7 @@ class Xml
 
 
     /**
-     * @param $stringXml
+     * @param $stringXml |SimpleXMLElement
      * @param bool $emptyToNull remove empty arrays with null
      * @return array
      */
@@ -526,14 +526,14 @@ class Xml
 
     }
 
-    public static function castToXmlString($data)
+    public static function castToXmlString($data, $startElement = 'data')
     {
         if (is_string($data)) {
             $xml = self::asSimpleXml($data);
         } elseif ($data instanceof SimpleXMLElement) {
             $xml = $data->asXML();
         } elseif (is_array($data)) {
-            $xml = self::from_array($data, 'data');
+            $xml = self::from_array($data, $startElement);
         } else {
             throw new Exception('unknown format');
         }
