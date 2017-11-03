@@ -173,18 +173,11 @@ class DataTable extends Zend_View_Helper_FormText
             if ($this->hasColumnDefinition()) {
                 $columnDefinition = $this->renderColumnDefinitions();
 
-                $script .= 'function ' . $this->dataTableFunctionName . '(frm) {' . "\n";
-                //$script .= '    frm.test();' . "\n";
+                $script .= 'function ' . $this->dataTableFunctionName . '() {' . "\n";
                 $script .= implode("\n", $this->getTemplates()) . "\n";
                 $script .= 'return ' . $columnDefinition . "\n";
                 $script .= '}' . "\n";
                 $script .= 'window[\'' . $this->dataTableFunctionName . '\'] = ' . $this->dataTableFunctionName . "\n";
-
-                /*
-                $script .= '$("#' . $this->id . '").on("init.dt", function () {' . "\n";
-                $script .= '    frm.test();' . "\n";
-                $script .= '    App.handleToAjax("#' . $this->id . '");' . "\n";
-                $script .= '})' . "\n";*/
             }
             $modalsScript = '';
 
@@ -215,7 +208,7 @@ class DataTable extends Zend_View_Helper_FormText
             $format = new JSFormat();
 
             $out = '<script>' . "\n" . $format->JSFormat($script) . '</script>' . "\n";
-            $out .= '<script>' . "\n" . $format->JSFormat($modalsScript . $scripts, ['frmProcess' => 'processObj', 'window' => 'window']) . '</script>' . "\n";
+            $out .= '<script>' . "\n" . $format->JSFormat($modalsScript . $scripts) . '</script>' . "\n";
 
             return $out;
         }

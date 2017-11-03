@@ -51,7 +51,7 @@ class DynamicForm extends Zend_View_Helper_Abstract
         }
 
 
-        $out = '<script type="text/javascript">' . "\n" . $format->JSFormat($mainScript . "\n", ['frmProcess' => 'processObj', 'window' => 'window']) . '</script>';
+        $out = '<script type="text/javascript">' . "\n" . $format->JSFormat($mainScript . "\n") . '</script>';
         return $out;
     }
 
