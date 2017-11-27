@@ -9,6 +9,7 @@
 namespace Dfi\Worker;
 
 
+use Composer\Autoload\ClassLoader;
 use Dfi\Exception\AppException;
 
 class Task
@@ -22,6 +23,13 @@ class Task
         $this->guid = $arg[0];
         $this->taskClass = $arg[1];
         $this->taskFile = $arg[2];
+
+
+        $base = realpath(APPLICATION_PATH . "/../");
+        $new = explode(PATH_SEPARATOR, get_include_path());
+        $new [] = $base;
+        set_include_path(implode(PATH_SEPARATOR, $new));
+
     }
 
     public function __destruct()
@@ -86,7 +94,11 @@ ini_set("include_path",
 
 
 $path = BASE_PATH . 'vendor/VendorAutoloader.php';
-require_once $path;
+/**
+ * @var ClassLoader
+ */
+$loader = require_once $path;
+$loader->setUseIncludePath(true);
 
 array_shift($argv);
 $task = new Task($argv);

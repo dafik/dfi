@@ -68,6 +68,7 @@ class Worker
                 '-dextension=simplexml.so',
                 '-dextension=xmlwriter.so',
                 '-dextension=iconv.so',
+                '-dextension=zip.so',
                 '-dlog_errors=On',
                 '-derror_reporting=E_ALL',
                 '-derror_log=' . $errorLog,
