@@ -45,7 +45,7 @@ class Task
         $object = new $this->taskClass();
         $object->setFile($this->taskFile);
         $object->setGuid($this->guid);
-        $object->setLogPath(BASE_PATH . 'data/worker');
+        $object->setLogPath(BASE_PATH . '/data/worker');
         $object->setMakeLog(true);
 
         $this->makeLog();
@@ -79,8 +79,8 @@ class Task
 
 }
 
-defined('BASE_PATH') || define("BASE_PATH", substr(__DIR__, 0, strpos(__DIR__, "vendor")));
-defined('APPLICATION_PATH') || define('APPLICATION_PATH', realpath(BASE_PATH . 'application'));
+defined('BASE_PATH') || define("BASE_PATH", substr(__DIR__, 0, strpos(__DIR__, "/vendor")));
+defined('APPLICATION_PATH') || define('APPLICATION_PATH', realpath(BASE_PATH . '/application'));
 defined('APPLICATION_ENV') || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
 
 ini_set("include_path",
@@ -93,7 +93,7 @@ ini_set("include_path",
 );
 
 
-$path = BASE_PATH . 'vendor/VendorAutoloader.php';
+$path = BASE_PATH . '/vendor/VendorAutoloader.php';
 /**
  * @var ClassLoader
  */
