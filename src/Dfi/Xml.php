@@ -73,7 +73,11 @@ class Xml
             }
 
             if (!is_array($value)) {
-                $xml->writeElement($key, $value . "");
+                if (is_bool($value)) {
+                    $xml->writeElement($key, $value ? "true" : "false");
+                } else {
+                    $xml->writeElement($key, $value . "");
+                }
             }
         }
     }
