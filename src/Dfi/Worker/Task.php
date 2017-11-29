@@ -17,12 +17,15 @@ class Task
     private $guid;
     private $taskClass;
     private $taskFile;
+    private $args;
 
-    public function __construct($arg)
+    public function __construct($args)
     {
-        $this->guid = $arg[0];
-        $this->taskClass = $arg[1];
-        $this->taskFile = $arg[2];
+        $this->guid = array_shift($args);
+        $this->taskClass = array_shift($args);
+        $this->taskFile = array_shift($args);
+
+        $this->args = $args;
 
 
         $base = realpath(APPLICATION_PATH . "/../");
@@ -42,7 +45,8 @@ class Task
         //TODO export to interface
 
         /** @var TaskInterface $object */
-        $object = new $this->taskClass();
+        $object = new $this->taskClass($this->args);
+
         $object->setFile($this->taskFile);
         $object->setGuid($this->guid);
         $object->setLogPath(BASE_PATH . 'data/worker');
