@@ -12,7 +12,7 @@ namespace Dfi\Worker;
 use Composer\Autoload\ClassLoader;
 use Dfi\Exception\AppException;
 
-class Task
+class TaskCmd
 {
     private $guid;
     private $taskClass;
@@ -26,6 +26,7 @@ class Task
         $this->taskFile = array_shift($args);
 
         $this->args = $args;
+
 
         $base = realpath(APPLICATION_PATH . "/../");
         $new = explode(PATH_SEPARATOR, get_include_path());

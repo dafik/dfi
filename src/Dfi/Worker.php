@@ -31,6 +31,7 @@ class Worker
         $this->file = $file;
     }
 
+
     private function makeGUID()
     {
         mt_srand((double)microtime() * 10000);//optional for php 4.2.0 and up.
@@ -79,15 +80,21 @@ class Worker
             $fullCommand = 'nohup ' . $command . ' > ' . $logFile . ' 2>&1 & echo $!';
             $pid = exec($fullCommand);
 
+            if ($pid) {
+                return true;
+            }
+
+
+
 
         } else {
 
             $dtkPath = realpath(APPLICATION_PATH . "/../vendor/dafik/dtk/src/");
 
-            $class = new $this->file;
+            $class = new $this->file($this->args);
             $class->setFile($this->args[0]);
 
-            $res = $class->run();
+            $res = $class->run($this->args);
 
 
         }
