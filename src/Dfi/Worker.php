@@ -70,6 +70,7 @@ class Worker
                 '-dextension=xmlwriter.so',
                 '-dextension=iconv.so',
                 '-dextension=zip.so',
+                '-dextension=tidy.so',
                 '-dlog_errors=On',
                 '-derror_reporting=E_ALL',
                 '-derror_log=' . $errorLog,
