@@ -71,6 +71,7 @@ class Worker
                 '-dextension=iconv.so',
                 '-dextension=zip.so',
                 '-dextension=tidy.so',
+                '-dextension=ctype.so',
                 '-dlog_errors=On',
                 '-derror_reporting=E_ALL',
                 '-derror_log=' . $errorLog,
@@ -84,8 +85,6 @@ class Worker
             if ($pid) {
                 return true;
             }
-
-
 
 
         } else {
