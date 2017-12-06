@@ -70,8 +70,6 @@ class Worker
                 return;
             }
 
-            //return
-
             $command = $interpreter . ' ' . $filePath . ' "' . $this->guid . '" "' . implode("\" \"", $this->args) . "\"";
 
             $fullCommand = 'nohup ' . $command . ' > ' . $logFile . ' 2>&1 & echo $!';
