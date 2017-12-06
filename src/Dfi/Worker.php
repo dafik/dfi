@@ -14,6 +14,7 @@ class Worker
     private $file;
     private $args;
     private $guid;
+    private $interpreter;
 
     /**
      * @return string
@@ -28,7 +29,12 @@ class Worker
     {
         $this->guid = $this->makeGUID();
         $this->args = $args;
-        $this->file = $file;
+        if (is_array($file)) {
+            $this->file = $file[0];
+            $this->interpreter = $file[1];
+        } else {
+            $this->file = $file;
+        }
     }
 
 
@@ -49,6 +55,33 @@ class Worker
 
     public function run($runInBackground = true)
     {
+
+        if ($this->interpreter) {
+
+            $logFile = realpath(APPLICATION_PATH . "/../data/worker") . '/' . $this->guid . '.log';
+
+            exec("which " . $this->interpreter, $output, $returnVar);
+            if ($returnVar != 0) {
+                return;
+            }
+            $interpreter = array_shift($output);
+            $filePath = realpath(APPLICATION_PATH . '/../' . $this->file);
+            if (!file_exists($filePath)) {
+                return;
+            }
+
+            //return
+
+            $command = $interpreter . ' ' . $filePath . ' "' . $this->guid . '" "' . implode("\" \"", $this->args) . "\"";
+
+            $fullCommand = 'nohup ' . $command . ' > ' . $logFile . ' 2>&1 & echo $!';
+            $pid = exec($fullCommand);
+
+            if ($pid) {
+                return true;
+            }
+            return false;
+        }
         $res = false;
 
         if ($runInBackground) {
